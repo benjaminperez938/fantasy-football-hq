@@ -169,8 +169,8 @@
   .wk-chip { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px 16px; position:relative; overflow:hidden; display:flex; align-items:center; gap:12px; min-height:90px; }
   .wk-chip.paid { background:rgba(0,255,135,0.05); border-color:rgba(0,255,135,0.2); }
   .wk-chip.unpaid { background:rgba(255,77,77,0.05); border-color:rgba(255,77,77,0.2); }
-  .wk-headshot { position:absolute; right:-4px; top:0; height:100%; width:auto; max-width:45%; opacity:0.35; object-fit:cover; object-position:top; pointer-events:none; mask-image:linear-gradient(to left, rgba(0,0,0,0.9) 40%, transparent 100%); -webkit-mask-image:linear-gradient(to left, rgba(0,0,0,0.9) 40%, transparent 100%); }
-  .wk-chip:hover .wk-headshot { opacity:0.5; transition:opacity 0.2s; }
+  .wk-headshot { position:absolute; right:-4px; top:0; height:100%; width:auto; max-width:45%; opacity:0.85; object-fit:cover; object-position:top; pointer-events:none; mask-image:linear-gradient(to left, rgba(0,0,0,0.9) 40%, transparent 100%); -webkit-mask-image:linear-gradient(to left, rgba(0,0,0,0.9) 40%, transparent 100%); }
+  .wk-chip:hover .wk-headshot { opacity:1; transition:opacity 0.2s; }
   .wk-info { flex:1; z-index:1; }
   .wk-num { font-family:'DM Mono',monospace; font-size:16px; font-weight:700; color:#ffffff; letter-spacing:1px; margin-bottom:3px; }
   .wk-player { font-size:16px; font-weight:700; margin-bottom:1px; line-height:1.2; color:var(--green); }
@@ -2037,26 +2037,56 @@ let newsLoaded = false;
 
 async function fetchESPNNews(){
   if(newsLoaded) return;
-  // Show placeholder cards immediately so the tab never looks empty
-  allNewsItems = getPlaceholderNews();
-  newsLoaded = true;
+  document.getElementById('newsLoading').style.display = 'block';
+
+  try {
+    // ESPN public NFL news feed — no auth needed
+    const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/football/nfl/news?limit=25');
+    const data = await res.json();
+
+    if(data.articles && data.articles.length > 0){
+      allNewsItems = data.articles.map(a => {
+        // Determine type based on categories/keywords
+        const text = (a.headline + ' ' + (a.description||'')).toLowerCase();
+        let type = 'league';
+        let tag = 'NFL NEWS';
+        if(text.includes('injur') || text.includes('questionable') || text.includes('out ') || text.includes('ir ') || text.includes('doubtful')){
+          type = 'injury'; tag = 'INJURY';
+        } else if(text.includes('trade') || text.includes('sign') || text.includes('release') || text.includes('cut') || text.includes('waiv')){
+          type = 'transaction'; tag = 'TRANSACTION';
+        } else if(ROSTER_PLAYERS.some(p => text.includes(p.toLowerCase()))){
+          type = 'roster'; tag = 'ROSTER IMPACT';
+        }
+        return {
+          type,
+          tag,
+          headline: a.headline,
+          meta: 'ESPN · ' + new Date(a.published).toLocaleDateString('en-US',{month:'short',day:'numeric', hour:'numeric', minute:'2-digit'}),
+          impact: a.description || '',
+          link: a.links?.web?.href || null,
+          rosterImpact: type === 'roster' || type === 'injury'
+        };
+      });
+      newsLoaded = true;
+    } else {
+      allNewsItems = getPlaceholderNews();
+      newsLoaded = true;
+    }
+  } catch(e) {
+    allNewsItems = getPlaceholderNews();
+    newsLoaded = true;
+  }
+
   document.getElementById('newsLoading').style.display = 'none';
   renderNewsCards('all');
-
-  // Try ESPN in background — will work if cookies are accessible
-  const base = `https://fantasy.espn.com/apis/v3/games/ffl/seasons/${ESPN_SEASON}/segments/0/leagues/${ESPN_LEAGUE_ID}`;
-  try {
-    const activityRes = await fetch(`${base}?view=mTransactions2`, { credentials:'include' });
-    if(activityRes.ok){
-      const activityData = await activityRes.json();
-      const live = buildNewsItems(null, activityData);
-      if(live.length > 0){
-        allNewsItems = live;
-        renderNewsCards('all');
-      }
-    }
-  } catch(e){ /* CORS — placeholder cards already showing */ }
 }
+
+// Players on league rosters to flag as roster-relevant
+const ROSTER_PLAYERS = [
+  'mahomes','chase','taylor','jeanty','nacua','cook','mcbride','judkins',
+  'aubrey','butker','henry','kelce','hill','diggs','adams','Jefferson',
+  'ceedee','lamb','tyreek','davante','stefon','kupp','amon-ra','puka'
+];
 
 function buildNewsItems(rosterData, activityData){
   const items = [];
@@ -2136,11 +2166,12 @@ function renderNewsCards(filter){
   }
 
   container.innerHTML = filtered.map(n=>`
-    <div class="news-card ${n.type}">
+    <div class="news-card ${n.type}" ${n.link ? `onclick="window.open('${n.link}','_blank')"` : ''} style="${n.link?'cursor:pointer':''}">
       <div class="news-tag ${n.type}">${n.tag}</div>
       <div class="news-headline">${n.headline}</div>
       <div class="news-meta">${n.meta}</div>
       ${n.impact ? `<div class="news-impact">${n.impact}</div>` : ''}
+      ${n.link ? `<div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--green);margin-top:6px;letter-spacing:1px">READ ON ESPN ↗</div>` : ''}
     </div>`).join('');
 }
 
