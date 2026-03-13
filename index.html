@@ -169,8 +169,8 @@
   .wk-chip { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px 16px; position:relative; overflow:hidden; display:flex; align-items:center; gap:12px; min-height:90px; }
   .wk-chip.paid { background:rgba(0,255,135,0.05); border-color:rgba(0,255,135,0.2); }
   .wk-chip.unpaid { background:rgba(255,77,77,0.05); border-color:rgba(255,77,77,0.2); }
-  .wk-headshot { position:absolute; right:-4px; top:0; height:100%; width:auto; max-width:45%; opacity:0.18; object-fit:cover; object-position:top; pointer-events:none; mask-image:linear-gradient(to left, rgba(0,0,0,0.8) 40%, transparent 100%); -webkit-mask-image:linear-gradient(to left, rgba(0,0,0,0.8) 40%, transparent 100%); }
-  .wk-chip:hover .wk-headshot { opacity:0.3; transition:opacity 0.2s; }
+  .wk-headshot { position:absolute; right:-4px; top:0; height:100%; width:auto; max-width:45%; opacity:0.35; object-fit:cover; object-position:top; pointer-events:none; mask-image:linear-gradient(to left, rgba(0,0,0,0.9) 40%, transparent 100%); -webkit-mask-image:linear-gradient(to left, rgba(0,0,0,0.9) 40%, transparent 100%); }
+  .wk-chip:hover .wk-headshot { opacity:0.5; transition:opacity 0.2s; }
   .wk-info { flex:1; z-index:1; }
   .wk-num { font-family:'DM Mono',monospace; font-size:16px; font-weight:700; color:#ffffff; letter-spacing:1px; margin-bottom:3px; }
   .wk-player { font-size:16px; font-weight:700; margin-bottom:1px; line-height:1.2; color:var(--green); }
@@ -767,10 +767,16 @@
         <div class="cmsg other"><div class="csender">Izik M.</div><div class="cbubble">Long season for me 😭</div><div class="ctime">1:12 PM</div></div>
       </div>
       <div class="chat-input-area">
+        <div id="gifPicker" style="display:none;background:var(--dark2);border:1px solid var(--border);border-radius:8px;padding:8px;margin-bottom:8px">
+          <input id="gifSearch" class="chat-inp" placeholder="Search GIFs..." style="margin-bottom:6px"
+            oninput="searchGifs(this.value)">
+          <div id="gifResults" style="display:flex;flex-wrap:wrap;gap:4px;max-height:160px;overflow-y:auto"></div>
+        </div>
         <div class="chat-input-row">
-          <div class="gif-chip">GIF</div>
-          <input class="chat-inp" placeholder="Say something..." onkeydown="if(event.key==='Enter'&&this.value.trim()){sendDemoMsg(this.value);this.value='';}">
-          <button class="csend">➤</button>
+          <div class="gif-chip" onclick="toggleGifPicker()">GIF</div>
+          <input id="chatInputBox" class="chat-inp" placeholder="Say something..."
+            onkeydown="handleChatKey(event)">
+          <button class="csend" onclick="triggerSend()">➤</button>
         </div>
       </div>
     </div>
@@ -2031,32 +2037,25 @@ let newsLoaded = false;
 
 async function fetchESPNNews(){
   if(newsLoaded) return;
+  // Show placeholder cards immediately so the tab never looks empty
+  allNewsItems = getPlaceholderNews();
+  newsLoaded = true;
+  document.getElementById('newsLoading').style.display = 'none';
+  renderNewsCards('all');
+
+  // Try ESPN in background — will work if cookies are accessible
   const base = `https://fantasy.espn.com/apis/v3/games/ffl/seasons/${ESPN_SEASON}/segments/0/leagues/${ESPN_LEAGUE_ID}`;
   try {
-    // Fetch league roster + recent activity
-    const [rosterRes, activityRes] = await Promise.all([
-      fetch(`${base}?view=mRoster&view=mTeam`, {
-        credentials:'include',
-        headers:{ 'Cookie':`espn_s2=${ESPN_S2}; SWID=${ESPN_SWID}` }
-      }),
-      fetch(`${base}?view=mTransactions2`, {
-        credentials:'include',
-        headers:{ 'Cookie':`espn_s2=${ESPN_S2}; SWID=${ESPN_SWID}` }
-      })
-    ]);
-
-    const rosterData = rosterRes.ok ? await rosterRes.json() : null;
-    const activityData = activityRes.ok ? await activityRes.json() : null;
-
-    allNewsItems = buildNewsItems(rosterData, activityData);
-    newsLoaded = true;
-  } catch(e) {
-    // CORS locally — show placeholder cards; works after Vercel deploy
-    allNewsItems = getPlaceholderNews();
-    newsLoaded = true;
-  }
-  renderNewsCards('all');
-  document.getElementById('newsLoading').style.display = 'none';
+    const activityRes = await fetch(`${base}?view=mTransactions2`, { credentials:'include' });
+    if(activityRes.ok){
+      const activityData = await activityRes.json();
+      const live = buildNewsItems(null, activityData);
+      if(live.length > 0){
+        allNewsItems = live;
+        renderNewsCards('all');
+      }
+    }
+  } catch(e){ /* CORS — placeholder cards already showing */ }
 }
 
 function buildNewsItems(rosterData, activityData){
@@ -2464,14 +2463,74 @@ function openNewcomerForm(){
 const _origSwitchTab = switchTab;
 
 
-function sendDemoMsg(text){
-  const msgs=document.getElementById('chatMsgs');
-  const t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-  const div=document.createElement('div');
-  div.className='cmsg own';
-  div.innerHTML=`<div class="cbubble">${text}</div><div class="ctime">${t}</div>`;
+const GIPHY_KEY = 'rtq4gF02Z37mvHCxqeNzpsOKZ3pNeW0R';
+let gifPickerOpen = false;
+
+function handleChatKey(e){
+  if(e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    triggerSend();
+  }
+  // Shift+Enter = line break (default textarea behavior — input doesn't support it, so just allow)
+}
+
+function triggerSend(){
+  const inp = document.getElementById('chatInputBox');
+  if(!inp) return;
+  const text = inp.value.trim();
+  if(!text) return;
+  sendDemoMsg(text);
+  inp.value = '';
+}
+
+function sendDemoMsg(text, isGif=false){
+  const msgs = document.getElementById('chatMsgs');
+  if(!msgs) return;
+  const t = new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const name = localStorage.getItem('signedInUser') || 'You';
+  const div = document.createElement('div');
+  div.className = 'cmsg own';
+  if(isGif){
+    div.innerHTML = `<div class="cbubble" style="padding:4px;background:transparent;border:none"><img src="${text}" style="max-width:180px;border-radius:8px"></div><div class="ctime">${t}</div>`;
+  } else {
+    div.innerHTML = `<div class="cbubble">${text}</div><div class="ctime">${t}</div>`;
+  }
   msgs.appendChild(div);
-  setTimeout(()=>msgs.scrollTop=msgs.scrollHeight,50);
+  setTimeout(()=>msgs.scrollTop=msgs.scrollHeight, 50);
+}
+
+function toggleGifPicker(){
+  const picker = document.getElementById('gifPicker');
+  gifPickerOpen = !gifPickerOpen;
+  picker.style.display = gifPickerOpen ? 'block' : 'none';
+  if(gifPickerOpen){
+    searchGifs('nfl');
+    document.getElementById('gifSearch').focus();
+  }
+}
+
+let gifTimer;
+function searchGifs(query){
+  clearTimeout(gifTimer);
+  if(!query) return;
+  gifTimer = setTimeout(async ()=>{
+    try {
+      const res = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${encodeURIComponent(query)}&limit=12&rating=g`);
+      const data = await res.json();
+      const container = document.getElementById('gifResults');
+      container.innerHTML = data.data.map(g=>`
+        <img src="${g.images.fixed_height_small.url}" style="height:80px;border-radius:4px;cursor:pointer"
+          onclick="sendGif('${g.images.original.url}')">`).join('');
+    } catch(e){
+      document.getElementById('gifResults').innerHTML = '<div style="font-size:10px;color:var(--muted);padding:8px">Could not load GIFs</div>';
+    }
+  }, 400);
+}
+
+function sendGif(url){
+  sendDemoMsg(url, true);
+  toggleGifPicker();
+  document.getElementById('gifSearch').value = '';
 }
 
 // ===== INIT =====
