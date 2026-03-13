@@ -169,8 +169,11 @@
   .wk-chip { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px 16px; position:relative; overflow:hidden; display:flex; align-items:center; gap:12px; min-height:90px; }
   .wk-chip.paid { background:rgba(0,255,135,0.05); border-color:rgba(0,255,135,0.2); }
   .wk-chip.unpaid { background:rgba(255,77,77,0.05); border-color:rgba(255,77,77,0.2); }
-  .wk-headshot { position:absolute; right:-4px; top:0; height:100%; width:auto; max-width:45%; opacity:0.85; object-fit:cover; object-position:top; pointer-events:none; mask-image:linear-gradient(to left, rgba(0,0,0,0.9) 40%, transparent 100%); -webkit-mask-image:linear-gradient(to left, rgba(0,0,0,0.9) 40%, transparent 100%); }
+  .wk-headshot { position:absolute; right:-4px; top:0; height:100%; width:auto; max-width:45%; opacity:0.85; object-fit:cover; object-position:top; pointer-events:none; }
   .wk-chip:hover .wk-headshot { opacity:1; transition:opacity 0.2s; }
+  .wk-headshot-dual { position:absolute; right:-4px; top:0; height:100%; width:auto; max-width:25%; opacity:0.85; object-fit:cover; object-position:top; pointer-events:none; }
+  .wk-headshot-dual.left { right:calc(25% - 4px); }
+  .wk-chip:hover .wk-headshot-dual { opacity:1; transition:opacity 0.2s; }
   .wk-info { flex:1; z-index:1; }
   .wk-num { font-family:'DM Mono',monospace; font-size:16px; font-weight:700; color:#ffffff; letter-spacing:1px; margin-bottom:3px; }
   .wk-player { font-size:16px; font-weight:700; margin-bottom:1px; line-height:1.2; color:var(--green); }
@@ -570,7 +573,7 @@
           </div>
 
           <div class="wk-chip paid" style="border-left:3px solid var(--green)">
-            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4361308.png" alt="JSN" onerror="this.style.display='none'">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4430878.png" alt="JSN" onerror="this.style.display='none'">
             <div class="wk-info">
               <div class="wk-num">WEEK 6</div>
               <div class="wk-player">JSN</div>
@@ -645,7 +648,7 @@
           </div>
 
           <div class="wk-chip paid" style="border-left:3px solid var(--green)">
-            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4430801.png" alt="Q. Judkins" onerror="this.style.display='none'">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4685702.png" alt="Q. Judkins" onerror="this.style.display='none'">
             <div class="wk-info">
               <div class="wk-num">WEEK 13</div>
               <div class="wk-player">Q. Judkins</div>
@@ -667,7 +670,8 @@
           </div>
 
           <div class="wk-chip paid" style="border-left:3px solid var(--green);margin-bottom:4px">
-            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/3915416.png" alt="B. Aubrey" onerror="this.style.display='none'">
+            <img class="wk-headshot-dual left" src="https://a.espncdn.com/i/headshots/nfl/players/full/3953687.png" alt="B. Aubrey" onerror="this.style.display='none'">
+            <img class="wk-headshot-dual" src="https://a.espncdn.com/i/headshots/nfl/players/full/3055899.png" alt="H. Butker" onerror="this.style.display='none'">
             <div class="wk-info">
               <div class="wk-num">WEEK 16+17 · K · SPLIT</div>
               <div class="wk-player">B. Aubrey / H. Butker</div>
