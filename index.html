@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Fantasy League HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green:#00ff87; --green-dim:#00c96a;
+    --dark:#0a0e0b; --dark2:#0f1410; --dark3:#1a211c;
+    --card:#131a14; --border:#1f2e21;
+    --text:#e8f0e9; --muted:#6b8a6e;
+    --red:#ff4d4d; --gold:#ffd700; --silver:#c0c0c0; --bronze:#cd7f32;
+    --blue:#4d9fff; --orange:#ff8c00;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { height:100%; }
+  body { background:#0d0d0d; color:var(--text); font-family:'DM Sans',sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:20px 16px 40px; min-height:100vh; }
+  body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,255,135,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,135,0.02) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; }
+
+  .app-label { font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:3px; color:var(--muted); margin-bottom:12px; text-align:center; position:relative; z-index:1; }
+
+  /* PHONE */
+  .phone { width:390px; max-width:100%; background:var(--dark); border:2px solid #222; border-radius:40px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.7),0 0 0 1px #111; display:flex; flex-direction:column; height:800px; position:relative; z-index:1; }
+
+  /* NOTCH */
+  .notch { background:var(--dark2); height:42px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; flex-shrink:0; border-bottom:1px solid var(--border); }
+  .notch-time { font-family:'DM Mono',monospace; font-size:13px; font-weight:500; }
+  .notch-icons { font-size:10px; color:var(--muted); display:flex; gap:4px; }
+
+  /* SCREEN */
+  .screen { flex:1; overflow:hidden; background:var(--dark); scrollbar-width:none; position:relative; display:flex; flex-direction:column; }
+  .screen::-webkit-scrollbar { display:none; }
+
+  /* TAB PANELS */
+  .tab-panel { display:none; height:100%; overflow:hidden; }
+  .tab-panel.active { display:flex; flex-direction:column; height:100%; }
+  #panel-chat.active { display:flex; flex-direction:column; height:100%; }
+
+  /* ===== HOME ===== */
+  .home-wrap { display:flex; flex-direction:column; height:100%; overflow:hidden; }
+  .home-header-fixed { background:var(--dark); border-bottom:1px solid var(--border); padding:8px 16px 10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; text-align:center; }
+  .home-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:3px; line-height:1; }
+  .home-title span { color:var(--green); }
+  .home-scroll { flex:1; overflow-y:auto; padding:14px 16px 16px; display:flex; flex-direction:column; align-items:center; scrollbar-width:none; }
+  .home-scroll::-webkit-scrollbar { display:none; }
+  .season-pills { display:flex; justify-content:center; gap:6px; }
+  .season-pill { background:var(--green); color:var(--dark); font-family:'DM Mono',monospace; font-size:9px; padding:3px 10px; border-radius:10px; font-weight:500; }
+
+  .status-row { display:flex; gap:6px; background:var(--card); border:1px solid var(--border); border-radius:6px; padding:7px 10px; margin-bottom:10px; width:100%; align-items:center; }
+  .status-dot { width:5px; height:5px; border-radius:50%; background:var(--green); box-shadow:0 0 5px var(--green); animation:pulse 2s infinite; flex-shrink:0; }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  .status-txt { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); }
+  .status-val { color:var(--text); font-weight:500; }
+
+  /* Prize row */
+  .prize-row { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-bottom:14px; width:100%; }
+  .prize-box { background:var(--card); border:1px solid var(--border); border-top:2px solid; border-radius:6px; padding:8px 4px; text-align:center; }
+  .prize-box:nth-child(1){border-top-color:var(--gold)} .prize-box:nth-child(2){border-top-color:var(--silver)} .prize-box:nth-child(3){border-top-color:var(--bronze)} .prize-box:nth-child(4){border-top-color:var(--green)}
+  .prize-place { font-family:'DM Mono',monospace; font-size:7px; color:var(--muted); letter-spacing:1px; margin-bottom:2px; }
+  .prize-amt { font-family:'Bebas Neue',sans-serif; font-size:22px; }
+  .prize-box:nth-child(1) .prize-amt{color:var(--gold)} .prize-box:nth-child(2) .prize-amt{color:var(--silver)} .prize-box:nth-child(3) .prize-amt{color:var(--bronze)} .prize-box:nth-child(4) .prize-amt{color:var(--green)}
+  .prize-lbl { font-size:8px; color:var(--muted); margin-top:1px; }
+
+  /* Wheel slot on home */
+  .home-wheel-slot { display:flex; flex-direction:column; align-items:center; margin-bottom:14px; width:100%; }
+  .home-wheel-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:2px; margin-bottom:8px; text-align:center; }
+
+  .wheel-container {
+    position:relative;
+    width:310px; height:310px;
+    transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1), height 0.6s cubic-bezier(0.34,1.56,0.64,1);
+    cursor:pointer;
+  }
+
+  /* Expand backdrop */
+  .wheel-expand-backdrop {
+    display:none;
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.92);
+    z-index:200;
+    align-items:center;
+    justify-content:center;
+    backdrop-filter:blur(8px);
+    border-radius:38px;
+  }
+  .wheel-expand-backdrop.open { display:flex; }
+  .wheel-expand-inner {
+    position:relative;
+    width:340px; height:340px;
+    animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
+  .wheel-expand-inner canvas { border-radius:50%; box-shadow:0 0 50px rgba(255,140,0,0.4); width:100%; height:100%; }
+  .wheel-expand-pointer {
+    position:absolute; top:50%; right:-14px; transform:translateY(-50%);
+    width:0; height:0;
+    border-top:11px solid transparent; border-bottom:11px solid transparent;
+    border-right:22px solid var(--orange);
+    z-index:10; filter:drop-shadow(0 0 8px var(--orange));
+  }
+  .wheel-expand-label {
+    position:absolute; bottom:-44px; left:50%; transform:translateX(-50%);
+    font-family:'DM Mono',monospace; font-size:9px; color:rgba(255,255,255,0.5);
+    white-space:nowrap; letter-spacing:2px;
+    border:1px solid rgba(255,255,255,0.1); border-radius:20px;
+    padding:4px 12px; background:rgba(255,255,255,0.05);
+  }
+  .wheel-container.minimized { width:120px; height:120px; }
+
+  .wheel-pointer-home {
+    position:absolute; top:50%; right:-10px; transform:translateY(-50%);
+    width:0; height:0;
+    border-top:8px solid transparent; border-bottom:8px solid transparent;
+    border-right:16px solid var(--orange);
+    z-index:10; filter:drop-shadow(0 0 5px var(--orange));
+    transition:all 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .wheel-container.minimized .wheel-pointer-home { border-top-width:5px; border-bottom-width:5px; border-right-width:10px; right:-7px; }
+
+  #homeWheelCanvas {
+    border-radius:50%;
+    box-shadow:0 0 24px rgba(255,140,0,0.2);
+    width:100%; height:100%;
+    transition:box-shadow 0.6s;
+  }
+  .wheel-container.minimized #homeWheelCanvas { box-shadow:0 0 10px rgba(255,140,0,0.15); }
+
+  /* Result banner */
+  .spin-banner { background:linear-gradient(135deg,#1a1f0f,var(--card)); border:1px solid #2a3a1a; border-left:3px solid var(--orange); border-radius:6px; padding:9px 12px; margin-bottom:12px; display:flex; align-items:center; gap:9px; width:100%; }
+  .spin-icon { font-size:18px; }
+  .spin-lbl { font-family:'DM Mono',monospace; font-size:7px; color:var(--orange); letter-spacing:1px; margin-bottom:2px; }
+  .spin-result { font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:1px; }
+  .spin-week { font-family:'DM Mono',monospace; font-size:8px; color:var(--muted); margin-left:auto; white-space:nowrap; }
+
+  /* Spinning overlay */
+  .spin-overlay {
+    display:none; position:absolute; inset:0;
+    background:rgba(10,14,11,0.92); backdrop-filter:blur(6px);
+    z-index:50; flex-direction:column; align-items:center; justify-content:center;
+    border-radius:38px;
+  }
+  .spin-overlay.on { display:flex; }
+  .spin-overlay-wheel { position:relative; width:310px; height:310px; margin-bottom:20px; }
+  .spin-overlay-pointer { position:absolute; top:50%; right:-13px; transform:translateY(-50%); width:0; height:0; border-top:11px solid transparent; border-bottom:11px solid transparent; border-right:22px solid var(--orange); z-index:10; filter:drop-shadow(0 0 8px var(--orange)); }
+  #overlayCanvas { border-radius:50%; box-shadow:0 0 40px rgba(255,140,0,0.3); width:100%; height:100%; }
+  .spin-overlay-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
+  .spin-overlay-result { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:2px; color:var(--orange); text-align:center; min-height:38px; }
+  .spin-overlay-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:6px; }
+  .spin-overlay-close { margin-top:20px; background:var(--green); color:var(--dark); border:none; border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; padding:10px 28px; cursor:pointer; }
+
+  /* Standings */
+  .sec-lbl { font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:2px; color:var(--muted); margin-bottom:7px; display:flex; align-items:center; gap:7px; width:100%; font-weight:700; }
+  .sec-lbl::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .standings-tbl { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:7px; overflow:hidden; margin-bottom:10px; font-size:11px; }
+  .standings-tbl th { background:var(--dark3); font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:1px; color:var(--muted); padding:7px 8px; text-align:left; border-bottom:1px solid var(--border); }
+  .standings-tbl td { padding:8px; border-bottom:1px solid rgba(31,46,33,0.4); vertical-align:middle; }
+  .standings-tbl tr:last-child td { border-bottom:none; }
+  .rank-chip { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:11px; }
+  .r1{background:rgba(255,215,0,0.15);color:var(--gold)} .r2{background:rgba(192,192,192,0.15);color:var(--silver)} .r3{background:rgba(205,127,50,0.15);color:var(--bronze)} .rn{background:var(--dark3);color:var(--muted)}
+  .rec{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#ffffff}
+  .paid-b{font-size:9px;padding:2px 6px;border-radius:8px;font-family:'DM Mono',monospace;white-space:nowrap}
+  .paid{background:rgba(0,255,135,0.1);color:var(--green)} .unpaid{background:rgba(255,77,77,0.1);color:var(--red)}
+
+  .wk-grid { display:flex; flex-direction:column; gap:8px; margin-bottom:10px; width:100%; }
+  .wk-chip { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px 16px; position:relative; overflow:hidden; display:flex; align-items:center; gap:12px; min-height:90px; }
+  .wk-chip.paid { background:rgba(0,255,135,0.05); border-color:rgba(0,255,135,0.2); }
+  .wk-chip.unpaid { background:rgba(255,77,77,0.05); border-color:rgba(255,77,77,0.2); }
+  .wk-headshot { position:absolute; right:-4px; top:0; height:100%; width:auto; max-width:45%; opacity:0.18; object-fit:cover; object-position:top; pointer-events:none; mask-image:linear-gradient(to left, rgba(0,0,0,0.8) 40%, transparent 100%); -webkit-mask-image:linear-gradient(to left, rgba(0,0,0,0.8) 40%, transparent 100%); }
+  .wk-chip:hover .wk-headshot { opacity:0.3; transition:opacity 0.2s; }
+  .wk-info { flex:1; z-index:1; }
+  .wk-num { font-family:'DM Mono',monospace; font-size:16px; font-weight:700; color:#ffffff; letter-spacing:1px; margin-bottom:3px; }
+  .wk-player { font-size:16px; font-weight:700; margin-bottom:1px; line-height:1.2; color:var(--green); }
+  .wk-cat { font-family:'DM Mono',monospace; font-size:11px; font-weight:700; color:var(--muted); margin-bottom:5px; }
+  .wk-score { font-family:'Bebas Neue',sans-serif; font-size:34px; color:#ffffff; letter-spacing:1px; line-height:1; margin-bottom:4px; }
+  .wk-winner { font-size:13px; color:var(--green); font-weight:700; }  .wk-num{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:1px}
+  .wk-cat{font-size:9px;color:var(--muted);margin-bottom:1px}
+  .wk-player{font-size:12px;font-weight:600;margin-bottom:1px}
+  .wk-winner{font-size:10px;color:var(--green-dim)}
+
+  /* ===== COMMISSIONER TAB ===== */
+  .comm-wrap { display:flex; flex-direction:column; height:100%; overflow:hidden; }
+  .comm-head { text-align:center; padding:12px 16px 10px; width:100%; border-bottom:1px solid var(--border); flex-shrink:0; background:var(--dark); }
+  .comm-body { flex:1; overflow-y:auto; padding:14px; scrollbar-width:none; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .comm-body::-webkit-scrollbar{display:none}
+  .comm-title { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:3px; }
+  .comm-title span { color:var(--orange); }
+
+  .comm-wheel-wrap { position:relative; width:220px; height:220px; margin:0 auto 14px; }
+  .comm-pointer { position:absolute; top:50%; right:-11px; transform:translateY(-50%); width:0; height:0; border-top:9px solid transparent; border-bottom:9px solid transparent; border-right:18px solid var(--orange); z-index:10; filter:drop-shadow(0 0 6px var(--orange)); }
+  #commCanvas { border-radius:50%; box-shadow:0 0 28px rgba(255,140,0,0.2); width:100%; height:100%; }
+
+  .comm-result { background:var(--card); border:1px solid var(--border); border-top:2px solid var(--orange); border-radius:8px; padding:10px 14px; width:100%; text-align:center; margin-bottom:12px; }
+  .cr-lbl { font-family:'DM Mono',monospace; font-size:8px; color:var(--orange); letter-spacing:2px; margin-bottom:3px; }
+  .cr-val { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:1px; }
+  .cr-week { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); margin-top:2px; }
+
+  .comm-spin-btn { width:100%; background:var(--orange); color:#fff; border:none; border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; padding:12px; cursor:pointer; transition:all 0.2s; margin-bottom:8px; }
+  .comm-spin-btn:hover{background:#e07800;transform:scale(1.01)}
+  .comm-spin-btn:disabled{background:var(--dark3);color:var(--muted);transform:none;cursor:default}
+
+  .comm-auto-note { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); text-align:center; margin-bottom:14px; }
+
+  .comm-cats { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:12px; width:100%; }
+  .comm-cats-title { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; color:var(--muted); margin-bottom:10px; }
+  .cat-list { display:flex; flex-direction:column; gap:4px; max-height:180px; overflow-y:auto; }
+  .cat-list::-webkit-scrollbar{width:3px} .cat-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+  .cat-item { display:flex; align-items:center; justify-content:space-between; background:var(--dark3); border:1px solid var(--border); border-radius:5px; padding:6px 10px; font-size:12px; }
+  .cat-rm { background:none; border:none; color:var(--muted); cursor:pointer; font-size:14px; transition:color 0.15s; }
+  .cat-rm:hover{color:var(--red)}
+  .cat-add-row { display:flex; gap:6px; margin-top:8px; }
+  .cat-inp { flex:1; background:var(--dark3); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:12px; padding:6px 10px; outline:none; }
+  .cat-inp:focus{border-color:var(--green)}
+  .cat-add-btn { background:var(--green); border:none; border-radius:6px; color:var(--dark); font-weight:600; font-size:12px; padding:6px 12px; cursor:pointer; }
+
+  /* ===== CALENDAR ===== */
+  .cal-wrap { padding:14px; }
+  .cal-title { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:3px; margin-bottom:2px; }
+  .cal-title span{color:var(--green)}
+  .cal-sub { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; margin-bottom:10px; }
+  .cal-legend { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .cl-item { display:flex; align-items:center; gap:4px; font-family:'DM Mono',monospace; font-size:8px; color:var(--muted); }
+  .cl-dot { width:7px; height:7px; border-radius:50%; }
+  .view-toggle { display:flex; background:var(--card); border:1px solid var(--border); border-radius:6px; overflow:hidden; margin-bottom:10px; }
+  .vt-btn { flex:1; background:none; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; padding:7px; cursor:pointer; transition:all 0.15s; }
+  .vt-btn.active{background:var(--green);color:var(--dark);font-weight:500}
+  .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .cal-month { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; }
+  .cal-arrow { background:var(--card); border:1px solid var(--border); color:var(--text); width:28px; height:28px; border-radius:5px; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+  .cal-arrow:hover{border-color:var(--green);color:var(--green)}
+  .mini-cal { background:var(--card); border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:10px; }
+  .mini-cal-wdays { display:grid; grid-template-columns:repeat(7,1fr); background:var(--dark3); border-bottom:1px solid var(--border); }
+  .mini-wday { text-align:center; padding:5px 2px; font-family:'DM Mono',monospace; font-size:7px; color:var(--muted); }
+  .mini-cal-days { display:grid; grid-template-columns:repeat(7,1fr); }
+  .mini-day { min-height:42px; border-right:1px solid rgba(31,46,33,0.4); border-bottom:1px solid rgba(31,46,33,0.4); padding:3px; }
+  .mini-day:nth-child(7n){border-right:none}
+  .mini-day.other{opacity:0.25} .mini-day.today{background:rgba(0,255,135,0.04)}
+  .mini-dnum { font-family:'DM Mono',monospace; font-size:8px; color:var(--muted); }
+  .mini-day.today .mini-dnum{color:var(--green)}
+  .mini-ev { font-size:7px; padding:1px 3px; border-radius:2px; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ev-nfl{background:rgba(77,159,255,0.15);color:#7dbdff} .ev-ff{background:rgba(0,255,135,0.1);color:var(--green)} .ev-rl{background:rgba(255,140,0,0.15);color:#ffb347} .ev-cu{background:rgba(255,215,0,0.1);color:var(--gold)}
+  .upcoming-list { display:flex; flex-direction:column; gap:6px; }
+  .upc-item { display:flex; gap:9px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:6px; padding:8px 10px; border-left:3px solid; }
+  .upc-item.nfl{border-left-color:var(--blue)} .upc-item.ff{border-left-color:var(--green)} .upc-item.rl{border-left-color:var(--orange)} .upc-item.cu{border-left-color:var(--gold)}
+  .upc-date{text-align:center;min-width:28px}
+  .upc-day{font-family:'Bebas Neue',sans-serif;font-size:18px;line-height:1}
+  .upc-mon{font-family:'DM Mono',monospace;font-size:7px;color:var(--muted)}
+  .upc-name{font-size:11px;font-weight:500}
+  .upc-time{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-top:1px}
+
+  /* ===== CHAT ===== */
+  .chat-hdr { background:var(--dark2); border-bottom:1px solid var(--border); padding:8px 12px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  .chat-av { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--green),#00a855); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:12px; color:var(--dark); }
+  .chat-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;font-weight:700}
+  .chat-online{display:flex;align-items:center;gap:3px;font-family:'DM Mono',monospace;font-size:8px;color:var(--muted)}
+  .chat-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+  .user-pill{display:flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:3px 8px 3px 3px;cursor:pointer}
+  .up-av{width:20px;height:20px;border-radius:50%;background:var(--green);color:var(--dark);font-family:'Bebas Neue',sans-serif;font-size:10px;display:flex;align-items:center;justify-content:center}
+  .up-name{font-size:10px;font-weight:500}
+  .chat-msgs{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+  .chat-msgs::-webkit-scrollbar{display:none}
+  .cdiv{text-align:center;margin:6px 0 3px;font-family:'DM Mono',monospace;font-size:8px;color:var(--muted)}
+  .cmsg{display:flex;flex-direction:column;max-width:70%;margin-bottom:2px}
+  .cmsg.own{align-self:flex-end;align-items:flex-end} .cmsg.other{align-self:flex-start;align-items:flex-start}
+  .csender{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:2px;padding:0 3px}
+  .cbubble{padding:6px 10px;border-radius:14px;font-size:12px;line-height:1.4;word-break:break-word}
+  .cmsg.own .cbubble{background:var(--green-dim);color:#fff;border-bottom-right-radius:3px}
+  .cmsg.other .cbubble{background:var(--dark3);color:var(--text);border:1px solid var(--border);border-bottom-left-radius:3px}
+  .ctime{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;padding:0 3px}
+  .creact{display:flex;gap:3px;margin-top:3px}
+  .crc{background:var(--dark3);border:1px solid var(--border);border-radius:9px;padding:1px 5px;font-size:11px;display:flex;align-items:center;gap:2px}
+  .crn{font-size:8px;font-family:'DM Mono',monospace;color:var(--muted)}
+  .reply-q{background:rgba(0,0,0,0.25);border-left:2px solid var(--green);border-radius:4px 4px 0 0;padding:3px 8px;font-size:9px;color:var(--muted);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .reply-q strong{color:var(--green);font-size:8px;display:block}
+  .chat-input-area{background:var(--dark2);border-top:1px solid var(--border);padding:8px 10px;flex-shrink:0}
+  .chat-input-row{display:flex;align-items:center;gap:6px}
+  .gif-chip{background:var(--dark3);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);cursor:pointer;flex-shrink:0}
+  .chat-inp{flex:1;background:var(--dark3);border:1px solid var(--border);border-radius:16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 12px;outline:none}
+  .chat-inp::placeholder{color:var(--muted)}
+  .csend{width:28px;height:28px;border-radius:50%;background:var(--green);border:none;color:var(--dark);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+  /* ===== NEWS ===== */
+  .news-pill { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; padding:5px 12px; border-radius:20px; border:1px solid var(--border); background:var(--dark3); color:var(--muted); cursor:pointer; white-space:nowrap; transition:all 0.2s; }
+  .news-pill.active { background:var(--green); color:var(--dark); border-color:var(--green); font-weight:700; }
+  .news-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:12px 14px; cursor:pointer; transition:border-color 0.2s; }
+  .news-card:hover { border-color:rgba(0,255,135,0.3); }
+  .news-card.injury { border-left:3px solid var(--red); }
+  .news-card.roster { border-left:3px solid var(--green); }
+  .news-card.transaction { border-left:3px solid var(--blue); }
+  .news-card.league { border-left:3px solid var(--orange); }
+  .news-tag { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:1.5px; padding:2px 7px; border-radius:10px; font-weight:700; display:inline-block; margin-bottom:6px; }
+  .news-tag.injury { background:rgba(255,77,77,0.15); color:var(--red); }
+  .news-tag.roster { background:rgba(0,255,135,0.1); color:var(--green); }
+  .news-tag.transaction { background:rgba(77,159,255,0.1); color:var(--blue); }
+  .news-tag.league { background:rgba(255,140,0,0.1); color:var(--orange); }
+  .news-headline { font-size:15px; font-weight:700; line-height:1.4; margin-bottom:4px; }
+  .news-meta { font-family:'DM Mono',monospace; font-size:8px; color:var(--muted); }
+  .news-impact { font-size:11px; color:var(--muted); margin-top:6px; line-height:1.5; padding-top:6px; border-top:1px solid var(--border); }
+  .coming-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px;text-align:center;min-height:400px}
+  .coming-icon{font-size:48px;margin-bottom:14px}
+  .coming-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;margin-bottom:8px}
+  .coming-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;line-height:1.6}
+  .coming-needs{margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;width:100%;text-align:left}
+  .needs-lbl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--orange);margin-bottom:8px}
+  .needs-item{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:5px}
+  .needs-item::before{content:'○';color:var(--border);font-size:10px}
+
+  /* Spin lock / vote / override */
+  .comm-spin-status { width:100%; margin-bottom:8px; font-family:'DM Mono',monospace; font-size:10px; text-align:center; padding:7px 10px; border-radius:6px; display:none; }
+  .comm-spin-status.locked { display:block; background:rgba(255,77,77,0.08); border:1px solid rgba(255,77,77,0.2); color:var(--red); }
+  .comm-spin-status.open { display:block; background:rgba(0,255,135,0.06); border:1px solid rgba(0,255,135,0.15); color:var(--green); }
+
+  .vote-status-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 12px; width:100%; }
+  .vote-status-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .vote-lbl { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; color:var(--muted); }
+  .vote-count { font-family:'DM Mono',monospace; font-size:9px; color:var(--text); font-weight:500; }
+  .vote-bar-bg { height:4px; background:var(--dark3); border-radius:2px; overflow:hidden; margin-bottom:8px; }
+  .vote-bar-fill { height:100%; background:var(--green); border-radius:2px; transition:width 0.4s ease; }
+  .vote-bar-fill.passed { background:var(--gold); }
+  .vote-btn { width:100%; background:var(--dark3); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; padding:7px; cursor:pointer; transition:all 0.15s; margin-top:2px; }
+  .vote-btn:hover { border-color:var(--green); color:var(--green); }
+  .vote-btn.voted { background:rgba(0,255,135,0.06); border-color:var(--green); color:var(--green); cursor:default; }
+  .vote-btn.disabled { opacity:0.4; cursor:default; }
+
+  .override-card { background:rgba(255,215,0,0.04); border:1px solid rgba(255,215,0,0.2); border-radius:8px; padding:10px 12px; width:100%; }
+  .override-lbl { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; color:var(--gold); margin-bottom:2px; }
+  .override-sub { font-size:11px; color:var(--muted); }
+
+
+  /* ===== LEAGUE SUB-PANELS ===== */
+  .league-subpanel { display:none; height:100%; flex-direction:column; overflow-y:auto; }
+  .league-subpanel::-webkit-scrollbar{display:none}
+  .league-subpanel.active { display:flex; }
+  #panel-settings { overflow:hidden; position:relative; }
+  #league-home { overflow-y:auto; flex:1; }
+  #league-home::-webkit-scrollbar{display:none}
+  .subpanel-header { background:var(--dark2); border-bottom:1px solid var(--border); padding:10px 14px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .back-btn { background:none; border:none; color:var(--green); font-family:'DM Mono',monospace; font-size:16px; cursor:pointer; padding:0; line-height:1; }
+  .subpanel-title { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; }
+  .profile-pic-wrap { position:relative; cursor:pointer; margin-bottom:8px; }
+  .profile-pic-edit { position:absolute; bottom:0; right:0; background:var(--dark2); border:1px solid var(--border); border-radius:50%; width:20px; height:20px; font-size:10px; display:flex; align-items:center; justify-content:center; }
+  .profile-av { width:72px; height:72px; border-radius:50%; background:var(--green); color:var(--dark); font-family:'Bebas Neue',sans-serif; font-size:30px; display:flex; align-items:center; justify-content:center; overflow:hidden; border:2px solid var(--border); }
+  .profile-av img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .profile-role-badge { display:inline-block; margin:4px 0 2px; padding:2px 10px; border-radius:10px; font-family:'DM Mono',monospace; font-size:8px; font-weight:600; letter-spacing:2px; background:var(--dark3); border:1px solid var(--border); color:var(--muted); }
+  .profile-role-badge.role-commissioner { background:rgba(255,215,0,0.12); border-color:rgba(255,215,0,0.4); color:var(--gold); }
+  .profile-role-badge.role-co-commissioner { background:rgba(255,215,0,0.07); border-color:rgba(255,215,0,0.2); color:#c8a800; }
+  .profile-role-badge.role-treasurer { background:rgba(0,255,135,0.08); border-color:rgba(0,255,135,0.25); color:var(--green); }
+  .profile-role-badge.role-host { background:rgba(77,159,255,0.1); border-color:rgba(77,159,255,0.3); color:var(--blue); }
+  .profile-role-badge.role-sponsor { background:rgba(255,140,0,0.1); border-color:rgba(255,140,0,0.3); color:var(--orange); }
+  .profile-role-badge.role-media { background:rgba(180,0,255,0.1); border-color:rgba(180,0,255,0.3); color:#c084fc; }
+  .profile-role-badge.role-manager { background:var(--dark3); border-color:var(--border); color:var(--muted); }
+
+  .profile-card { background:linear-gradient(135deg,var(--dark3),var(--card)); border:1px solid var(--border); border-radius:10px; padding:16px; display:flex; flex-direction:column; align-items:center; margin-bottom:14px; }
+  .profile-av { width:52px; height:52px; border-radius:50%; background:var(--green); color:var(--dark); font-family:'Bebas Neue',sans-serif; font-size:24px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+  .profile-name { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; }
+  .profile-rank { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:2px; margin-top:2px; }
+  .profile-field { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(31,46,33,0.4); }
+  .profile-field:last-child{border-bottom:none}
+  .pf-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; }
+  .pf-val { font-size:11px; font-weight:500; color:var(--text); max-width:55%; text-align:right; word-break:break-all; }
+  .rules-wrap { padding:14px; }
+  .rules-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 20px; text-align:center; }
+  .rules-loading-icon { font-size:36px; margin-bottom:12px; }
+  .rules-loading-text { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; margin-bottom:6px; }
+  .rules-loading-sub { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); line-height:1.6; }
+  .rule-section { margin-bottom:16px; }
+  .rule-sec-title { font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:2px; color:var(--green); margin-bottom:7px; padding-bottom:4px; border-bottom:1px solid var(--border); }
+  .rule-item { font-size:11px; color:var(--muted); padding:4px 0 4px 10px; border-left:2px solid var(--border); margin-bottom:4px; line-height:1.5; }
+  .champions-wall { display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; margin-bottom:6px; }
+  .champions-wall::-webkit-scrollbar{display:none}
+  .champ-card { background:linear-gradient(135deg,rgba(255,215,0,0.08),var(--card)); border:1px solid rgba(255,215,0,0.2); border-radius:8px; padding:10px; min-width:90px; text-align:center; flex-shrink:0; }
+  .champ-card.past { background:var(--card); border-color:var(--border); }
+  .champ-season { font-family:'DM Mono',monospace; font-size:8px; color:var(--muted); letter-spacing:1px; margin-bottom:4px; }
+  .champ-crown { font-size:22px; margin-bottom:4px; }
+  .champ-name { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:1px; }
+  .champ-record { font-family:'DM Mono',monospace; font-size:8px; color:var(--muted); margin-top:2px; }
+  .legacy-season-tabs { display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap; }
+  .lst { background:var(--card); border:1px solid var(--border); border-radius:5px; padding:4px 10px; font-family:'DM Mono',monospace; font-size:9px; cursor:pointer; transition:all 0.15s; }
+  .lst.active { background:var(--green); color:var(--dark); border-color:var(--green); font-weight:600; }
+  .roster-card { display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:6px; cursor:pointer; transition:border-color 0.15s; }
+  .roster-card:hover{border-color:var(--green)}
+  .roster-av { width:36px; height:36px; border-radius:50%; background:var(--dark3); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:15px; flex-shrink:0; color:var(--green); }
+  .roster-name { font-size:13px; font-weight:600; }
+  .roster-sub { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); margin-top:1px; }
+  .roster-rank { margin-left:auto; font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--muted); }
+
+  .settings-wrap{padding:16px;overflow-y:auto;height:100%;scrollbar-width:none}
+  .settings-wrap::-webkit-scrollbar{display:none}
+  .settings-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;margin-bottom:16px}
+  .settings-title span{color:var(--green)}
+  .settings-section{margin-bottom:16px}
+  .settings-sec-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:8px}
+  .settings-item{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:11px 14px;margin-bottom:6px;cursor:pointer;transition:border-color 0.15s}
+  .settings-item:hover{border-color:var(--green)}
+  .si-left{display:flex;align-items:center;gap:10px}
+  .si-icon{font-size:16px}
+  .si-label{font-size:13px;font-weight:500}
+  .si-sub{font-size:10px;color:var(--muted);margin-top:1px}
+  .si-arrow{color:var(--muted);font-size:14px}
+  .si-value{font-family:'DM Mono',monospace;font-size:10px;color:var(--green)}
+  .notif-toggle{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--green);min-width:28px;text-align:right;transition:color 0.2s}
+  .notif-toggle.off{color:var(--muted)}
+  .payout-task{background:var(--dark3);border:1px solid rgba(255,140,0,0.3);border-radius:8px;padding:10px 12px;margin-bottom:8px}
+  .payout-task.done{border-color:var(--border);opacity:0.6}
+  .payout-task-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+  .payout-task-name{font-weight:700;font-size:13px}
+  .payout-task-meta{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px}
+  .payout-task-amt{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--orange);letter-spacing:1px}
+  .payout-task-done-amt{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);letter-spacing:1px}
+  .payout-send-btn{width:100%;padding:7px;background:var(--orange);border:none;border-radius:6px;color:#000;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;margin-top:4px}
+  .payout-sent-tag{font-family:'DM Mono',monospace;font-size:9px;color:var(--green);text-align:center;padding-top:4px}
+
+  /* ===== BOTTOM TAB BAR ===== */
+  .bottom-bar { background:var(--dark2); border-top:1px solid var(--border); display:flex; height:56px; flex-shrink:0; }
+  .bb-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; transition:all 0.15s; border-top:2px solid transparent; padding:4px 2px; }
+  .bb-tab.active{border-top-color:var(--green)}
+  .bb-tab:not(.active):hover{background:rgba(0,255,135,0.03)}
+  .bb-icon{font-size:17px;line-height:1}
+  .bb-label{font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.5px}
+  .bb-tab.active .bb-label{color:var(--green)}
+  .bb-lock{font-size:15px;line-height:1}
+
+  /* MODALS */
+  .overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);z-index:100;align-items:center;justify-content:center;padding:20px;border-radius:38px}
+  .overlay.on{display:flex}
+  .modal{background:var(--dark2);border:1px solid var(--border);border-top:2px solid var(--green);border-radius:12px;padding:20px;width:100%;animation:su 0.2s ease}
+  @keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .modal h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:6px}
+  .modal p{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:14px}
+  .mg{margin-bottom:10px}
+  .mg label{display:block;font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);margin-bottom:4px}
+  .mg input{width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 11px;outline:none}
+  .mg input:focus{border-color:var(--green)}
+  .macts{display:flex;gap:7px}
+  .mbtn{flex:1;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:9px;border-radius:7px;border:none;cursor:pointer}
+  .mbtn-p{background:var(--green);color:var(--dark)} .mbtn-s{background:var(--dark3);color:var(--text);border:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<div class="app-label">FANTASY LEAGUE HQ — FULL APP PREVIEW</div>
+
+<div class="phone" id="phone">
+
+  <div class="notch">
+    <span class="notch-time" id="notchTime">9:41</span>
+    <div class="notch-icons"><span>●●●●</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+
+  <div class="screen" id="screen">
+
+    <!-- ===== HOME ===== -->
+    <div class="tab-panel active" id="panel-home">
+      <div class="home-wrap">
+
+        <!-- Sticky header -->
+        <div class="home-header-fixed">
+          <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+            <div class="home-title">THE <span>LEDGER</span></div>
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--muted);margin-top:2px;">A FANTASY HQ PROPERTY</div>
+            <div class="season-pills" style="margin-top:5px;"><span class="season-pill">25-26</span></div>
+          </div>
+        </div>
+
+        <!-- Scrollable content -->
+        <div class="home-scroll">
+
+        <div class="status-row">
+          <div class="status-dot"></div>
+          <span class="status-txt">Live · Total Out: <span class="status-val">$75</span></span>
+          <span class="status-txt" style="margin-left:auto">Last: <span class="status-val">Just now</span></span>
+        </div>
+
+        <!-- This Week's Category -->
+        <div class="spin-banner" id="homeBanner">
+          <div class="spin-icon">🎰</div>
+          <div>
+            <div class="spin-lbl">THIS WEEK'S CATEGORY</div>
+            <div class="spin-result" id="homeBannerResult">—</div>
+          </div>
+          <div class="spin-week" id="homeBannerWeek">WK 13 · Wed</div>
+        </div>
+
+        <!-- Respin vote -->
+        <div style="width:100%;margin-bottom:12px;">
+          <div class="vote-status-card">
+            <div class="vote-status-top">
+              <span class="vote-lbl">🗳 RESPIN VOTE</span>
+              <span class="vote-count" id="homeVoteCount">0 / 4 needed</span>
+            </div>
+            <div class="vote-bar-bg"><div class="vote-bar-fill" id="homeVoteBar" style="width:0%"></div></div>
+            <button class="vote-btn" id="homeVoteBtn" onclick="castVote()">Vote to Respin This Week</button>
+          </div>
+        </div>
+
+        <div class="sec-lbl">Season Standings</div>
+        <table class="standings-tbl">
+          <thead><tr><th></th><th>Manager</th><th>Record</th></tr></thead>
+          <tbody>
+            <tr style="background:rgba(0,255,135,0.04)"><td><div class="rank-chip r1">1</div></td><td style="font-weight:700;font-size:13px">Brayn B.</td><td><span class="rec">11-2-0</span></td></tr>
+            <tr style="background:rgba(0,255,135,0.04)"><td><div class="rank-chip r2">2</div></td><td style="font-weight:700;font-size:13px">Sean W.</td><td><span class="rec">8-5-0</span></td></tr>
+            <tr style="background:rgba(0,255,135,0.04)"><td><div class="rank-chip r3">3</div></td><td style="font-weight:700;font-size:13px">Aaron G.</td><td><span class="rec">5-8-0</span></td></tr>
+            <tr style="background:rgba(255,77,77,0.04)"><td><div class="rank-chip rn">4</div></td><td style="font-weight:700;font-size:13px">L. Duque</td><td><span class="rec">10-3-0</span></td></tr>
+            <tr style="background:rgba(255,77,77,0.04)"><td><div class="rank-chip rn">5</div></td><td style="font-weight:700;font-size:13px">Benjamin P.</td><td><span class="rec">4-9-0</span></td></tr>
+            <tr style="background:rgba(0,255,135,0.04)"><td><div class="rank-chip rn">6</div></td><td style="font-weight:700;font-size:13px">Izik M.</td><td><span class="rec">1-12-0</span></td></tr>
+          </tbody>
+        </table>
+
+        <!-- Respin vote removed from here — now lives under result banner -->
+
+        <div class="sec-lbl">Weekly Winners</div>
+        <div class="wk-grid">
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/3054220.png" alt="J. Cook" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 1</div>
+              <div class="wk-player">J. Cook</div>
+              <div class="wk-cat">RB2</div>
+              <div class="wk-score">21.2</div>
+              <div class="wk-winner">🏆 Izik M.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4361579.png" alt="T. McBride" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 2</div>
+              <div class="wk-player">T. McBride</div>
+              <div class="wk-cat">TE</div>
+              <div class="wk-score">13.8</div>
+              <div class="wk-winner">🏆 Aaron G.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4431565.png" alt="P. Nacua" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 3</div>
+              <div class="wk-player">P. Nacua</div>
+              <div class="wk-cat">FLEX</div>
+              <div class="wk-score">22.8</div>
+              <div class="wk-winner">🏆 Bryan B.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4890973.png" alt="A. Jeanty" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 4</div>
+              <div class="wk-player">A. Jeanty</div>
+              <div class="wk-cat">Bench Bum</div>
+              <div class="wk-score">33.5</div>
+              <div class="wk-winner">🏆 Aaron G.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/3139477.png" alt="P. Mahomes" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 5</div>
+              <div class="wk-player">P. Mahomes</div>
+              <div class="wk-cat">QB</div>
+              <div class="wk-score">26.72</div>
+              <div class="wk-winner">🏆 Bryan B.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4361308.png" alt="JSN" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 6</div>
+              <div class="wk-player">JSN</div>
+              <div class="wk-cat">WR2</div>
+              <div class="wk-score">30.2</div>
+              <div class="wk-winner">🏆 Bryan B.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 7</div>
+              <div class="wk-player">Overall Bench</div>
+              <div class="wk-cat">BENCH</div>
+              <div class="wk-score">92.34</div>
+              <div class="wk-winner">🏆 Benjamin P.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4362628.png" alt="J. Chase" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 8</div>
+              <div class="wk-player">J. Chase</div>
+              <div class="wk-cat">WR1</div>
+              <div class="wk-score">21.1</div>
+              <div class="wk-winner">🏆 Bryan B.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4431565.png" alt="P. Nacua" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 9</div>
+              <div class="wk-player">P. Nacua</div>
+              <div class="wk-cat">FLEX</div>
+              <div class="wk-score">22.8</div>
+              <div class="wk-winner">🏆 L. Duque</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4242335.png" alt="J. Taylor" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 10</div>
+              <div class="wk-player">J. Taylor</div>
+              <div class="wk-cat">RB1</div>
+              <div class="wk-score">49.6</div>
+              <div class="wk-winner">🏆 Bryan B.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 11</div>
+              <div class="wk-player">Overall Non-Bench</div>
+              <div class="wk-cat">OVERALL (Non-Bench)</div>
+              <div class="wk-score">160.78</div>
+              <div class="wk-winner">🏆 L. Duque</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4258173.png" alt="Rams D/ST" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 12</div>
+              <div class="wk-player">Rams D/ST</div>
+              <div class="wk-cat">D/ST</div>
+              <div class="wk-score">20.0</div>
+              <div class="wk-winner">🏆 Benjamin P.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/4430801.png" alt="Q. Judkins" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 13</div>
+              <div class="wk-player">Q. Judkins</div>
+              <div class="wk-cat">FLEX</div>
+              <div class="wk-score">15.9</div>
+              <div class="wk-winner">🏆 Benjamin P.</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green)">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/3054220.png" alt="J. Cook" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 14+15</div>
+              <div class="wk-player">J. Cook</div>
+              <div class="wk-cat">RB2 · Combined</div>
+              <div class="wk-score">42.2</div>
+              <div class="wk-winner">🏆 Izik M. · $5.00</div>
+            </div>
+          </div>
+
+          <div class="wk-chip paid" style="border-left:3px solid var(--green);margin-bottom:4px">
+            <img class="wk-headshot" src="https://a.espncdn.com/i/headshots/nfl/players/full/3915416.png" alt="B. Aubrey" onerror="this.style.display='none'">
+            <div class="wk-info">
+              <div class="wk-num">WEEK 16+17 · K · SPLIT</div>
+              <div class="wk-player">B. Aubrey / H. Butker</div>
+              <div class="wk-cat">Kicker · Combined</div>
+              <div class="wk-score">21.0 each</div>
+              <div class="wk-winner">🏆 Sean W. $2.50 · Bryan B. $2.50</div>
+            </div>
+          </div>
+
+        </div><!-- end wk-grid -->
+        </div><!-- end home-scroll -->
+      </div><!-- end home-wrap -->
+    </div><!-- end panel-home -->
+
+    <!-- ===== NEWS ===== -->
+    <div class="tab-panel" id="panel-news">
+      <div style="display:flex;flex-direction:column;height:100%;overflow:hidden">
+
+        <!-- Sticky header -->
+        <div style="padding:12px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--dark)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px">LEAGUE <span style="color:var(--green)">NEWS</span></div>
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:2px">ESPN FANTASY · PLAYER ALERTS · ROSTER IMPACT</div>
+        </div>
+
+        <!-- Filter pills -->
+        <div style="display:flex;gap:6px;padding:10px 14px;flex-shrink:0;overflow-x:auto;scrollbar-width:none">
+          <button class="news-pill active" onclick="filterNews('all',this)">All</button>
+          <button class="news-pill" onclick="filterNews('roster',this)">My Roster</button>
+          <button class="news-pill" onclick="filterNews('injury',this)">Injuries</button>
+          <button class="news-pill" onclick="filterNews('transaction',this)">Transactions</button>
+          <button class="news-pill" onclick="filterNews('league',this)">League</button>
+        </div>
+
+        <!-- News feed -->
+        <div id="newsFeed" style="flex:1;overflow-y:auto;padding:0 14px 14px;scrollbar-width:none">
+          <div id="newsLoading" style="text-align:center;padding:40px 0">
+            <div style="font-size:28px;margin-bottom:8px">📰</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">Loading news...</div>
+          </div>
+          <div id="newsCards" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ===== CALENDAR ===== -->
+    <div class="tab-panel" id="panel-calendar">
+      <div class="cal-wrap">
+        <div class="cal-title">LEAGUE <span>CALENDAR</span></div>
+        <div class="cal-sub">NFL · FANTASY · ROULETTE · EVENTS · PST</div>
+        <div class="cal-legend">
+          <div class="cl-item"><div class="cl-dot" style="background:var(--blue)"></div>NFL</div>
+          <div class="cl-item"><div class="cl-dot" style="background:var(--green)"></div>Fantasy</div>
+          <div class="cl-item"><div class="cl-dot" style="background:var(--orange)"></div>Roulette</div>
+          <div class="cl-item"><div class="cl-dot" style="background:var(--gold)"></div>Custom</div>
+        </div>
+        <div class="view-toggle">
+          <button class="vt-btn active">Monthly</button>
+          <button class="vt-btn">Weekly</button>
+        </div>
+        <div class="cal-nav">
+          <button class="cal-arrow">‹</button>
+          <div class="cal-month">MARCH 2026</div>
+          <button class="cal-arrow">›</button>
+        </div>
+        <div class="mini-cal">
+          <div class="mini-cal-wdays">
+            <div class="mini-wday">S</div><div class="mini-wday">M</div><div class="mini-wday">T</div>
+            <div class="mini-wday">W</div><div class="mini-wday">T</div><div class="mini-wday">F</div><div class="mini-wday">S</div>
+          </div>
+          <div class="mini-cal-days" id="miniCalDays"></div>
+        </div>
+        <div class="sec-lbl" style="font-size:12px;margin-top:4px">Upcoming</div>
+        <div class="upcoming-list">
+          <div class="upc-item rl"><div class="upc-date"><div class="upc-day">12</div><div class="upc-mon">MAR</div></div><div><div class="upc-name">🎰 Roulette Spin</div><div class="upc-time">12:00 PM PST</div></div></div>
+          <div class="upc-item ff"><div class="upc-date"><div class="upc-day">15</div><div class="upc-mon">MAR</div></div><div><div class="upc-name">Fantasy Week 14 Starts</div><div class="upc-time">12:00 AM PST</div></div></div>
+          <div class="upc-item cu"><div class="upc-date"><div class="upc-day">22</div><div class="upc-mon">MAR</div></div><div><div class="upc-name">League Draft Night</div><div class="upc-time">7:00 PM PST</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CHAT ===== -->
+    <div class="tab-panel" id="panel-chat">
+      <div class="chat-hdr">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="chat-av">FLH</div>
+          <div><div class="chat-title">League Chat</div><div class="chat-online"><div class="chat-dot"></div><span>6 members</span></div></div>
+        </div>
+        <div class="user-pill"><div class="up-av">B</div><span class="up-name">Bryan B.</span></div>
+      </div>
+      <div class="chat-msgs" id="chatMsgs">
+        <div class="cdiv">TODAY</div>
+        <div class="cmsg other"><div class="csender">Bryan B.</div><div class="cbubble">Bro J. Taylor went OFF 😤</div><div class="ctime">1:04 PM</div></div>
+        <div class="cmsg other"><div class="csender">Aaron G.</div><div class="cbubble">I had him on the bench 💀</div><div class="ctime">1:05 PM</div><div class="creact"><div class="crc">😂<span class="crn">3</span></div></div></div>
+        <div class="cmsg other"><div class="csender">Benjamin P.</div><div class="reply-q"><strong>Bryan B.</strong>J. Taylor went OFF 😤</div><div class="cbubble" style="border-top-left-radius:3px;border-top-right-radius:3px">Someone trade me a WR 😭</div><div class="ctime">1:08 PM</div></div>
+        <div class="cmsg own"><div class="cbubble">Nah I'm good lol 👑</div><div class="ctime">1:09 PM</div></div>
+        <div class="cmsg other"><div class="csender">Izik M.</div><div class="cbubble">Long season for me 😭</div><div class="ctime">1:12 PM</div></div>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-row">
+          <div class="gif-chip">GIF</div>
+          <input class="chat-inp" placeholder="Say something..." onkeydown="if(event.key==='Enter'&&this.value.trim()){sendDemoMsg(this.value);this.value='';}">
+          <button class="csend">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LEAGUE TAB ===== -->
+    <div class="tab-panel" id="panel-settings">
+      <div id="league-home" class="league-subpanel active">
+        <div class="settings-wrap">
+          <div class="settings-title">LEAGUE <span>HQ</span></div>
+
+          <div class="settings-section">
+            <div class="settings-sec-label">YOUR PROFILE</div>
+            <div class="settings-item" onclick="openSubPanel('sub-profile')">
+              <div class="si-left"><div class="si-icon">👤</div><div><div class="si-label" id="profileNameLabel">Edit Profile</div><div class="si-sub">Photo, display name & role</div></div></div>
+              <span class="si-arrow">›</span>
+            </div>
+            <div class="settings-item" onclick="openSubPanel('sub-notifications')">
+              <div class="si-left"><div class="si-icon">🔔</div><div><div class="si-label">Notifications</div><div class="si-sub" id="notifSummary">All notifications on</div></div></div>
+              <span class="si-arrow">›</span>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-sec-label">LEAGUE INFO</div>
+            <div class="settings-item" onclick="openSubPanel('sub-rules')">
+              <div class="si-left"><div class="si-icon">📋</div><div><div class="si-label">Rules & Regulations</div><div class="si-sub">Official league rulebook</div></div></div>
+              <span class="si-arrow">›</span>
+            </div>
+            <div class="settings-item" onclick="openSubPanel('sub-legacy')">
+              <div class="si-left"><div class="si-icon">🏛</div><div><div class="si-label">Legacy & Records</div><div class="si-sub">Champions, standings, all-time stats</div></div></div>
+              <span class="si-arrow">›</span>
+            </div>
+            <div class="settings-item" onclick="openSubPanel('sub-roster')">
+              <div class="si-left"><div class="si-icon">👥</div><div><div class="si-label">Player Roster</div><div class="si-sub">View all member profiles</div></div></div>
+              <span class="si-arrow">›</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PROFILE SUB-PANEL -->
+      <div id="sub-profile" class="league-subpanel">
+        <div class="subpanel-header">
+          <button class="back-btn" onclick="closeSubPanel()">‹ Back</button>
+          <span class="subpanel-title">MY PROFILE</span>
+        </div>
+        <div class="settings-wrap" style="padding-top:10px">
+
+          <!-- Profile photo + name + role -->
+          <div class="profile-card">
+            <div class="profile-pic-wrap" onclick="triggerPhotoPicker()">
+              <div class="profile-av" id="profileAv">?</div>
+              <div class="profile-pic-edit">📷</div>
+            </div>
+            <div class="profile-name" id="profileNameBig">Not set</div>
+            <div class="profile-role-badge" id="profileRoleBadge">MANAGER</div>
+          </div>
+
+          <!-- Hidden file input for photo upload -->
+          <input type="file" id="profilePhotoInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(event)">
+
+          <div class="settings-section">
+            <div class="settings-sec-label">DISPLAY NAME</div>
+            <div style="display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
+              <input type="text" id="displayNameInp" maxlength="24" placeholder="Your display name"
+                style="flex:1;background:none;border:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;"
+                onkeydown="if(event.key==='Enter')saveDisplayName()">
+              <button onclick="saveDisplayName()" style="background:var(--green);border:none;border-radius:5px;color:var(--dark);font-family:'DM Mono',monospace;font-size:9px;font-weight:600;padding:4px 10px;cursor:pointer;white-space:nowrap;">SAVE</button>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-top:5px;padding:0 2px">This is how you appear in chat and across the app.</div>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- NOTIFICATIONS SUB-PANEL -->
+      <div id="sub-notifications" class="league-subpanel">
+        <div class="subpanel-header">
+          <button class="back-btn" onclick="closeSubPanel()">‹ Back</button>
+          <span class="subpanel-title">NOTIFICATIONS</span>
+        </div>
+        <div class="settings-wrap" style="padding-top:10px">
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:14px;line-height:1.6">
+            Notifications are on by default. Toggle any category off to stop receiving those alerts.
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-sec-label">LEAGUE ACTIVITY</div>
+            <div class="settings-item" onclick="toggleNotif('notif_spin')">
+              <div class="si-left"><div class="si-icon">🎰</div><div><div class="si-label">Weekly Spin Result</div><div class="si-sub">When this week's category is revealed</div></div></div>
+              <div class="notif-toggle" id="notif_spin">ON</div>
+            </div>
+            <div class="settings-item" onclick="toggleNotif('notif_respin')">
+              <div class="si-left"><div class="si-icon">🔄</div><div><div class="si-label">Respin Vote Updates</div><div class="si-sub">When votes are cast or threshold is reached</div></div></div>
+              <div class="notif-toggle" id="notif_respin">ON</div>
+            </div>
+            <div class="settings-item" onclick="toggleNotif('notif_chat')">
+              <div class="si-left"><div class="si-icon">💬</div><div><div class="si-label">New Chat Messages</div><div class="si-sub">Activity in the league chat</div></div></div>
+              <div class="notif-toggle" id="notif_chat">ON</div>
+            </div>
+            <div class="settings-item" onclick="toggleNotif('notif_calendar')">
+              <div class="si-left"><div class="si-icon">📅</div><div><div class="si-label">Calendar Reminders</div><div class="si-sub">Upcoming events & deadlines</div></div></div>
+              <div class="notif-toggle" id="notif_calendar">ON</div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-sec-label">PERSONALIZED ALERTS</div>
+            <div class="settings-item" onclick="toggleNotif('notif_roster_news')">
+              <div class="si-left"><div class="si-icon">🏈</div><div><div class="si-label">Roster Player News</div><div class="si-sub">Injury, bye week & status updates for your players</div></div></div>
+              <div class="notif-toggle" id="notif_roster_news">ON</div>
+            </div>
+            <div class="settings-item" onclick="toggleNotif('notif_payment')">
+              <div class="si-left"><div class="si-icon">💸</div><div><div class="si-label">Payment Processed</div><div class="si-sub">Commissioner or Treasurer has confirmed your payment</div></div></div>
+              <div class="notif-toggle" id="notif_payment">ON</div>
+            </div>
+          </div>
+
+          <div style="margin-top:4px;padding:12px;background:var(--dark3);border:1px solid var(--border);border-radius:8px;font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);line-height:1.6;text-align:center">
+            PUSH NOTIFICATIONS ACTIVATE AFTER DEPLOYING TO VERCEL
+          </div>
+        </div>
+      </div>
+
+      <!-- RULES SUB-PANEL -->
+      <div id="sub-rules" class="league-subpanel">
+        <div class="subpanel-header">
+          <button class="back-btn" onclick="closeSubPanel()">‹ Back</button>
+          <span class="subpanel-title">RULES & REGS</span>
+        </div>
+        <div class="rules-wrap">
+          <div class="rules-loading" id="rulesLoading" style="display:none">
+            <div class="rules-loading-icon">📋</div>
+            <div class="rules-loading-text">Loading rulebook...</div>
+            <div class="rules-loading-sub">Paste your Google Doc link in settings to load rules automatically</div>
+          </div>
+          <div id="rulesContent" style="display:none;padding:14px;font-size:12px;line-height:1.7;color:var(--text)"></div>
+          <!-- Placeholder rules until doc is linked -->
+          <div id="rulesPlaceholder" style="padding:14px">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:4px">FANTASY LEAGUE HQ</div>
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:2px;margin-bottom:6px">OFFICIAL RULES & REGULATIONS · 25-26</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:16px;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:6px;">Welcome to Fantasy Football! Our mission here is to have fun and compete for cash prizes. Enjoy longtime rivalries and root for your favorite teams as we enter the gridiron together!</div>
+
+            <div class="rule-section">
+              <div class="rule-sec-title">I. LEAGUE OVERVIEW</div>
+              <div class="rule-item">1. Commissioner: Benjamin P.</div>
+              <div class="rule-item">2. Co-Commissioner: TBA</div>
+              <div class="rule-item">3. Treasurer: TBA</div>
+              <div class="rule-item">4. Platform: ESPN Fantasy</div>
+              <div class="rule-item">5. Format: 10 teams, expanding and capped at 14 next year</div>
+              <div class="rule-item">6. Head-to-head matchups · PPR or Standard scoring</div>
+              <div class="rule-item">7. Weekly matchups: Thursday – Monday</div>
+            </div>
+
+            <div class="rule-section">
+              <div class="rule-sec-title">II. ROSTER SETTINGS</div>
+              <div class="rule-item">1. Roster Size: 10–14</div>
+              <div class="rule-item">2. Waiver System: Rolling — priority given in reverse rank order</div>
+              <div class="rule-item">3. Trade Deadline: Beginning of Thursday Night Football each week</div>
+              <div class="rule-item">4. Playoff Format: TBA</div>
+            </div>
+
+            <div class="rule-section">
+              <div class="rule-sec-title">III. ENTRY FEES & PRIZES</div>
+              <div class="rule-item">1. Entry Fee: $30 — due by draft day</div>
+              <div class="rule-item">2. 1st Place: $150 + Trophy (to be returned)</div>
+              <div class="rule-item">3. 2nd Place: $75</div>
+              <div class="rule-item">4. 3rd Place: $50</div>
+              <div class="rule-item">5. All others receive 20% buy-in back (~$5)</div>
+              <div class="rule-item">6. Weekly Roulette winner earns a $5 prize payout</div>
+              <div class="rule-item">7. Last place receives a Loser Challenge</div>
+              <div class="rule-item">8. Payment via Venmo or Zelle</div>
+            </div>
+
+            <div class="rule-section">
+              <div class="rule-sec-title">IV. DRAFT RULES</div>
+              <div class="rule-item">1. Draft Type: Snake (Auction format planned for future)</div>
+              <div class="rule-item">2. Draft Date & Time: TBA</div>
+              <div class="rule-item">3. Time Per Pick: 1.5 minutes</div>
+              <div class="rule-item">4. Draft Order: Decided by Order Challenge — see Important Dates</div>
+            </div>
+
+            <div class="rule-section">
+              <div class="rule-sec-title">V. SEASON RULES</div>
+              <div class="rule-item">1. No trading past the trade deadline — trades close at the start of Thursday Night Football each week</div>
+              <div class="rule-item">2. Waiver order decided by manager rank in reverse order (lowest to highest)</div>
+              <div class="rule-item">3. Lineup window closes at the start of every Thursday Night Football game</div>
+              <div class="rule-item">4. Tanking, collusion, or inactivity may result in strikes, suspensions, or team restructuring/keeper privileges revoked</div>
+            </div>
+
+            <div class="rule-section">
+              <div class="rule-sec-title">VI. WEEKLY ROULETTE</div>
+              <div class="rule-item">1. Every Wednesday at 12:00 PM PST a category is spun — highest scorer in that category wins the $5 weekly payout</div>
+              <div class="rule-item">2. Categories include: QB, RB1, RB2, WR1, WR2, TE, Kicker, D/ST, Bench Bum, Overall Bench, Overall Non-Bench, and combo categories</div>
+              <div class="rule-item">3. First spin of the week locks the result — no re-spins without a majority league vote (4 of 6 members)</div>
+              <div class="rule-item">4. Commissioner override PIN required to unlock a re-spin after a passing vote</div>
+              <div class="rule-item">5. Once locked, no authorized user may spin again that week</div>
+            </div>
+
+            <div class="rule-section">
+              <div class="rule-sec-title">VII. KEEPERS & CONTRACTS</div>
+              <div class="rule-item">1. Contracts for extended participation begin in Year 5</div>
+              <div class="rule-item">2. Planned expansion to 12–14 teams</div>
+              <div class="rule-item">3. Keeper system starting Year 5: keep 1 player, costs a 1st round draft pick</div>
+            </div>
+
+            <div class="rule-section">
+              <div class="rule-sec-title">VIII. CODE OF CONDUCT</div>
+              <div class="rule-item">1. Respectful communication is expected from all members at all times</div>
+              <div class="rule-item">2. No harassment, hate speech, or personal attacks — in the app or any league communication</div>
+              <div class="rule-item">3. Keep the group chat fun and friendly — trash talk is welcome, but know the line</div>
+              <div class="rule-item">4. 3-strike policy enforced by the commissioner — violations may result in strikes, suspension, or removal</div>
+              <div class="rule-item">5. Commissioner rulings are final unless overturned by a majority league vote</div>
+              <div class="rule-item">6. If the commissioner cannot be reached, contact the Co-Commissioner or Treasurer</div>
+            </div>
+
+            <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-align:center;margin-top:20px;padding-top:14px;border-top:1px solid var(--border)">
+              COMMISSIONER: BENJAMIN P. · FANTASY LEAGUE HQ · 25-26
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEGACY SUB-PANEL -->
+      <div id="sub-legacy" class="league-subpanel">
+        <div class="subpanel-header">
+          <button class="back-btn" onclick="closeSubPanel()">‹ Back</button>
+          <span class="subpanel-title">LEGACY & RECORDS</span>
+        </div>
+        <div class="settings-wrap" style="padding-top:10px">
+
+          <!-- Champions Wall -->
+          <div class="sec-lbl" style="font-size:12px">🏆 Champions Wall</div>
+          <div class="champions-wall">
+            <div class="champ-card">
+              <div class="champ-season">25-26</div>
+              <div class="champ-crown">👑</div>
+              <div class="champ-name">TBD</div>
+              <div class="champ-record">Current Season</div>
+            </div>
+            <div class="champ-card past">
+              <div class="champ-season">24-25</div>
+              <div class="champ-crown">🏆</div>
+              <div class="champ-name">Brayn B.</div>
+              <div class="champ-record">12-1-0</div>
+            </div>
+            <div class="champ-card past">
+              <div class="champ-season">23-24</div>
+              <div class="champ-crown">🏆</div>
+              <div class="champ-name">Sean W.</div>
+              <div class="champ-record">10-3-0</div>
+            </div>
+          </div>
+
+          <!-- Past Standings -->
+          <div class="sec-lbl" style="font-size:12px;margin-top:14px">📊 Past Standings</div>
+          <div class="legacy-season-tabs" id="legacySeasonTabs">
+            <div class="lst active" onclick="showLegacySeason('24-25',this)">24-25</div>
+            <div class="lst" onclick="showLegacySeason('23-24',this)">23-24</div>
+          </div>
+          <div id="legacyStandings"></div>
+
+          <!-- All-time Weekly Winners -->
+          <div class="sec-lbl" style="font-size:12px;margin-top:14px">🎯 All-Time Weekly Winners</div>
+          <table class="standings-tbl" style="margin-bottom:10px">
+            <thead><tr><th>Manager</th><th>Wins</th><th>Earnings</th></tr></thead>
+            <tbody id="allTimeWinnersBody"></tbody>
+          </table>
+
+          <!-- All-time Payouts -->
+          <div class="sec-lbl" style="font-size:12px;margin-top:6px">💸 All-Time Payouts</div>
+          <table class="standings-tbl" style="margin-bottom:14px">
+            <thead><tr><th>Manager</th><th>Earned</th><th>Seasons</th></tr></thead>
+            <tbody id="allTimePayoutsBody"></tbody>
+          </table>
+
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-align:center;padding:10px 0">
+            DATA PULLS FROM GOOGLE SHEETS · ADD PAST SEASONS TO SEE MORE
+          </div>
+        </div>
+      </div>
+
+      <!-- ROSTER SUB-PANEL -->
+      <div id="sub-roster" class="league-subpanel">
+        <div class="subpanel-header">
+          <button class="back-btn" onclick="closeSubPanel()">‹ Back</button>
+          <span class="subpanel-title">PLAYER ROSTER</span>
+        </div>
+        <div class="settings-wrap" style="padding-top:10px">
+          <div id="rosterList"></div>
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-align:center;padding:10px 0;margin-top:4px">
+            PROFILES AUTO-POPULATE FROM NEWCOMER QUESTIONNAIRE
+          </div>
+        </div>
+      </div>
+
+      <!-- MEMBER DETAIL SUB-PANEL -->
+      <div id="sub-member" class="league-subpanel">
+        <div class="subpanel-header">
+          <button class="back-btn" onclick="openSubPanel('sub-roster')">‹ Roster</button>
+          <span class="subpanel-title" id="memberDetailTitle">PROFILE</span>
+        </div>
+        <div class="settings-wrap" style="padding-top:10px">
+          <div id="memberDetailContent"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== COMMISSIONER ===== -->
+    <div class="tab-panel" id="panel-commissioner">
+      <div class="comm-wrap">
+
+        <!-- Sticky header -->
+        <div class="comm-head">
+          <div class="comm-title">COMMISSIONER</div>
+          <div id="commRoleBanner" style="font-family:'DM Mono',monospace;font-size:8px;color:var(--orange);letter-spacing:2px;margin-top:3px">COMMISSIONER</div>
+        </div>
+
+        <!-- Scrollable body -->
+        <div class="comm-body">
+
+          <!-- 1. PAYOUT TASKS -->
+          <div class="comm-cats" style="width:100%">
+            <div class="comm-cats-title" style="color:var(--orange)">💸 PAYOUT TASKS</div>
+            <div id="payoutTasksPending">
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-align:center;padding:10px 0">No pending payouts</div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="settings-sec-label" style="margin-bottom:6px">COMPLETED</div>
+              <div id="payoutTasksDone">
+                <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-align:center;padding:6px 0">No completed payouts yet</div>
+              </div>
+            </div>
+            <button class="cat-add-btn" style="width:100%;margin-top:10px;background:var(--dark3);color:var(--text);border:1px solid var(--border)" onclick="openAddPayoutTask()">+ Add Payout Task</button>
+          </div>
+
+          <!-- 2. WHEEL CATEGORIES -->
+          <div class="comm-cats" style="width:100%">
+            <div class="comm-cats-title">WHEEL CATEGORIES</div>
+            <div class="cat-list" id="catList"></div>
+            <div class="cat-add-row">
+              <input class="cat-inp" id="catInp" placeholder="Add new category..." onkeydown="if(event.key==='Enter')addCat()">
+              <button class="cat-add-btn" onclick="addCat()">+ Add</button>
+            </div>
+          </div>
+
+          <!-- 3. RESPIN VOTE -->
+          <div class="vote-status-card" id="commVoteCard" style="width:100%">
+            <div class="vote-status-top">
+              <span class="vote-lbl">RESPIN VOTE</span>
+              <span class="vote-count" id="commVoteCount">0 / 4 needed</span>
+            </div>
+            <div class="vote-bar-bg"><div class="vote-bar-fill" id="commVoteBar" style="width:0%"></div></div>
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-top:5px;" id="commVoteNames">No votes yet</div>
+          </div>
+
+          <!-- 4. SPIN BUTTON -->
+          <button class="comm-spin-btn" id="commSpinBtn" onclick="spinCommWheel()" style="width:100%;margin-bottom:4px">🔒 LOCKED</button>
+          <div class="comm-auto-note" id="commSpinNote" style="margin-bottom:10px">Auto-spins Wed 12:00 PM PST</div>
+
+          <!-- 5. OVERRIDE -->
+          <div id="overrideSection" style="display:none;width:100%;margin-bottom:10px">
+            <div class="override-card">
+              <div class="override-lbl">OVERRIDE</div>
+              <div class="override-sub">Enter override PIN to unlock one respin</div>
+              <div style="display:flex;gap:6px;margin-top:8px;">
+                <input type="password" id="overridePinInp" class="cat-inp" placeholder="Override PIN" style="flex:1" onkeydown="if(event.key==='Enter')doOverride()">
+                <button class="cat-add-btn" onclick="doOverride()">Unlock</button>
+              </div>
+              <div style="color:var(--red);font-family:'DM Mono',monospace;font-size:9px;margin-top:4px;display:none" id="overrideErr">Incorrect PIN.</div>
+            </div>
+          </div>
+
+          <!-- 6. NEWCOMER QUESTIONNAIRE -->
+          <div class="comm-cats" style="width:100%;margin-bottom:20px">
+            <div class="comm-cats-title">NEWCOMER QUESTIONNAIRE</div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5">Share this form with prospective members. Responses auto-populate their player profile.</div>
+            <div style="display:flex;gap:6px;margin-bottom:8px">
+              <button class="cat-add-btn" style="flex:1" onclick="openNewcomerForm()">Open Form ↗</button>
+              <button class="cat-add-btn" style="flex:1;background:var(--dark3);color:var(--text);border:1px solid var(--border)" onclick="copyFormLink()">Copy Link</button>
+            </div>
+          </div>
+
+        </div><!-- end comm-body -->
+      </div>
+    </div>
+
+  </div><!-- end screen -->
+
+  <!-- Wheel Expand Backdrop -->
+  <div class="wheel-expand-backdrop" id="wheelExpandBackdrop" onclick="collapseWheel()">
+    <div class="wheel-expand-inner" onclick="event.stopPropagation()">
+      <div class="wheel-expand-pointer"></div>
+      <canvas id="wheelExpandCanvas" width="340" height="340"></canvas>
+      <div class="wheel-expand-label">TAP OUTSIDE TO CLOSE</div>
+    </div>
+  </div>
+
+  <!-- Spinning Overlay (fullscreen) -->
+  <div class="overlay" id="spinOverlay">
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
+      <div class="spin-overlay-title">THIS WEEK'S ROULETTE</div>
+      <div class="spin-overlay-wheel" style="position:relative;width:300px;height:300px;margin:12px auto 16px;">
+        <div style="position:absolute;top:50%;right:-13px;transform:translateY(-50%);width:0;height:0;border-top:11px solid transparent;border-bottom:11px solid transparent;border-right:22px solid var(--orange);z-index:10;filter:drop-shadow(0 0 8px var(--orange))"></div>
+        <canvas id="overlayCanvas" width="300" height="300" style="border-radius:50%;box-shadow:0 0 40px rgba(255,140,0,0.35);width:100%;height:100%;"></canvas>
+      </div>
+      <div class="spin-overlay-result" id="overlayResult">🎰</div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;" id="overlaySubtitle">Spinning...</div>
+      <button class="spin-overlay-close" id="overlayCloseBtn" style="display:none" onclick="closeSpinOverlay()">LET'S GO →</button>
+    </div>
+  </div>
+
+  <!-- Sign In Overlay -->
+  <div class="overlay" id="signInOv" style="z-index:300">
+    <div class="modal">
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:3px">THE <span style="color:var(--green)">LEDGER</span></div>
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:2px;margin-top:2px">A FANTASY HQ PROPERTY</div>
+      </div>
+      <p style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:16px">Enter your name as it appears on ESPN or as First Name + Last Initial</p>
+      <div class="mg">
+        <label>Your Name</label>
+        <input type="text" id="signInName" placeholder="e.g. Benjamin P. or BenjaminP" autocomplete="off"
+          onkeydown="if(event.key==='Enter')doSignIn()"
+          style="text-transform:none">
+        <div style="color:var(--red);font-size:10px;font-family:'DM Mono',monospace;margin-top:4px;display:none" id="signInErr">Name not recognized. Check spelling or contact the commissioner.</div>
+      </div>
+      <button class="mbtn mbtn-p" style="width:100%;margin-top:4px" onclick="doSignIn()">Sign In</button>
+      <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);text-align:center;margin-top:10px">Not on the roster? Contact Benjamin P.</div>
+    </div>
+  </div>
+
+  <!-- Lock / Commissioner Login Modal -->
+  <div class="overlay" id="lockOv">
+    <div class="modal">
+      <h2>Commissioner <span style="color:var(--green)">Access</span></h2>
+      <p>Enter the commissioner password to unlock admin tools.</p>
+      <div class="mg"><label>Password</label>
+        <input type="password" id="lockPw" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLockLogin()">
+        <div style="color:var(--red);font-size:10px;font-family:'DM Mono',monospace;margin-top:4px;display:none" id="lockErr">Incorrect password.</div>
+      </div>
+      <div class="macts">
+        <button class="mbtn mbtn-s" onclick="closeLockModal()">Cancel</button>
+        <button class="mbtn mbtn-p" onclick="doLockLogin()">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Tab Bar -->
+  <div class="bottom-bar" id="bottomBar">
+    <div class="bb-tab" id="bb-news" onclick="switchTab('news')"><div class="bb-icon">📰</div><div class="bb-label">NEWS</div></div>
+    <div class="bb-tab" id="bb-calendar" onclick="switchTab('calendar')"><div class="bb-icon">📅</div><div class="bb-label">CALENDAR</div></div>
+    <div class="bb-tab active" id="bb-home" onclick="switchTab('home')"><div class="bb-icon">🏠</div><div class="bb-label">HOME</div></div>
+    <div class="bb-tab" id="bb-chat" onclick="switchTab('chat')"><div class="bb-icon">💬</div><div class="bb-label">CHAT</div></div>
+    <div class="bb-tab" id="bb-settings" onclick="switchTab('settings')"><div class="bb-icon">⚙️</div><div class="bb-label">SETTINGS</div></div>
+    <!-- Commissioner tab — hidden by default -->
+    <div class="bb-tab" id="bb-commissioner" onclick="switchTab('commissioner')" style="display:none"><div class="bb-lock">🔐</div><div class="bb-label">COMM</div></div>
+  </div>
+
+</div><!-- end phone -->
+
+<script>
+// Clock
+function updateClock(){ document.getElementById('notchTime').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); }
+updateClock(); setInterval(updateClock,10000);
+
+// ===== CATEGORIES =====
+let categories = ['QB','RB1','RB2','WR1','WR2','TE','Kicker','D/ST','Bench Bum','Overall Bench','Overall Non-Bench','QB + D/ST','RB2 + TE','K + Defense','WR1 + RB2','Aerial Assault','Bust of Week'];
+const COLORS = ['#1a4a2e','#0d3320','#1f5a38','#0a2818','#153d28','#224d35','#0f3d25','#1b4730','#2a5a1e','#1e4a18','#234e20','#193d2a','#0e3522','#264f2e','#1c4530','#112e1e','#204028'];
+
+let me = null; // set when user picks their name
+let isCommissioner = false;
+let wheelAngle = 0;
+let commWheelAngle = 0;
+let spinning = false;
+
+// ===== DRAW WHEEL =====
+function drawWheelOn(canvasId, angle, size, highlightIdx=-1, showText=false){
+  const canvas = document.getElementById(canvasId);
+  if(!canvas) return;
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const cx=size/2, cy=size/2, r=size/2-2;
+  const slice=(2*Math.PI)/categories.length;
+  ctx.clearRect(0,0,size,size);
+
+  categories.forEach((cat,i)=>{
+    const start=angle+i*slice-Math.PI/2;
+    const end=start+slice;
+
+    // Slice fill
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,start,end); ctx.closePath();
+    ctx.fillStyle=i===highlightIdx?'#ff8c00':COLORS[i%COLORS.length]; ctx.fill();
+    ctx.strokeStyle='rgba(0,255,135,0.15)'; ctx.lineWidth=1; ctx.stroke();
+
+    // Only draw text in inspect mode
+    if(showText){
+      ctx.save();
+      ctx.translate(cx,cy);
+      ctx.rotate(start+slice/2);
+      ctx.textAlign='right';
+      ctx.fillStyle = i===highlightIdx ? '#fff' : 'rgba(255,255,255,0.95)';
+      const fs = 12;
+      const lineH = 14;
+      const textR = r - 10;
+      ctx.font = `800 ${fs}px DM Sans`;
+      const words = cat.split(' ');
+      const mid = (words.length - 1) / 2;
+      words.forEach((word, li) => {
+        ctx.fillText(word, textR, (li - mid) * lineH + lineH * 0.3);
+      });
+      ctx.restore();
+    }
+  });
+
+  // Center dot
+  const dotR = size < 150 ? 10 : size < 240 ? 14 : 20;
+  ctx.beginPath(); ctx.arc(cx, cy, dotR, 0, 2*Math.PI);
+  ctx.fillStyle='#0a0e0b'; ctx.fill();
+  ctx.strokeStyle='rgba(0,255,135,0.35)'; ctx.lineWidth=1.5; ctx.stroke();
+}
+
+// ===== TABS =====
+const ALL_TABS=['home','news','calendar','chat','settings','commissioner'];
+
+function switchTab(tab){
+  ALL_TABS.forEach(t=>{
+    const p=document.getElementById('panel-'+t);
+    const b=document.getElementById('bb-'+t);
+    if(p) p.classList.toggle('active',t===tab);
+    if(b) b.classList.toggle('active',t===tab);
+  });
+  document.getElementById('screen').scrollTop=0;
+  if(tab==='calendar') drawMiniCal();
+  if(tab==='news') fetchESPNNews();
+  if(tab==='commissioner'){
+    renderCatList(); renderPayoutTasks();
+    // Populate saved links
+    const fl=localStorage.getItem('newcomerFormLink');
+    const rl=localStorage.getItem('rulesDocLink');
+    const fi=document.getElementById('formLinkInp');
+    const ri=document.getElementById('rulesLinkInp');
+    if(fi&&fl) fi.value=fl;
+    if(ri&&rl) ri.value=rl;
+  }
+  if(tab==='settings'){
+    // Reset to league home when switching back
+    document.querySelectorAll('.league-subpanel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('league-home').classList.add('active');
+    renderProfile();
+  }
+  if(tab==='chat') setTimeout(()=>{ const m=document.getElementById('chatMsgs'); m.scrollTop=m.scrollHeight; },50);
+}
+
+
+// ===== COMMISSIONER AUTH =====
+function openLockModal(){
+  if(isCommissioner){ switchTab('commissioner'); return; }
+  document.getElementById('lockOv').classList.add('on');
+  setTimeout(()=>document.getElementById('lockPw').focus(),100);
+}
+
+function closeLockModal(){
+  document.getElementById('lockOv').classList.remove('on');
+  document.getElementById('lockPw').value='';
+  document.getElementById('lockErr').style.display='none';
+}
+
+function doLockLogin(){
+  if(document.getElementById('lockPw').value==='FF2526'){
+    // Verify this user is Benjamin P.
+    if(me && me.name !== 'Benjamin P.'){
+      document.getElementById('lockErr').style.display='block';
+      document.getElementById('lockErr').textContent='Commissioner access is restricted.';
+      return;
+    }
+    isCommissioner=true;
+    closeLockModal();
+    document.getElementById('bb-commissioner').style.display='flex';
+    document.querySelectorAll('.bb-tab').forEach(t=>t.style.flex='1');
+    // Update sticky role banner
+    const role = me ? getRoleFromSheet(me.name) : 'commissioner';
+    const bannerEl = document.getElementById('commRoleBanner');
+    if(bannerEl) bannerEl.textContent = role.toUpperCase();
+    switchTab('commissioner');
+    renderCatList();
+    updateAllVoteUI();
+    renderPayoutTasks();
+  } else {
+    document.getElementById('lockErr').style.display='block';
+  }
+}
+
+// ===== HOME WHEEL =====
+// Check if we need to spin this week
+function shouldSpinThisWeek(){
+  // For demo: always spin on first load. In production, check localStorage for last spin date vs last Wednesday 12pm
+  const lastSpin = localStorage.getItem('lastSpinWeek');
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun, 3=Wed
+  const hour = now.getHours();
+  const weekKey = `${now.getFullYear()}-W${getWeekNum(now)}`;
+  // After Wednesday 12pm
+  const pastWedNoon = day > 3 || (day === 3 && hour >= 12);
+  if(pastWedNoon && lastSpin !== weekKey){
+    localStorage.setItem('lastSpinWeek', weekKey);
+    return true;
+  }
+  return false;
+}
+
+function getWeekNum(d){ const onejan=new Date(d.getFullYear(),0,1); return Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7); }
+
+function initHomeWheel(){
+  // DEMO: spin disabled — assume spin already happened
+  // localStorage.removeItem('spinState');
+
+  const state = getSpinState();
+  if(state.locked && state.result){
+    document.getElementById('homeBannerResult').textContent = state.result;
+  } else {
+    setTimeout(()=>startHomeWheelSpin(), 800);
+  }
+}
+
+function minimizeHomeWheel(){
+  // No-op — wheel no longer shown on home
+}
+
+function startHomeWheelSpin(){
+  // Show fullscreen overlay
+  const overlay=document.getElementById('spinOverlay');
+  overlay.classList.add('on');
+  drawWheelOn('overlayCanvas',0,300,-1,true);
+
+  const targetSlice=Math.floor(Math.random()*categories.length);
+  const sliceAngle=(2*Math.PI)/categories.length;
+  const extraSpins=6+Math.random()*4;
+  // Rotate so the CENTER of targetSlice lands at the top (pointer position)
+  // Slice i center is at: angle + i*sliceAngle - π/2 + sliceAngle/2 = 0
+  // So angle = π/2 - i*sliceAngle - sliceAngle/2
+  const targetAngle = extraSpins*2*Math.PI + Math.PI/2 - targetSlice*sliceAngle - sliceAngle/2;
+  const duration=4500;
+  const start=performance.now();
+  let overlayAngle=0;
+
+  document.getElementById('overlayResult').textContent='🎰';
+  document.getElementById('overlaySubtitle').textContent='Spinning...';
+  document.getElementById('overlayCloseBtn').style.display='none';
+
+  function ease(t){ return t<0.5?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1; }
+
+  function animate(now){
+    const elapsed=now-start;
+    const progress=Math.min(elapsed/duration,1);
+    overlayAngle=targetAngle*ease(progress);
+
+    // Compute which slice is actually under the pointer (3 o'clock = canvas angle 0)
+    // Slice i occupies: angle + i*slice - PI/2  to  angle + i*slice - PI/2 + slice
+    // Pointer at 0, so find i where: 0 - overlayAngle + PI/2 mod 2PI falls in [i*slice, (i+1)*slice]
+    const norm = (((-overlayAngle + Math.PI/2) % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+    const underPointer = Math.floor(norm / sliceAngle) % categories.length;
+
+    drawWheelOn('overlayCanvas', overlayAngle, 300, progress===1 ? underPointer : -1, true);
+    if(progress<1){
+      requestAnimationFrame(animate);
+    } else {
+      const winner=categories[underPointer];
+      document.getElementById('overlayResult').textContent=winner;
+      document.getElementById('overlaySubtitle').textContent='Week 13 · This week\'s category!';
+      document.getElementById('overlayCloseBtn').style.display='inline-block';
+      document.getElementById('homeBannerResult').textContent=winner;
+      wheelAngle=overlayAngle%(2*Math.PI);
+      // Lock spin state
+      const state = getSpinState();
+      if(!state.locked){
+        state.locked=true; state.result=winner; state.week='13'; state.spunBy='auto'; state.votes=[]; state.overrideUnlocked=false;
+        saveSpinState(state);
+        logSpin('auto', 'Auto');
+        updateAllVoteUI();
+        autoCreatePayoutTask(state.week, winner);
+      }
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function closeSpinOverlay(){
+  document.getElementById('spinOverlay').classList.remove('on');
+}
+
+// ===== SPIN LOCK + VOTE + OVERRIDE SYSTEM =====
+const TOTAL_MEMBERS = 6;
+const VOTES_NEEDED = Math.floor(TOTAL_MEMBERS / 2) + 1; // 4
+
+function getSpinState(){
+  const raw = localStorage.getItem('spinState');
+  if(!raw) return { locked:false, result:null, week:null, spunBy:null, votes:[], overrideUnlocked:false };
+  return JSON.parse(raw);
+}
+
+function saveSpinState(state){ localStorage.setItem('spinState', JSON.stringify(state)); }
+
+
+
+function updateAllVoteUI(){
+  const state = getSpinState();
+  const votes = state.votes || [];
+  const pct = Math.min((votes.length / VOTES_NEEDED) * 100, 100);
+  const passed = votes.length >= VOTES_NEEDED;
+  const myName = me ? me.name : null;
+  const alreadyVoted = myName && votes.includes(myName);
+
+  // Home vote card
+  const hvc = document.getElementById('homeVoteCount');
+  const hvb = document.getElementById('homeVoteBar');
+  const hvBtn = document.getElementById('homeVoteBtn');
+  if(hvc) hvc.textContent = `${votes.length} / ${VOTES_NEEDED} needed`;
+  if(hvb){ hvb.style.width = pct+'%'; hvb.classList.toggle('passed', passed); }
+  if(hvBtn){
+    if(!state.locked){ hvBtn.textContent='No spin yet this week'; hvBtn.classList.add('disabled'); hvBtn.onclick=null; }
+    else if(passed){ hvBtn.textContent='✓ Vote passed — awaiting commissioner'; hvBtn.classList.add('voted'); hvBtn.onclick=null; }
+    else if(alreadyVoted){ hvBtn.textContent='✓ You voted to respin'; hvBtn.classList.add('voted'); hvBtn.onclick=null; }
+    else { hvBtn.textContent='Vote to Respin This Week'; hvBtn.classList.remove('voted','disabled'); hvBtn.onclick=castVote; }
+  }
+
+  // Commissioner vote card
+  const cvc = document.getElementById('commVoteCount');
+  const cvb = document.getElementById('commVoteBar');
+  const cvNames = document.getElementById('commVoteNames');
+  if(cvc) cvc.textContent = `${votes.length} / ${VOTES_NEEDED} needed`;
+  if(cvb){ cvb.style.width = pct+'%'; cvb.classList.toggle('passed', passed); }
+  if(cvNames) cvNames.textContent = votes.length ? votes.join(', ') : 'No votes yet';
+
+  // Override section — show to commissioner if vote passed and still locked
+  const overSec = document.getElementById('overrideSection');
+  if(overSec) overSec.style.display = (isCommissioner && state.locked && !state.overrideUnlocked) ? 'block' : 'none';
+
+  // Spin button state
+  updateSpinBtn();
+}
+
+function updateSpinBtn(){
+  const state = getSpinState();
+  const btn = document.getElementById('commSpinBtn');
+  const note = document.getElementById('commSpinNote');
+  if(!btn) return;
+
+  // Build note text from spin log
+  const spinLog = JSON.parse(localStorage.getItem('spinLog')||'[]');
+  const lastSpin = spinLog[spinLog.length-1];
+  if(note){
+    if(lastSpin){
+      const tag = lastSpin.type==='respin' ? '🔄 Respin' : '🎰 Spun';
+      note.textContent = `${tag} · ${lastSpin.by} · ${lastSpin.datetime}`;
+    } else {
+      note.textContent = 'Auto-spins Wed 12:00 PM PST';
+    }
+  }
+
+  if(!state.locked){
+    btn.disabled = false;
+    btn.textContent = '🎰 SPIN';
+    btn.style.cssText = 'background:var(--green);color:var(--dark);border:none';
+  } else if(state.overrideUnlocked){
+    btn.disabled = false;
+    btn.textContent = '🎰 RESPIN';
+    btn.style.cssText = 'background:var(--orange);color:#000;border:none';
+  } else {
+    btn.disabled = true;
+    btn.textContent = '🔒 LOCKED';
+    btn.style.cssText = 'background:rgba(255,77,77,0.12);color:var(--red);border:1px solid rgba(255,77,77,0.3)';
+  }
+}
+
+function castVote(){
+  if(!me){ alert('Set your name first.'); return; }
+  const state = getSpinState();
+  if(!state.locked){ return; }
+  if(state.votes.includes(me.name)) return;
+  state.votes.push(me.name);
+  saveSpinState(state);
+  updateAllVoteUI();
+}
+
+function doOverride(){
+  const pin = document.getElementById('overridePinInp').value;
+  if(pin !== OVERRIDE_PIN){
+    document.getElementById('overrideErr').style.display='block'; return;
+  }
+  document.getElementById('overrideErr').style.display='none';
+  document.getElementById('overridePinInp').value='';
+  const state = getSpinState();
+  state.overrideUnlocked = true;
+  state.votes = [];
+  saveSpinState(state);
+  updateAllVoteUI();
+}
+
+// ===== COMMISSIONER WHEEL SPIN =====
+function spinCommWheel(){
+  const state = getSpinState();
+  if(spinning) return;
+  if(state.locked && !state.overrideUnlocked) return;
+
+  // Trigger the same fullscreen overlay the users see
+  triggerSpinOverlay();
+}
+
+function triggerSpinOverlay(){
+  if(spinning) return;
+  spinning = true;
+
+  // Show overlay
+  const ov = document.getElementById('spinOverlay');
+  ov.classList.add('on');
+  document.getElementById('overlayResult').textContent = '🎰';
+  document.getElementById('overlaySubtitle').textContent = 'Spinning...';
+  document.getElementById('overlayCloseBtn').style.display = 'none';
+
+  const sliceAngle = (2*Math.PI)/categories.length;
+  const targetSlice = Math.floor(Math.random()*categories.length);
+  const extraSpins = 6+Math.random()*4;
+  const targetAngle = extraSpins*2*Math.PI + Math.PI/2 - targetSlice*sliceAngle - sliceAngle/2;
+  const duration = 4500;
+  const start = performance.now();
+  let overlayAngle = 0;
+
+  function ease(t){ return t<0.5?4*t*t*t:(t-1)*(2*t-2)*(2*t-2)+1; }
+
+  function animate(now){
+    const elapsed = now - start;
+    const progress = Math.min(elapsed/duration, 1);
+    overlayAngle = targetAngle * ease(progress);
+
+    const norm = (((-overlayAngle + Math.PI/2) % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+    const underPointer = Math.floor(norm / sliceAngle) % categories.length;
+
+    drawWheelOn('overlayCanvas', overlayAngle, 300, progress===1 ? underPointer : -1, true);
+
+    if(progress < 1){
+      requestAnimationFrame(animate);
+    } else {
+      spinning = false;
+      const winner = categories[underPointer];
+      document.getElementById('overlayResult').textContent = winner;
+      document.getElementById('overlaySubtitle').textContent = 'Respin complete · This week\'s new category!';
+      document.getElementById('overlayCloseBtn').style.display = 'inline-block';
+      document.getElementById('homeBannerResult').textContent = winner;
+      wheelAngle = overlayAngle % (2*Math.PI);
+      const newState = getSpinState();
+      const wasLocked = newState.locked;
+      newState.locked = true; newState.result = winner; newState.week = '13';
+      newState.spunBy = isCommissioner ? 'Commissioner' : 'Authorized User';
+      newState.overrideUnlocked = false; newState.votes = [];
+      saveSpinState(newState);
+      logSpin(wasLocked ? 'respin' : 'manual', newState.spunBy);
+      updateAllVoteUI();
+      // Auto-create payout task for weekly winner
+      autoCreatePayoutTask(newState.week, winner);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+// ===== CATEGORY MANAGEMENT =====
+function renderCatList(){
+  const list=document.getElementById('catList');
+  list.innerHTML=categories.map((cat,i)=>
+    `<div class="cat-item">
+      <span>${cat}</span>
+      <button class="cat-rm" onclick="removeCat(${i})">✕</button>
+    </div>`
+  ).join('');
+}
+
+function removeCat(i){
+  categories.splice(i,1);
+  renderCatList();
+  drawWheelOn('commCanvas',commWheelAngle,220);
+}
+
+function addCat(){
+  const inp=document.getElementById('catInp');
+  const val=inp.value.trim(); if(!val) return;
+  categories.push(val); inp.value='';
+  renderCatList();
+  drawWheelOn('commCanvas',commWheelAngle,220);
+}
+
+// ===== MINI CALENDAR =====
+function drawMiniCal(){
+  const today=new Date(); const y=today.getFullYear(); const m=today.getMonth();
+  const first=new Date(y,m,1).getDay();
+  const days=new Date(y,m+1,0).getDate();
+  const prev=new Date(y,m,0).getDate();
+  const pad=d=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  const events={};
+  events[pad(12)]=[{cls:'ev-rl',lbl:'🎰'}];
+  events[pad(15)]=[{cls:'ev-ff',lbl:'FF14'}];
+  events[pad(16)]=[{cls:'ev-nfl',lbl:'NFL'}];
+  events[pad(22)]=[{cls:'ev-cu',lbl:'Draft'}];
+  let html='';
+  for(let i=0;i<first;i++) html+=`<div class="mini-day other"><div class="mini-dnum">${prev-first+i+1}</div></div>`;
+  for(let d=1;d<=days;d++){
+    const iT=d===today.getDate();
+    const evs=events[pad(d)]||[];
+    html+=`<div class="mini-day${iT?' today':''}"><div class="mini-dnum">${d}</div>`;
+    evs.forEach(e=>html+=`<div class="mini-ev ${e.cls}">${e.lbl}</div>`);
+    html+='</div>';
+  }
+  const rem=(first+days)%7===0?0:7-(first+days)%7;
+  for(let d=1;d<=rem;d++) html+=`<div class="mini-day other"><div class="mini-dnum">${d}</div></div>`;
+  document.getElementById('miniCalDays').innerHTML=html;
+}
+
+// ===== WHEEL EXPAND/COLLAPSE =====
+function expandWheel(){
+  const state = getSpinState();
+  if(!state.locked) return;
+  const backdrop = document.getElementById('wheelExpandBackdrop');
+  backdrop.classList.add('open');
+  drawWheelOn('wheelExpandCanvas', wheelAngle, 320, -1, true);
+}
+
+function collapseWheel(){
+  document.getElementById('wheelExpandBackdrop').classList.remove('open');
+}
+
+
+function openSubPanel(id){
+  document.getElementById('league-home').classList.remove('active');
+  document.querySelectorAll('.league-subpanel').forEach(p=>p.classList.remove('active'));
+  const panel = document.getElementById(id);
+  if(panel) panel.classList.add('active');
+  if(id==='sub-legacy') renderLegacy();
+  if(id==='sub-roster') renderRoster();
+  if(id==='sub-profile') renderProfile();
+  if(id==='sub-rules') renderRules();
+  if(id==='sub-notifications') initNotifToggles();
+}
+
+function closeSubPanel(){
+  document.querySelectorAll('.league-subpanel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('league-home').classList.add('active');
+}
+
+// ===== PROFILE =====
+// ===== ROSTER MEMBERS & ESPN ALIASES =====
+const ROSTER_MEMBERS = [
+  { name:'Brayn B.',    espn:['braynb','bryan b','brayn b','bryanb'] },
+  { name:'Sean W.',     espn:['seanw','sean w'] },
+  { name:'Aaron G.',    espn:['aarong','aaron g'] },
+  { name:'L. Duque',    espn:['lduque','l duque','duque'] },
+  { name:'Benjamin P.', espn:['benjaminp','benjamin p','benp','ben p','bperez'] },
+  { name:'Izik M.',     espn:['izikm','izik m'] },
+];
+
+function matchName(input){
+  const clean = input.trim().toLowerCase();
+  return ROSTER_MEMBERS.find(m =>
+    m.name.toLowerCase() === clean ||
+    m.espn.includes(clean) ||
+    m.espn.some(a => a.replace(/\s/g,'') === clean.replace(/\s/g,''))
+  );
+}
+
+function doSignIn(){
+  const val = document.getElementById('signInName').value;
+  const match = matchName(val);
+  if(!match){
+    document.getElementById('signInErr').style.display='block';
+    return;
+  }
+  localStorage.setItem('myName', match.name);
+  me = { name: match.name };
+  document.getElementById('signInOv').classList.remove('on');
+  if(match.name === 'Benjamin P.'){
+    isCommissioner = true;
+    document.getElementById('bb-commissioner').style.display='flex';
+  }
+  renderProfile();
+  updateAllVoteUI();
+}
+
+function checkSignIn(){
+  const saved = localStorage.getItem('myName');
+  if(saved){
+    const match = ROSTER_MEMBERS.find(m => m.name === saved);
+    if(match){
+      me = { name: match.name };
+      if(match.name === 'Benjamin P.'){
+        isCommissioner = true;
+        document.getElementById('bb-commissioner').style.display='flex';
+      }
+      return;
+    }
+  }
+  document.getElementById('signInOv').classList.add('on');
+  setTimeout(()=>document.getElementById('signInName').focus(), 300);
+}
+
+// ===== OVERRIDE PIN =====
+const OVERRIDE_PIN = 'BP99';
+
+// ===== Role config
+const ROLE_COLORS = {
+  'commissioner':    'role-commissioner',
+  'co-commissioner': 'role-co-commissioner',
+  'treasurer':       'role-treasurer',
+  'host':            'role-host',
+  'sponsor':         'role-sponsor',
+  'media':           'role-media',
+  'manager':         'role-manager',
+};
+
+function getRoleFromSheet(name){
+  // Sheet columns: Name, Role (read from sheetData if available)
+  if(window.sheetData){
+    const row = window.sheetData.find(r => r[0]===name);
+    if(row && row[6]) return row[6].toLowerCase().trim(); // col G = Role
+  }
+  if(name==='Benjamin P.') return 'commissioner';
+  return 'manager';
+}
+
+function renderRoleBadge(role){
+  const el = document.getElementById('profileRoleBadge');
+  if(!el) return;
+  el.textContent = role.toUpperCase().replace('-',' ');
+  el.className = 'profile-role-badge ' + (ROLE_COLORS[role]||'role-manager');
+}
+
+function renderProfile(){
+  const profiles = JSON.parse(localStorage.getItem('playerProfiles')||'{}');
+  const name = me ? me.name : null;
+  const p = name ? (DEMO_PROFILES[name]||{}) : {};
+  const custom = name ? (profiles[name]||{}) : {};
+  const standings = [
+    {name:'Brayn B.',rec:'11-2-0',rank:1,paid:true},
+    {name:'Sean W.',rec:'8-5-0',rank:2,paid:true},
+    {name:'Aaron G.',rec:'5-8-0',rank:3,paid:true},
+    {name:'L. Duque',rec:'10-3-0',rank:4,paid:false},
+    {name:'Benjamin P.',rec:'4-9-0',rank:5,paid:false},
+    {name:'Izik M.',rec:'1-12-0',rank:6,paid:true},
+  ];
+  const standing = name ? standings.find(s=>s.name===name) : null;
+  const displayName = name||'Not set';
+  const role = name ? getRoleFromSheet(name) : 'manager';
+
+  // Avatar — photo or initial
+  const photoKey = 'profilePhoto_'+(name||'');
+  const savedPhoto = localStorage.getItem(photoKey);
+  const avEl = document.getElementById('profileAv');
+  if(avEl){
+    if(savedPhoto){
+      avEl.innerHTML = `<img src="${savedPhoto}" alt="profile">`;
+    } else {
+      avEl.innerHTML = displayName[0]?.toUpperCase()||'?';
+      avEl.style.background = 'var(--green)';
+      avEl.style.color = 'var(--dark)';
+    }
+  }
+
+  document.getElementById('profileNameBig').textContent = displayName;
+  renderRoleBadge(role);
+
+  // Display name input pre-fill
+  const inp = document.getElementById('displayNameInp');
+  if(inp) inp.value = name||'';
+
+  // League home label
+  const lbl = document.getElementById('profileNameLabel');
+  if(lbl) lbl.textContent = 'Edit Profile';
+}
+
+// ===== PAYOUT TASKS =====
+function getPayoutTasks(){ return JSON.parse(localStorage.getItem('payoutTasks')||'[]'); }
+function savePayoutTasks(t){ localStorage.setItem('payoutTasks', JSON.stringify(t)); }
+
+function renderPayoutTasks(){
+  const tasks = getPayoutTasks();
+  const pending = tasks.filter(t=>!t.done);
+  const done = tasks.filter(t=>t.done);
+
+  const pendingEl = document.getElementById('payoutTasksPending');
+  const doneEl = document.getElementById('payoutTasksDone');
+  if(!pendingEl) return;
+
+  if(pending.length===0){
+    pendingEl.innerHTML = `<div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-align:center;padding:10px 0">No pending payouts</div>`;
+  } else {
+    pendingEl.innerHTML = pending.map(t=>`
+      <div class="payout-task" id="ptask_${t.id}">
+        <div class="payout-task-top">
+          <div>
+            <div class="payout-task-name">${t.winner}</div>
+            <div class="payout-task-meta">Week ${t.week} · ${t.category} · ${t.dueDate ? '📅 Due '+t.dueDate : t.date}${t.auto?' · Auto-generated':''}</div>
+          </div>
+          <div class="payout-task-amt">$${t.amount}</div>
+        </div>
+        <button class="payout-send-btn" onclick="markPayoutSent('${t.id}')">✓ MARK AS SENT</button>
+      </div>`).join('');
+  }
+
+  if(done.length===0){
+    doneEl.innerHTML = `<div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);text-align:center;padding:6px 0">No completed payouts yet</div>`;
+  } else {
+    doneEl.innerHTML = done.slice().reverse().map(t=>`
+      <div class="payout-task done">
+        <div class="payout-task-top">
+          <div>
+            <div class="payout-task-name" style="font-size:12px">${t.winner}</div>
+            <div class="payout-task-meta">Week ${t.week} · ${t.category} · Sent ${t.sentDate}</div>
+          </div>
+          <div class="payout-task-done-amt">$${t.amount}</div>
+        </div>
+        <div class="payout-sent-tag">✓ Sent by ${t.sentBy||'Commissioner'}</div>
+      </div>`).join('');
+  }
+}
+
+function markPayoutSent(id){
+  const tasks = getPayoutTasks();
+  const task = tasks.find(t=>t.id===id);
+  if(!task) return;
+  task.done = true;
+  task.sentDate = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  task.sentBy = me ? me.name : 'Commissioner';
+  savePayoutTasks(tasks);
+  renderPayoutTasks();
+
+  // Drop message in chat
+  const msg = `💸 ${task.winner} — your $${task.amount} prize for Week ${task.week} has been sent!`;
+  sendSystemChatMsg(msg);
+
+  // OS push notification to winner
+  firePayoutNotification(task.winner, task.amount, task.week);
+}
+
+function sendSystemChatMsg(text){
+  const msgs = document.getElementById('chatMsgs');
+  if(!msgs) return;
+  const div = document.createElement('div');
+  div.style.cssText = 'text-align:center;margin:10px 0';
+  div.innerHTML = `<span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);background:rgba(0,255,135,0.08);border:1px solid rgba(0,255,135,0.2);border-radius:20px;padding:4px 12px">${text}</span>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function firePayoutNotification(winner, amount, week){
+  if(!('Notification' in window)) return;
+  const send = ()=>{
+    new Notification('💸 Prize Sent!', {
+      body: `${winner} — $${amount} for Week ${week} has been sent your way.`,
+      icon: '/favicon.ico'
+    });
+  };
+  if(Notification.permission === 'granted'){
+    send();
+  } else if(Notification.permission !== 'denied'){
+    Notification.requestPermission().then(p=>{ if(p==='granted') send(); });
+  }
+}
+
+function logSpin(type, by){
+  const log = JSON.parse(localStorage.getItem('spinLog')||'[]');
+  const now = new Date();
+  const datetime = now.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' · ' +
+    now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  log.push({ type, by, datetime });
+  localStorage.setItem('spinLog', JSON.stringify(log));
+}
+
+function autoCreatePayoutTask(week, category){
+  // Find weekly winner from the weekly winners data for this week
+  const weeklyWinners = {
+    '10':{ winner:'Brayn B.', player:'J. Chase' },
+    '11':{ winner:'Aaron G.', player:'A. Jeanty' },
+    '12':{ winner:'Benjamin P.', player:'P. Mahomes' },
+    '13':{ winner:'Brayn B.', player:'J. Taylor' },
+  };
+  const data = weeklyWinners[week];
+  if(!data) return;
+  // Don't duplicate if task already exists for this week
+  const tasks = getPayoutTasks();
+  if(tasks.find(t=>t.week===week && !t.manual)) return;
+  tasks.push({
+    id: Date.now().toString(),
+    winner: data.winner,
+    week: week,
+    category: category||'—',
+    amount: '5',
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),
+    dueDate: null,
+    done: false,
+    manual: false,
+    auto: true
+  });
+  savePayoutTasks(tasks);
+  renderPayoutTasks();
+  // Fire OS notification to commissioner
+  firePayoutNotification('⚠️ Payout Due', `Send $5 to ${data.winner} for Week ${week}`, '');
+}
+
+function openAddPayoutTask(){
+  const winner = prompt('Winner name (e.g. Sean W.):');
+  if(!winner||!winner.trim()) return;
+  const week = prompt('Week number:');
+  if(!week) return;
+  const category = prompt('Category (e.g. WR1):') || '—';
+  const amount = prompt('Prize amount (default 5):', '5') || '5';
+  const dueDateStr = prompt('Due date (optional, e.g. Mar 15 — adds to calendar):') || '';
+  const tasks = getPayoutTasks();
+  const task = {
+    id: Date.now().toString(),
+    winner: winner.trim(),
+    week: week.trim(),
+    category: category.trim(),
+    amount: amount.trim(),
+    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),
+    dueDate: dueDateStr.trim() || null,
+    done: false,
+    manual: true
+  };
+  tasks.push(task);
+  savePayoutTasks(tasks);
+  // Add to calendar if due date was entered
+  if(dueDateStr.trim()){
+    addPayoutToCalendar(task);
+  }
+  renderPayoutTasks();
+}
+
+function addPayoutToCalendar(task){
+  const calEvents = JSON.parse(localStorage.getItem('calendarEvents')||'[]');
+  calEvents.push({
+    id: 'payout_'+task.id,
+    title: `💸 Send $${task.amount} to ${task.winner}`,
+    date: task.dueDate,
+    type: 'payout',
+    week: task.week
+  });
+  localStorage.setItem('calendarEvents', JSON.stringify(calEvents));
+}
+
+// ===== ESPN CONFIG =====
+const ESPN_LEAGUE_ID = '163678058';
+const ESPN_SEASON = '2025';
+const ESPN_S2 = 'AECuohCk98%2BXSmmt54tFxfCtexr2vFBn%2FcThpUfL%2FC3Z0BIWD%2BSqlUG2eeW8%2FN9vE3jC5qfdgLd4JLhJ1rk%2FHoPrboVdLk%2Bsj%2FEzWKM1xVywnFRrjgNUwdlBRrcUFj0j%2BS4pDGyEZXP0ofaMkVsp%2B5ThK49fPQ9aBxp8uoTkJJRi1MDcWhAOKgw06ZM8iBD1mup6NSYxk5SBzeo9gDasDOe69Kzz%2FNjQAG1HFWBKWoxbg%2BA5RHXg%2FwXsB0GOxB3wmoa7Yb61boSszSmkHCXNzyq3UMFtsySN32rHS5Mnqi35Sdy%2FkbXHGSWu5FdZlS0kAGs%3D';
+const ESPN_SWID = '{3C00B111-9E49-4B2B-B9F7-34AB87E004C5}';
+
+let allNewsItems = [];
+let newsLoaded = false;
+
+async function fetchESPNNews(){
+  if(newsLoaded) return;
+  const base = `https://fantasy.espn.com/apis/v3/games/ffl/seasons/${ESPN_SEASON}/segments/0/leagues/${ESPN_LEAGUE_ID}`;
+  try {
+    // Fetch league roster + recent activity
+    const [rosterRes, activityRes] = await Promise.all([
+      fetch(`${base}?view=mRoster&view=mTeam`, {
+        credentials:'include',
+        headers:{ 'Cookie':`espn_s2=${ESPN_S2}; SWID=${ESPN_SWID}` }
+      }),
+      fetch(`${base}?view=mTransactions2`, {
+        credentials:'include',
+        headers:{ 'Cookie':`espn_s2=${ESPN_S2}; SWID=${ESPN_SWID}` }
+      })
+    ]);
+
+    const rosterData = rosterRes.ok ? await rosterRes.json() : null;
+    const activityData = activityRes.ok ? await activityRes.json() : null;
+
+    allNewsItems = buildNewsItems(rosterData, activityData);
+    newsLoaded = true;
+  } catch(e) {
+    // CORS locally — show placeholder cards; works after Vercel deploy
+    allNewsItems = getPlaceholderNews();
+    newsLoaded = true;
+  }
+  renderNewsCards('all');
+  document.getElementById('newsLoading').style.display = 'none';
+}
+
+function buildNewsItems(rosterData, activityData){
+  const items = [];
+  // Parse transactions
+  if(activityData && activityData.transactions){
+    activityData.transactions.slice(0,10).forEach(tx => {
+      const date = new Date(tx.executionType ? tx.scoringPeriodId : Date.now());
+      items.push({
+        type:'transaction',
+        tag:'TRANSACTION',
+        headline: tx.items ? formatTransaction(tx) : 'League transaction',
+        meta: 'ESPN · ' + new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'}),
+        impact: 'Check your lineup for any needed adjustments.',
+        rosterImpact: true
+      });
+    });
+  }
+  // Add placeholder personalized items
+  items.push(...getPlaceholderNews());
+  return items;
+}
+
+function formatTransaction(tx){
+  const adds = tx.items.filter(i=>i.type==='ADD').map(i=>i.playerName||'Unknown').join(', ');
+  const drops = tx.items.filter(i=>i.type==='DROP').map(i=>i.playerName||'Unknown').join(', ');
+  if(adds && drops) return `Added ${adds} · Dropped ${drops}`;
+  if(adds) return `Added ${adds}`;
+  if(drops) return `Dropped ${drops}`;
+  return 'League transaction';
+}
+
+function getPlaceholderNews(){
+  return [
+    {
+      type:'injury', tag:'INJURY ALERT', headline:'Track injury reports before setting your lineup',
+      meta:'ESPN · Updated weekly',
+      impact:'⚠️ Check active injury designations before Thursday night kickoff.',
+      rosterImpact: true
+    },
+    {
+      type:'roster', tag:'ROSTER ALERT', headline:'Weekly roulette category affects your scoring strategy',
+      meta:'League HQ · This week',
+      impact:`This week's category is live. Check the Home tab for which position to target.`,
+      rosterImpact: true
+    },
+    {
+      type:'league', tag:'LEAGUE', headline:'Standings update after Week 13',
+      meta:'League HQ · Season 2025',
+      impact:'Brayn B. leads at 11-2. Playoffs positioning is set.',
+      rosterImpact: false
+    },
+    {
+      type:'transaction', tag:'TRANSACTION', headline:'Trade deadline is Thursday Night Football kickoff',
+      meta:'League Rules · Section II',
+      impact:'No trades or lineup changes accepted after TNF starts each week.',
+      rosterImpact: false
+    },
+    {
+      type:'roster', tag:'ROSTER TIP', headline:'Set your lineup before Thursday Night Football',
+      meta:'Auto-reminder · Weekly',
+      impact:'Lineup locks at TNF kickoff. Late scratches can cost you — check beat reporters gameday morning.',
+      rosterImpact: true
+    }
+  ];
+}
+
+function renderNewsCards(filter){
+  const container = document.getElementById('newsCards');
+  if(!container) return;
+  const filtered = filter==='all' ? allNewsItems :
+    filter==='roster' ? allNewsItems.filter(n=>n.rosterImpact) :
+    allNewsItems.filter(n=>n.type===filter);
+
+  if(filtered.length===0){
+    container.innerHTML = `<div style="text-align:center;padding:30px 0;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">No ${filter} news right now</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(n=>`
+    <div class="news-card ${n.type}">
+      <div class="news-tag ${n.type}">${n.tag}</div>
+      <div class="news-headline">${n.headline}</div>
+      <div class="news-meta">${n.meta}</div>
+      ${n.impact ? `<div class="news-impact">${n.impact}</div>` : ''}
+    </div>`).join('');
+}
+
+function filterNews(type, btn){
+  document.querySelectorAll('.news-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  renderNewsCards(type);
+}
+
+// ===== NOTIFICATIONS =====
+const NOTIF_KEYS = ['notif_spin','notif_respin','notif_chat','notif_calendar','notif_roster_news','notif_payment'];
+
+function initNotifToggles(){
+  NOTIF_KEYS.forEach(k=>{
+    const stored = localStorage.getItem(k);
+    const isOn = stored === null ? true : stored === 'true'; // default ON
+    const el = document.getElementById(k);
+    if(el){ el.textContent = isOn ? 'ON' : 'OFF'; el.classList.toggle('off', !isOn); }
+  });
+  updateNotifSummary();
+}
+
+function toggleNotif(key){
+  const el = document.getElementById(key);
+  if(!el) return;
+  const isOn = el.textContent === 'ON';
+  const newVal = !isOn;
+  localStorage.setItem(key, newVal);
+  el.textContent = newVal ? 'ON' : 'OFF';
+  el.classList.toggle('off', !newVal);
+  updateNotifSummary();
+}
+
+function updateNotifSummary(){
+  const allOn = NOTIF_KEYS.every(k => {
+    const s = localStorage.getItem(k);
+    return s === null || s === 'true';
+  });
+  const allOff = NOTIF_KEYS.every(k => localStorage.getItem(k) === 'false');
+  const el = document.getElementById('notifSummary');
+  if(!el) return;
+  if(allOn) el.textContent = 'All notifications on';
+  else if(allOff) el.textContent = 'All notifications off';
+  else el.textContent = 'Some notifications off';
+}
+
+function isNotifOn(key){ const s=localStorage.getItem(key); return s===null||s==='true'; }
+
+function saveDisplayName(){
+  const val = document.getElementById('displayNameInp').value.trim();
+  if(!val) return;
+  // Store as chosen name
+  localStorage.setItem('chosenDisplayName', val);
+  // Update me object
+  me = {name: val};
+  localStorage.setItem('myName', val);
+  renderProfile();
+  // Flash save confirmation
+  const btn = document.querySelector('#displayNameInp + button');
+  if(btn){ const orig=btn.textContent; btn.textContent='✓'; setTimeout(()=>btn.textContent=orig,1200); }
+}
+
+function triggerPhotoPicker(){
+  document.getElementById('profilePhotoInput').click();
+}
+
+function handlePhotoUpload(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    const dataUrl = ev.target.result;
+    const name = me ? me.name : 'guest';
+    localStorage.setItem('profilePhoto_'+name, dataUrl);
+    renderProfile();
+  };
+  reader.readAsDataURL(file);
+}
+
+function openNameModalFromProfile(){ closeSubPanel(); setTimeout(openNameModal,100); }
+
+
+// ===== RULES =====
+function renderRules(){
+  const DOC_ID = '1MPOA4C2Ppko3tGnC2XdzucCECeqD9aSqi60tHmZXfXc';
+  const exportUrl = `https://docs.google.com/document/d/${DOC_ID}/export?format=html`;
+  const link = `https://docs.google.com/document/d/${DOC_ID}/edit?usp=sharing`;
+
+  // Save link for commissioner input
+  localStorage.setItem('rulesDocLink', link);
+  const ri = document.getElementById('rulesLinkInp');
+  if(ri) ri.value = link;
+
+  document.getElementById('rulesPlaceholder').style.display='none';
+  document.getElementById('rulesContent').style.display='none';
+  document.getElementById('rulesLoading').style.display='flex';
+
+  fetch(exportUrl)
+    .then(r => r.text())
+    .then(html => {
+      // Strip Google's wrapper styles, keep just the body content
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      // Remove all style tags and scripts
+      doc.querySelectorAll('style,script,meta,link').forEach(el=>el.remove());
+      // Get body content
+      const body = doc.body ? doc.body.innerHTML : html;
+      document.getElementById('rulesLoading').style.display='none';
+      document.getElementById('rulesContent').style.display='block';
+      document.getElementById('rulesContent').innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;">
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">📋 Live from Google Doc</span>
+          <a href="${link}" target="_blank" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--green);text-decoration:none">Open ↗</a>
+        </div>
+        <div style="font-size:11px;line-height:1.7;color:var(--text)">${body}</div>`;
+    })
+    .catch(() => {
+      // Fallback — show placeholder with link
+      document.getElementById('rulesLoading').style.display='none';
+      document.getElementById('rulesPlaceholder').style.display='block';
+      document.getElementById('rulesPlaceholder').innerHTML += `
+        <div style="margin-top:10px;text-align:center">
+          <a href="${link}" target="_blank" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);text-decoration:none">📋 Open Rules Doc ↗</a>
+          <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px">Full content loads when deployed to Vercel</div>
+        </div>`;
+    });
+}
+
+function saveRulesLink(){
+  const val = document.getElementById('rulesLinkInp').value.trim();
+  if(!val) return;
+  localStorage.setItem('rulesDocLink', val);
+  document.getElementById('rulesLinkStatus').style.display='block';
+  setTimeout(()=>document.getElementById('rulesLinkStatus').style.display='none',2000);
+}
+
+// ===== LEGACY =====
+const LEGACY_DATA = {
+  '24-25': [
+    {rank:1,name:'Brayn B.',rec:'12-1-0',paid:true},
+    {rank:2,name:'Sean W.',rec:'9-4-0',paid:true},
+    {rank:3,name:'L. Duque',rec:'8-5-0',paid:true},
+    {rank:4,name:'Aaron G.',rec:'6-7-0',paid:true},
+    {rank:5,name:'Benjamin P.',rec:'3-10-0',paid:true},
+    {rank:6,name:'Izik M.',rec:'2-11-0',paid:true},
+  ],
+  '23-24': [
+    {rank:1,name:'Sean W.',rec:'10-3-0',paid:true},
+    {rank:2,name:'Benjamin P.',rec:'8-5-0',paid:true},
+    {rank:3,name:'Aaron G.',rec:'7-6-0',paid:true},
+    {rank:4,name:'Brayn B.',rec:'6-7-0',paid:true},
+    {rank:5,name:'L. Duque',rec:'5-8-0',paid:true},
+    {rank:6,name:'Izik M.',rec:'3-10-0',paid:true},
+  ]
+};
+
+const ALL_TIME_WINNERS = [
+  {name:'Brayn B.',wins:8,earnings:40},
+  {name:'Benjamin P.',wins:5,earnings:25},
+  {name:'Aaron G.',wins:4,earnings:20},
+  {name:'Sean W.',wins:3,earnings:15},
+  {name:'L. Duque',wins:2,earnings:10},
+  {name:'Izik M.',wins:1,earnings:5},
+];
+
+const ALL_TIME_PAYOUTS = [
+  {name:'Brayn B.',earned:340,seasons:3},
+  {name:'Sean W.',earned:225,seasons:3},
+  {name:'L. Duque',earned:60,seasons:3},
+  {name:'Aaron G.',earned:120,seasons:3},
+  {name:'Benjamin P.',earned:100,seasons:3},
+  {name:'Izik M.',earned:30,seasons:3},
+];
+
+function renderLegacy(){
+  showLegacySeason('24-25', document.querySelector('.lst'));
+  // All-time winners
+  document.getElementById('allTimeWinnersBody').innerHTML = ALL_TIME_WINNERS.map(r=>
+    `<tr><td style="font-weight:700;font-size:13px">${r.name}</td><td><span class="rec">${r.wins}</span></td><td><span style="color:var(--green);font-family:'DM Mono',monospace;font-size:10px">$${r.earnings}</span></td></tr>`
+  ).join('');
+  // All-time payouts
+  document.getElementById('allTimePayoutsBody').innerHTML = ALL_TIME_PAYOUTS.sort((a,b)=>b.earned-a.earned).map(r=>
+    `<tr><td style="font-weight:700;font-size:13px">${r.name}</td><td><span style="color:var(--gold);font-family:'DM Mono',monospace;font-size:10px">$${r.earned}</span></td><td><span class="rec">${r.seasons}</span></td></tr>`
+  ).join('');
+}
+
+function showLegacySeason(season, el){
+  document.querySelectorAll('.lst').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const data = LEGACY_DATA[season]||[];
+  document.getElementById('legacyStandings').innerHTML = `
+    <table class="standings-tbl" style="margin-bottom:6px">
+      <thead><tr><th></th><th>Manager</th><th>Record</th><th>Paid</th></tr></thead>
+      <tbody>${data.map(r=>`
+        <tr>
+          <td><div class="rank-chip ${r.rank<=3?'r'+r.rank:'rn'}">${r.rank}</div></td>
+          <td style="font-weight:700;font-size:13px">${r.name}</td>
+          <td><span class="rec">${r.rec}</span></td>
+          <td><span class="paid-b paid">✓</span></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ===== ROSTER =====
+const DEMO_PROFILES = {
+  'Brayn B.':  {email:'brayn@email.com',phone:'555-0101',bday:'Mar 5',espn:'braynb',venmo:'@braynb',rec:'11-2-0',rank:1},
+  'Sean W.':   {email:'sean@email.com',phone:'555-0102',bday:'Jul 12',espn:'seanw',venmo:'@seanw',rec:'8-5-0',rank:2},
+  'Aaron G.':  {email:'aaron@email.com',phone:'555-0103',bday:'Nov 3',espn:'aarong',venmo:'@aarong',rec:'5-8-0',rank:3},
+  'L. Duque':  {email:'lduque@email.com',phone:'555-0104',bday:'Jan 22',espn:'lduque',venmo:'@lduque',rec:'10-3-0',rank:4},
+  'Benjamin P.':{email:'ben@email.com',phone:'555-0105',bday:'Sep 17',espn:'benjaminp',venmo:'@benjaminp',rec:'4-9-0',rank:5},
+  'Izik M.':   {email:'izik@email.com',phone:'555-0106',bday:'Jun 8',espn:'izikm',venmo:'@izikm',rec:'1-12-0',rank:6},
+};
+
+function renderRoster(){
+  const members = ['Brayn B.','Sean W.','Aaron G.','L. Duque','Benjamin P.','Izik M.'];
+  document.getElementById('rosterList').innerHTML = members.map(name=>{
+    const role = getRoleFromSheet(name);
+    const roleClass = ROLE_COLORS[role]||'role-manager';
+    const photo = localStorage.getItem('profilePhoto_'+name);
+    const avContent = photo ? `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : name[0];
+    const isSelf = me && me.name === name;
+    const p = DEMO_PROFILES[name]||{};
+    return `<div class="roster-card" onclick="viewRosterMember('${name}')">
+      <div class="roster-av" style="${photo?'background:none':'color:var(--green)'}">${avContent}</div>
+      <div style="flex:1">
+        <div class="roster-name">${name}${isSelf?' <span style="font-size:9px;color:var(--green);font-family:\'DM Mono\',monospace">(you)</span>':''}</div>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+          <span class="profile-role-badge ${roleClass}" style="font-size:7px;padding:1px 6px">${role.toUpperCase()}</span>
+          <span class="roster-sub">${p.rec||'—'}</span>
+        </div>
+      </div>
+      <div style="color:var(--muted);font-size:11px">›</div>
+    </div>`;
+  }).join('');
+}
+
+function viewRosterMember(name){
+  const role = getRoleFromSheet(name);
+  const roleClass = ROLE_COLORS[role]||'role-manager';
+  const photo = localStorage.getItem('profilePhoto_'+name);
+  const isSelf = me && me.name === name;
+  const p = DEMO_PROFILES[name]||{};
+
+  const avContent = photo
+    ? `<img src="${photo}" style="width:64px;height:64px;object-fit:cover;border-radius:50%;border:2px solid var(--green)">`
+    : `<div style="width:64px;height:64px;border-radius:50%;background:var(--dark3);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--green);font-weight:700">${name[0]}</div>`;
+
+  function infoRow(label, val){
+    if(!val||val==='—') return '';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)">${label}</span>
+      <span style="font-size:12px;font-weight:500">${val}</span>
+    </div>`;
+  }
+
+  const statsBlock = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;margin-bottom:4px">
+      <div style="background:var(--dark3);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center">
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:3px">RECORD</div>
+        <div style="font-size:14px;font-weight:700">${p.rec||'—'}</div>
+      </div>
+      <div style="background:var(--dark3);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center">
+        <div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:3px">RANK</div>
+        <div style="font-size:14px;font-weight:700">#${p.rank||'—'}</div>
+      </div>
+    </div>`;
+
+  const infoBlock = `
+    <div style="margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0 12px">
+      ${infoRow('ESPN USERNAME', p.espn)}
+      ${infoRow('PHONE', p.phone)}
+      ${infoRow('EMAIL', p.email)}
+      ${infoRow('INSTAGRAM', p.instagram ? '@'+p.instagram : p.instagram)}
+      ${infoRow('BIRTHDAY', p.bday)}
+      ${infoRow('FAV TEAM', p.favTeam||p.fav_team)}
+      ${infoRow('VENMO', p.venmo)}
+    </div>
+    <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:8px;color:var(--border);text-align:center">
+      DATA FROM NEWCOMER QUESTIONNAIRE · GOOGLE SHEET
+    </div>`;
+
+  document.getElementById('memberDetailTitle').textContent = name.toUpperCase();
+  document.getElementById('memberDetailContent').innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0 8px">
+      ${avContent}
+      <div style="font-size:18px;font-weight:700;margin-top:12px">${name}${isSelf?' <span style="font-size:10px;color:var(--green);font-family:\'DM Mono\',monospace">(you)</span>':''}</div>
+      <span class="profile-role-badge ${roleClass}" style="margin-top:6px">${role.toUpperCase()}</span>
+    </div>
+    ${statsBlock}
+    ${infoBlock}`;
+
+  document.getElementById('league-home').classList.remove('active');
+  document.querySelectorAll('.league-subpanel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('sub-member').classList.add('active');
+}
+
+const NEWCOMER_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSctotvkSwI2D-Lhu6tRIRMK0W6ROkDDhE6fejzL_z1Qz-7gnQ/viewform';
+
+function saveFormLink(){
+  const val = document.getElementById('formLinkInp').value.trim() || NEWCOMER_FORM_URL;
+  localStorage.setItem('newcomerFormLink', val);
+  document.getElementById('formLinkStatus').style.display='block';
+  setTimeout(()=>document.getElementById('formLinkStatus').style.display='none',2000);
+}
+
+function copyFormLink(){
+  const link = localStorage.getItem('newcomerFormLink') || NEWCOMER_FORM_URL;
+  navigator.clipboard.writeText(link).then(()=>{
+    const btn = document.querySelector('[onclick="copyFormLink()"]');
+    if(btn){ const o=btn.textContent; btn.textContent='✓ Copied!'; setTimeout(()=>btn.textContent=o,1500); }
+  }).catch(()=>prompt('Copy this link:',link));
+}
+
+function openNewcomerForm(){
+  window.open(NEWCOMER_FORM_URL,'_blank');
+}
+
+// Load saved form/rules links into commissioner inputs on tab open
+const _origSwitchTab = switchTab;
+
+
+function sendDemoMsg(text){
+  const msgs=document.getElementById('chatMsgs');
+  const t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const div=document.createElement('div');
+  div.className='cmsg own';
+  div.innerHTML=`<div class="cbubble">${text}</div><div class="ctime">${t}</div>`;
+  msgs.appendChild(div);
+  setTimeout(()=>msgs.scrollTop=msgs.scrollHeight,50);
+}
+
+// ===== INIT =====
+checkSignIn();
+initNotifToggles();
+initHomeWheel();
+drawMiniCal();
+updateAllVoteUI();
+
+</script>
+</body>
+</html>
