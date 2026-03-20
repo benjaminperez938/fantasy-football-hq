@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Fantasy League HQ</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -16,13 +16,11 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   html,body { height:100%; }
-  body { background:#0d0d0d; color:var(--text); font-family:'DM Sans',sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:20px 16px 40px; min-height:100vh; }
-  body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,255,135,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,135,0.02) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; }
-
-  .app-label { font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:3px; color:var(--muted); margin-bottom:12px; text-align:center; position:relative; z-index:1; }
+  body { background:#0d0d0d; color:var(--text); font-family:'DM Sans',sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; padding:0; min-height:100dvh; overflow:hidden; }
+  body::before { display:none; }
 
   /* PHONE */
-  .phone { width:390px; max-width:100%; background:var(--dark); border:2px solid #222; border-radius:40px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,0.7),0 0 0 1px #111; display:flex; flex-direction:column; height:800px; position:relative; z-index:1; }
+  .phone { width:100%; max-width:100%; background:var(--dark); border:none; border-radius:0; overflow:hidden; box-shadow:none; display:flex; flex-direction:column; height:100dvh; position:relative; z-index:1; }
 
 
 
@@ -37,7 +35,7 @@
 
   /* ===== HOME ===== */
   .home-wrap { display:flex; flex-direction:column; height:100%; overflow:hidden; }
-  .home-header-fixed { background:var(--dark); border-bottom:1px solid var(--border); padding:8px 16px 10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; text-align:center; }
+  .home-header-fixed { background:var(--dark); border-bottom:1px solid var(--border); padding:env(safe-area-inset-top, 8px) 16px 10px; padding-top:max(env(safe-area-inset-top), 12px); display:flex; align-items:center; justify-content:center; flex-shrink:0; text-align:center; }
   .home-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:3px; line-height:1; }
   .home-title span { color:var(--green); }
   .home-scroll { flex:1; overflow-y:auto; padding:14px 16px 16px; display:flex; flex-direction:column; align-items:center; scrollbar-width:none; }
@@ -414,7 +412,7 @@
   .payout-sent-tag{font-family:'DM Mono',monospace;font-size:9px;color:var(--green);text-align:center;padding-top:4px}
 
   /* ===== BOTTOM TAB BAR ===== */
-  .bottom-bar { background:var(--dark2); border-top:1px solid var(--border); display:flex; height:56px; flex-shrink:0; }
+  .bottom-bar { background:var(--dark2); border-top:1px solid var(--border); display:flex; height:56px; flex-shrink:0; padding-bottom:env(safe-area-inset-bottom, 0px); height:calc(56px + env(safe-area-inset-bottom, 0px)); }
   .bb-tab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; transition:all 0.15s; border-top:2px solid transparent; padding:4px 2px; }
   .bb-tab.active{border-top-color:var(--green)}
   .bb-tab:not(.active):hover{background:rgba(0,255,135,0.03)}
@@ -504,8 +502,6 @@
   <div class="loader-sub" id="loaderSub">A Fantasy HQ Property</div>
 </div>
 
-
-<div class="app-label">FANTASY LEAGUE HQ — FULL APP PREVIEW</div>
 
 <div class="phone" id="phone">
 
@@ -2663,12 +2659,11 @@ function sendGif(url){
   var FONT_SIZE = Math.min(72, Math.floor(W * 0.17));
   var FONT = FONT_SIZE + 'px Bebas Neue, sans-serif';
 
-  // Measure text to center it
+  // Center text properly — use textAlign center
   ctx.font = FONT;
-  ctx.letterSpacing = '6px';
-  var TW = ctx.measureText(TEXT).width + 36; // +36 for letter spacing
-  var TX = (W - TW) / 2;
+  var TX = W / 2;
   var TY = 85;
+  ctx.textAlign = 'center';
 
   // Draw the dark base text
   function drawBase() {
@@ -2676,6 +2671,7 @@ function sendGif(url){
     ctx.font = FONT;
     ctx.fillStyle = '#1a1a1a';
     ctx.letterSpacing = '6px';
+    ctx.textAlign = "center";
     ctx.fillText(TEXT, TX, TY);
   }
 
@@ -2687,6 +2683,7 @@ function sendGif(url){
     ctx.font = FONT;
     ctx.letterSpacing = '6px';
     ctx.fillStyle = '#1a1a1a';
+    ctx.textAlign = "center";
     ctx.fillText(TEXT, TX, TY);
 
     // 2. Use destination-in to punch text shape, then draw glow
@@ -2713,6 +2710,7 @@ function sendGif(url){
     oc.font = FONT;
     oc.letterSpacing = '6px';
     oc.fillStyle = 'white';
+    oc.textAlign = "center";
     oc.fillText(TEXT, TX, TY);
 
     // Draw the glow (blurred) onto main canvas
@@ -2730,6 +2728,7 @@ function sendGif(url){
     oc2.font = FONT;
     oc2.letterSpacing = '6px';
     oc2.fillStyle = 'white';
+    oc2.textAlign = "center";
     oc2.fillText(TEXT, TX, TY);
     ctx.drawImage(off2, 0, 0);
 
@@ -2741,7 +2740,7 @@ function sendGif(url){
 
   // Animate sweep: starts off left edge, ends off right edge
   var SWEEP_DURATION = 3000; // ms — slow sweep
-  var HOLD_AFTER     = 2500; // ms to hold after sweep
+  var HOLD_AFTER     = 2000; // ms to hold after sweep
   var startTime = null;
   var sweepDone = false;
 
