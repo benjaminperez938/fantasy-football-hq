@@ -466,57 +466,16 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    animation: loaderFadeOut 0.6s ease 5s forwards;
+    transition: opacity 0.6s ease;
   }
-  @keyframes loaderFadeOut {
-    from { opacity: 1; pointer-events: all; }
-    to   { opacity: 0; pointer-events: none; }
-  }
-
-  .loader-text-wrap {
-    position: relative;
-    display: inline-block;
-    overflow: visible;
+  #loaderScreen.hidden {
+    opacity: 0;
+    pointer-events: none;
   }
 
-  .loader-text-base,
-  .loader-text-lit,
-  .loader-text-glow {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 58px;
-    letter-spacing: 8px;
-    white-space: nowrap;
+  /* Canvas-based loader — JS draws and animates everything */
+  #loaderCanvas {
     display: block;
-    user-select: none;
-    padding: 0 4px;
-  }
-
-  .loader-text-base {
-    color: #1c1c1c;
-  }
-
-  .loader-text-lit {
-    color: #ffffff;
-    position: absolute;
-    top: 0; left: 0;
-    right: 0;
-    /* key fix: use padding on clip so it never cuts short */
-    animation: textSweep 1.4s cubic-bezier(0.3, 0, 0.7, 1) 0.4s both;
-  }
-
-  .loader-text-glow {
-    color: rgba(255,255,255,0.35);
-    position: absolute;
-    top: 0; left: 0;
-    right: 0;
-    filter: blur(12px);
-    animation: textSweep 1.4s cubic-bezier(0.3, 0, 0.7, 1) 0.4s both;
-  }
-
-  /* sweep reveals from left edge to right edge — no intermediate stops */
-  @keyframes textSweep {
-    0%   { clip-path: inset(0 101% 0 0); }
-    100% { clip-path: inset(0 -1%  0 0); }
   }
 
   .loader-sub {
@@ -526,10 +485,12 @@
     color: rgba(255,255,255,0.2);
     margin-top: 16px;
     text-transform: uppercase;
-    animation: loaderSubFade 0.8s ease 0.5s both;
+    opacity: 0;
+    transition: opacity 0.8s ease;
   }
-  @keyframes loaderSubFade {
-    from { opacity: 0; transform: translateY(4px); }
+  .loader-sub.visible {
+    opacity: 1;
+  }
     to   { opacity: 1; transform: translateY(0); }
   }
 
@@ -539,12 +500,8 @@
 
 <!-- ── LOADING SCREEN ── -->
 <div id="loaderScreen">
-  <div class="loader-text-wrap" style="">
-    <span class="loader-text-base">FANTASY HQ</span>
-    <span class="loader-text-glow">FANTASY HQ</span>
-    <span class="loader-text-lit">FANTASY HQ</span>
-  </div>
-  <div class="loader-sub">A Fantasy HQ Property</div>
+  <canvas id="loaderCanvas"></canvas>
+  <div class="loader-sub" id="loaderSub">A Fantasy HQ Property</div>
 </div>
 
 
@@ -2689,14 +2646,132 @@ function sendGif(url){
 }
 
 
-// Remove loader from DOM after it fades out
+// ── LOADING SCREEN — Canvas-based, JS-timed ──
 (function(){
-  var loader = document.getElementById('loaderScreen');
-  if(loader){
-    loader.addEventListener('animationend', function(){
-      loader.style.display = 'none';
-    });
+  var screen = document.getElementById('loaderScreen');
+  var canvas = document.getElementById('loaderCanvas');
+  var sub    = document.getElementById('loaderSub');
+  if(!screen || !canvas) return;
+
+  var W = window.innerWidth;
+  var H = window.innerHeight;
+  canvas.width  = W;
+  canvas.height = 120;
+
+  var ctx = canvas.getContext('2d');
+  var TEXT = 'FANTASY HQ';
+  var FONT_SIZE = Math.min(72, Math.floor(W * 0.17));
+  var FONT = FONT_SIZE + 'px Bebas Neue, sans-serif';
+
+  // Measure text to center it
+  ctx.font = FONT;
+  ctx.letterSpacing = '6px';
+  var TW = ctx.measureText(TEXT).width + 36; // +36 for letter spacing
+  var TX = (W - TW) / 2;
+  var TY = 85;
+
+  // Draw the dark base text
+  function drawBase() {
+    ctx.clearRect(0, 0, W, 120);
+    ctx.font = FONT;
+    ctx.fillStyle = '#1a1a1a';
+    ctx.letterSpacing = '6px';
+    ctx.fillText(TEXT, TX, TY);
   }
+
+  // Draw a frame with sweep at position x (0 to W)
+  function drawFrame(sweepX) {
+    ctx.clearRect(0, 0, W, 120);
+
+    // 1. Draw dark base letters
+    ctx.font = FONT;
+    ctx.letterSpacing = '6px';
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillText(TEXT, TX, TY);
+
+    // 2. Use destination-in to punch text shape, then draw glow
+    // Save state
+    ctx.save();
+
+    // Create an offscreen for the glow pass
+    var off = document.createElement('canvas');
+    off.width = W; off.height = 120;
+    var oc = off.getContext('2d');
+
+    // Draw the sweep gradient on offscreen
+    var grd = oc.createLinearGradient(sweepX - 35, 0, sweepX + 35, 0);
+    grd.addColorStop(0,    'rgba(255,255,255,0)');
+    grd.addColorStop(0.35, 'rgba(255,255,255,0.6)');
+    grd.addColorStop(0.5,  'rgba(255,255,255,1)');
+    grd.addColorStop(0.65, 'rgba(255,255,255,0.6)');
+    grd.addColorStop(1,    'rgba(255,255,255,0)');
+    oc.fillStyle = grd;
+    oc.fillRect(0, 0, W, 120);
+
+    // Mask to text shape using destination-in
+    oc.globalCompositeOperation = 'destination-in';
+    oc.font = FONT;
+    oc.letterSpacing = '6px';
+    oc.fillStyle = 'white';
+    oc.fillText(TEXT, TX, TY);
+
+    // Draw the glow (blurred) onto main canvas
+    ctx.filter = 'blur(8px)';
+    ctx.drawImage(off, 0, 0);
+    ctx.filter = 'none';
+
+    // Draw crisp lit version on top
+    var off2 = document.createElement('canvas');
+    off2.width = W; off2.height = 120;
+    var oc2 = off2.getContext('2d');
+    oc2.fillStyle = grd;
+    oc2.fillRect(0, 0, W, 120);
+    oc2.globalCompositeOperation = 'destination-in';
+    oc2.font = FONT;
+    oc2.letterSpacing = '6px';
+    oc2.fillStyle = 'white';
+    oc2.fillText(TEXT, TX, TY);
+    ctx.drawImage(off2, 0, 0);
+
+    ctx.restore();
+  }
+
+  // Show tagline after 0.5s
+  setTimeout(function(){ sub.classList.add('visible'); }, 500);
+
+  // Animate sweep: starts off left edge, ends off right edge
+  var SWEEP_DURATION = 3000; // ms — slow sweep
+  var HOLD_AFTER     = 2500; // ms to hold after sweep
+  var startTime = null;
+  var sweepDone = false;
+
+  function animate(ts) {
+    if(!startTime) startTime = ts;
+    var elapsed = ts - startTime;
+
+    if(elapsed < SWEEP_DURATION) {
+      // ease in-out
+      var t = elapsed / SWEEP_DURATION;
+      var ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+      var sweepX = -100 + ease * (W + 200);
+      drawFrame(sweepX);
+      requestAnimationFrame(animate);
+    } else {
+      // Sweep done — show fully lit text
+      drawFrame(W + 200);
+      if(!sweepDone) {
+        sweepDone = true;
+        // Hold then fade out
+        setTimeout(function(){
+          screen.classList.add('hidden');
+          setTimeout(function(){ screen.style.display = 'none'; }, 650);
+        }, HOLD_AFTER);
+      }
+    }
+  }
+
+  // Small delay to ensure font is loaded
+  setTimeout(function(){ requestAnimationFrame(animate); }, 200);
 })();
 
 // ===== INIT =====
