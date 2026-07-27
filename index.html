@@ -53,10 +53,10 @@
   .prize-row { display:grid; grid-template-columns:repeat(4,1fr); gap:5px; margin-bottom:14px; width:100%; }
   .prize-box { background:var(--card); border:1px solid var(--border); border-top:2px solid; border-radius:6px; padding:8px 4px; text-align:center; }
   .prize-box:nth-child(1){border-top-color:var(--gold)} .prize-box:nth-child(2){border-top-color:var(--silver)} .prize-box:nth-child(3){border-top-color:var(--bronze)} .prize-box:nth-child(4){border-top-color:var(--green)}
-  .prize-place { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; margin-bottom:2px; }
+  .prize-place { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:1px; margin-bottom:2px; }
   .prize-amt { font-family:'Bebas Neue',sans-serif; font-size:22px; }
   .prize-box:nth-child(1) .prize-amt{color:var(--gold)} .prize-box:nth-child(2) .prize-amt{color:var(--silver)} .prize-box:nth-child(3) .prize-amt{color:var(--bronze)} .prize-box:nth-child(4) .prize-amt{color:var(--green)}
-  .prize-lbl { font-size:10px; color:var(--muted); margin-top:1px; }
+  .prize-lbl { font-size:12px; color:var(--muted); margin-top:1px; }
 
   /* Wheel slot on home */
   .home-wheel-slot { display:flex; flex-direction:column; align-items:center; margin-bottom:14px; width:100%; }
@@ -126,9 +126,9 @@
   /* Result banner */
   .spin-banner { background:linear-gradient(135deg,#1a1f0f,var(--card)); border:1px solid #2a3a1a;  border-radius:6px; padding:9px 12px; margin-bottom:12px; display:flex; align-items:center; gap:9px; width:100%; }
   .spin-icon { font-size:18px; }
-  .spin-lbl { font-family:'DM Mono',monospace; font-size:9px; color:var(--orange); letter-spacing:1px; margin-bottom:2px; }
+  .spin-lbl { font-family:'DM Mono',monospace; font-size:11px; color:var(--orange); letter-spacing:1px; margin-bottom:2px; }
   .spin-result { font-family:'Bebas Neue',sans-serif; font-size:17px; letter-spacing:1px; }
-  .spin-week { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-left:auto; white-space:nowrap; }
+  .spin-week { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); margin-left:auto; white-space:nowrap; }
 
   /* Spinning overlay */
   .spin-overlay {
@@ -143,7 +143,7 @@
   #overlayCanvas { border-radius:50%; box-shadow:0 0 40px rgba(232,114,12,0.3); width:100%; height:100%; }
   .spin-overlay-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:3px; color:var(--muted); margin-bottom:6px; }
   .spin-overlay-result { font-family:'Bebas Neue',sans-serif; font-size:32px; letter-spacing:2px; color:var(--orange); text-align:center; min-height:38px; }
-  .spin-overlay-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:6px; }
+  .spin-overlay-sub { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); margin-top:6px; }
   .spin-overlay-close { margin-top:20px; background:var(--green); color:var(--dark); border:none; border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; padding:10px 28px; cursor:pointer; }
 
   /* Standings */
@@ -151,7 +151,7 @@
   .sec-lbl::after { content:''; flex:1; height:1px; background:var(--border); }
 
   .standings-tbl { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--border); border-radius:7px; overflow:hidden; margin-bottom:10px; font-size:11px; }
-  .standings-tbl th { background:var(--dark3); font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:1px; color:var(--muted); padding:7px 8px; text-align:left; border-bottom:1px solid var(--border); }
+  .standings-tbl th { background:var(--dark3); font-family:'DM Mono',monospace; font-size:12px; font-weight:700; letter-spacing:1px; color:var(--muted); padding:7px 8px; text-align:left; border-bottom:1px solid var(--border); }
   .standings-tbl td { padding:8px; border-bottom:1px solid rgba(31,46,33,0.4); vertical-align:middle; }
   .standings-tbl tr:last-child td { border-bottom:none; }
   .rank-chip { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:11px; }
@@ -189,7 +189,10 @@
   .src-name { font-size:15px; font-weight:700; }
   .src-ben { font-family:'DM Mono',monospace; font-size:11px; color:var(--gold); letter-spacing:1px; margin-left:6px; font-weight:700; }
   .src-desc { font-size:12px; color:var(--muted); margin-top:3px; line-height:1.5; }
-  .src-url { font-family:'DM Mono',monospace; font-size:10px; color:var(--blue); margin-top:4px; }
+  .src-url { font-family:'DM Mono',monospace; font-size:12px; color:var(--blue); margin-top:4px; }
+  .src-links { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+  .src-link-btn { font-family:'DM Mono',monospace; font-size:11px; padding:4px 10px; background:var(--dark3); border:1px solid var(--border); color:var(--blue); text-decoration:none; letter-spacing:0.5px; transition:background 0.15s; }
+  .src-link-btn:hover { background:var(--border); }
 
 
   /* ===== PREDICTOR ===== */
@@ -211,7 +214,7 @@
   #commCanvas { border-radius:50%; box-shadow:0 0 28px rgba(232,114,12,0.2); width:100%; height:100%; }
 
   .comm-result { background:var(--card); border:1px solid var(--border); border-top:2px solid var(--orange); border-radius:8px; padding:10px 14px; width:100%; text-align:center; margin-bottom:12px; }
-  .cr-lbl { font-family:'DM Mono',monospace; font-size:10px; color:var(--orange); letter-spacing:2px; margin-bottom:3px; }
+  .cr-lbl { font-family:'DM Mono',monospace; font-size:12px; color:var(--orange); letter-spacing:2px; margin-bottom:3px; }
   .cr-val { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:1px; }
   .cr-week { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:2px; }
 
@@ -239,7 +242,7 @@
   .cal-title span{color:var(--green)}
   .cal-sub { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); letter-spacing:1px; margin-bottom:10px; }
   .cal-legend { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
-  .cl-item { display:flex; align-items:center; gap:4px; font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+  .cl-item { display:flex; align-items:center; gap:4px; font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); }
   .cl-dot { width:7px; height:7px; border-radius:50%; }
   .view-toggle { display:flex; background:var(--card); border:1px solid var(--border); border-radius:6px; overflow:hidden; margin-bottom:10px; }
   .vt-btn { flex:1; background:none; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; padding:7px; cursor:pointer; transition:all 0.15s; }
@@ -250,21 +253,21 @@
   .cal-arrow:hover{border-color:var(--green);color:var(--green)}
   .mini-cal { background:var(--card); border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:10px; }
   .mini-cal-wdays { display:grid; grid-template-columns:repeat(7,1fr); background:var(--dark3); border-bottom:1px solid var(--border); }
-  .mini-wday { text-align:center; padding:5px 2px; font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); }
+  .mini-wday { text-align:center; padding:5px 2px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); }
   .mini-cal-days { display:grid; grid-template-columns:repeat(7,1fr); }
   .mini-day { min-height:42px; border-right:1px solid rgba(31,46,33,0.4); border-bottom:1px solid rgba(31,46,33,0.4); padding:3px; }
   .mini-day:nth-child(7n){border-right:none}
   .mini-day.other{opacity:0.25} .mini-day.today{background:rgba(10,168,96,0.04)}
-  .mini-dnum { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+  .mini-dnum { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); }
   .mini-day.today .mini-dnum{color:var(--green)}
-  .mini-ev { font-size:9px; padding:1px 3px; border-radius:2px; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mini-ev { font-size:11px; padding:1px 3px; border-radius:2px; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .ev-nfl{background:rgba(26,95,208,0.15);color:#7dbdff} .ev-ff{background:rgba(10,168,96,0.1);color:var(--green)} .ev-rl{background:rgba(232,114,12,0.15);color:#ffb347} .ev-cu{background:rgba(184,134,11,0.1);color:var(--gold)}
   .upcoming-list { display:flex; flex-direction:column; gap:6px; }
   .upc-item { display:flex; gap:9px; align-items:center; background:var(--card); border:1px solid var(--border); border-radius:6px; padding:8px 10px; }
   .upc-item.nfl{} .upc-item.ff{} .upc-item.rl{} .upc-item.cu{}
   .upc-date{text-align:center;min-width:28px}
   .upc-day{font-family:'Bebas Neue',sans-serif;font-size:18px;line-height:1}
-  .upc-mon{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)}
+  .upc-mon{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
   .upc-name{font-size:11px;font-weight:500}
   .upc-time{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:1px}
 
@@ -272,26 +275,26 @@
   .chat-hdr { background:var(--dark2); border-bottom:1px solid var(--border); padding:8px 12px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
   .chat-av { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--green),#00a855); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:12px; color:var(--dark); }
   .chat-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;font-weight:700}
-  .chat-online{display:flex;align-items:center;gap:3px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
-  .chat-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+  .chat-online{display:flex;align-items:center;gap:3px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)}
+  .chat-dot{display:none}
   .user-pill{display:flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:3px 8px 3px 3px;cursor:pointer}
-  .up-av{width:20px;height:20px;border-radius:50%;background:var(--green);color:var(--dark);font-family:'Bebas Neue',sans-serif;font-size:10px;display:flex;align-items:center;justify-content:center}
-  .up-name{font-size:10px;font-weight:500}
+  .up-av{width:20px;height:20px;border-radius:50%;background:var(--green);color:var(--dark);font-family:'Bebas Neue',sans-serif;font-size:12px;display:flex;align-items:center;justify-content:center}
+  .up-name{font-size:12px;font-weight:500}
   .chat-msgs{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
   .chat-msgs::-webkit-scrollbar{display:none}
-  .cdiv{text-align:center;margin:6px 0 3px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+  .cdiv{text-align:center;margin:6px 0 3px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)}
   .cmsg{display:flex;flex-direction:column;max-width:70%;margin-bottom:2px}
   .cmsg.own{align-self:flex-end;align-items:flex-end} .cmsg.other{align-self:flex-start;align-items:flex-start}
-  .csender{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:2px;padding:0 3px}
+  .csender{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:2px;padding:0 3px}
   .cbubble{padding:6px 10px;border-radius:14px;font-size:12px;line-height:1.4;word-break:break-word}
-  .cmsg.own .cbubble{background:var(--green-dim);color:#fff;border-bottom-right-radius:3px}
-  .cmsg.other .cbubble{background:var(--dark3);color:var(--text);border:1px solid var(--border);border-bottom-left-radius:3px}
-  .ctime{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px;padding:0 3px}
+  .cmsg.own .cbubble{background:var(--green-dim);color:var(--dark) !important;border-bottom-right-radius:3px}
+  .cmsg.other .cbubble{background:var(--dark3);color:var(--text) !important;border:1px solid var(--border);border-bottom-left-radius:3px}
+  .ctime{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:2px;padding:0 3px}
   .creact{display:flex;gap:3px;margin-top:3px}
   .crc{background:var(--dark3);border:1px solid var(--border);border-radius:9px;padding:1px 5px;font-size:11px;display:flex;align-items:center;gap:2px}
-  .crn{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted)}
+  .crn{font-size:12px;font-family:'DM Mono',monospace;color:var(--muted)}
   .reply-q{background:rgba(0,0,0,0.25);border-left:2px solid var(--green);border-radius:4px 4px 0 0;padding:3px 8px;font-size:11px;color:var(--muted);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .reply-q strong{color:var(--green);font-size:10px;display:block}
+  .reply-q strong{color:var(--green);font-size:12px;display:block}
   .chat-input-area{background:var(--dark2);border-top:1px solid var(--border);padding:8px 10px;flex-shrink:0}
   .chat-input-row{display:flex;align-items:center;gap:6px}
   .gif-chip{background:var(--dark3);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);cursor:pointer;flex-shrink:0}
@@ -305,25 +308,25 @@
   .news-pill.active { color:var(--green); font-weight:700; }
   .news-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:12px 14px; cursor:pointer; transition:border-color 0.2s; }
   .news-card:hover { border-color:rgba(10,168,96,0.3); }
-  .news-tag { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1.5px; padding:2px 7px; border-radius:10px; font-weight:700; display:inline-block; margin-bottom:6px; }
+  .news-tag { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1.5px; padding:2px 7px; border-radius:10px; font-weight:700; display:inline-block; margin-bottom:6px; }
   .news-tag.injury { background:rgba(224,49,49,0.15); color:var(--red); }
   .news-tag.roster { background:rgba(10,168,96,0.1); color:var(--green); }
   .news-tag.transaction { background:rgba(26,95,208,0.1); color:var(--blue); }
   .news-tag.league { background:rgba(232,114,12,0.1); color:var(--orange); }
   .news-headline { font-size:15px; font-weight:700; line-height:1.4; margin-bottom:4px; }
-  .news-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+  .news-meta { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); }
   .news-impact { font-size:11px; color:var(--muted); margin-top:6px; line-height:1.5; padding-top:6px; border-top:1px solid var(--border); }
   .coming-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px;text-align:center;min-height:400px}
   .coming-icon{font-size:48px;margin-bottom:14px}
   .coming-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;margin-bottom:8px}
-  .coming-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;line-height:1.6}
+  .coming-sub{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:1px;line-height:1.6}
   .coming-needs{margin-top:14px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;width:100%;text-align:left}
-  .needs-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--orange);margin-bottom:8px}
+  .needs-lbl{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;color:var(--orange);margin-bottom:8px}
   .needs-item{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:5px}
-  .needs-item::before{content:'○';color:var(--border);font-size:10px}
+  .needs-item::before{content:'○';color:var(--border);font-size:12px}
 
   /* Spin lock / vote / override */
-  .comm-spin-status { width:100%; margin-bottom:8px; font-family:'DM Mono',monospace; font-size:10px; text-align:center; padding:7px 10px; border-radius:6px; display:none; }
+  .comm-spin-status { width:100%; margin-bottom:8px; font-family:'DM Mono',monospace; font-size:12px; text-align:center; padding:7px 10px; border-radius:6px; display:none; }
   .comm-spin-status.locked { display:block; background:rgba(224,49,49,0.08); border:1px solid rgba(224,49,49,0.2); color:var(--red); }
   .comm-spin-status.open { display:block; background:rgba(10,168,96,0.06); border:1px solid rgba(10,168,96,0.15); color:var(--green); }
 
@@ -355,10 +358,10 @@
   .back-btn { background:none; border:none; color:var(--green); font-family:'DM Mono',monospace; font-size:16px; cursor:pointer; padding:0; line-height:1; }
   .subpanel-title { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; }
   .profile-pic-wrap { position:relative; cursor:pointer; margin-bottom:8px; }
-  .profile-pic-edit { position:absolute; bottom:0; right:0; background:var(--dark2); border:1px solid var(--border); border-radius:50%; width:20px; height:20px; font-size:10px; display:flex; align-items:center; justify-content:center; }
+  .profile-pic-edit { position:absolute; bottom:0; right:0; background:var(--dark2); border:1px solid var(--border); border-radius:50%; width:20px; height:20px; font-size:12px; display:flex; align-items:center; justify-content:center; }
   .profile-av { width:72px; height:72px; border-radius:50%; background:var(--green); color:var(--dark); font-family:'Bebas Neue',sans-serif; font-size:30px; display:flex; align-items:center; justify-content:center; overflow:hidden; border:2px solid var(--border); }
   .profile-av img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
-  .profile-role-badge { display:inline-block; margin:4px 0 2px; padding:2px 10px; border-radius:10px; font-family:'DM Mono',monospace; font-size:10px; font-weight:600; letter-spacing:2px; background:var(--dark3); border:1px solid var(--border); color:var(--muted); }
+  .profile-role-badge { display:inline-block; margin:4px 0 2px; padding:2px 10px; border-radius:10px; font-family:'DM Mono',monospace; font-size:12px; font-weight:600; letter-spacing:2px; background:var(--dark3); border:1px solid var(--border); color:var(--muted); }
   .profile-role-badge.role-commissioner { background:rgba(184,134,11,0.12); border-color:rgba(184,134,11,0.4); color:var(--gold); }
   .profile-role-badge.role-co-commissioner { background:rgba(184,134,11,0.07); border-color:rgba(184,134,11,0.2); color:#c8a800; }
   .profile-role-badge.role-treasurer { background:rgba(10,168,96,0.08); border-color:rgba(10,168,96,0.25); color:var(--green); }
@@ -387,10 +390,10 @@
   .champions-wall::-webkit-scrollbar{display:none}
   .champ-card { background:linear-gradient(135deg,rgba(184,134,11,0.08),var(--card)); border:1px solid rgba(184,134,11,0.2); border-radius:8px; padding:10px; min-width:90px; text-align:center; flex-shrink:0; }
   .champ-card.past { background:var(--card); border-color:var(--border); }
-  .champ-season { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:4px; }
+  .champ-season { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:1px; margin-bottom:4px; }
   .champ-crown { font-size:22px; margin-bottom:4px; }
   .champ-name { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:1px; }
-  .champ-record { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:2px; }
+  .champ-record { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); margin-top:2px; }
   .legacy-season-tabs { display:flex; gap:4px; margin-bottom:8px; flex-wrap:wrap; }
   .lst { background:var(--card); border:1px solid var(--border); border-radius:5px; padding:4px 10px; font-family:'DM Mono',monospace; font-size:11px; cursor:pointer; transition:all 0.15s; }
   .lst.active { background:var(--green); color:var(--dark); border-color:var(--green); font-weight:600; }
@@ -412,19 +415,19 @@
   .si-left{display:flex;align-items:center;gap:10px}
   .si-icon{font-size:16px}
   .si-label{font-size:13px;font-weight:500}
-  .si-sub{font-size:10px;color:var(--muted);margin-top:1px}
+  .si-sub{font-size:12px;color:var(--muted);margin-top:1px}
   .si-arrow{color:var(--muted);font-size:14px}
-  .si-value{font-family:'DM Mono',monospace;font-size:10px;color:var(--green)}
-  .notif-toggle{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:var(--green);min-width:28px;text-align:right;transition:color 0.2s}
+  .si-value{font-family:'DM Mono',monospace;font-size:12px;color:var(--green)}
+  .notif-toggle{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--green);min-width:28px;text-align:right;transition:color 0.2s}
   .notif-toggle.off{color:var(--muted)}
   .payout-task{background:var(--dark3);border:1px solid rgba(232,114,12,0.3);border-radius:8px;padding:10px 12px;margin-bottom:8px}
   .payout-task.done{border-color:var(--border);opacity:0.6}
   .payout-task-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
   .payout-task-name{font-weight:700;font-size:13px}
-  .payout-task-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:2px}
+  .payout-task-meta{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);margin-top:2px}
   .payout-task-amt{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--orange);letter-spacing:1px}
   .payout-task-done-amt{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);letter-spacing:1px}
-  .payout-send-btn{width:100%;padding:7px;background:var(--orange);border:none;border-radius:6px;color:#000;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;margin-top:4px}
+  .payout-send-btn{width:100%;padding:7px;background:var(--orange);border:none;border-radius:6px;color:#000;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;margin-top:4px}
   .payout-sent-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--green);text-align:center;padding-top:4px}
 
   /* ===== BOTTOM TAB BAR ===== */
@@ -433,7 +436,7 @@
   .bb-tab.active{border-top-color:var(--green)}
   .bb-tab:not(.active):hover{background:rgba(10,168,96,0.03)}
   .bb-icon{font-size:17px;line-height:1}
-  .bb-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.5px}
+  .bb-label{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:0.5px}
   .bb-tab.active .bb-label{color:var(--green)}
   .bb-lock{font-size:15px;line-height:1}
 
@@ -445,7 +448,7 @@
   .modal h2{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:6px}
   .modal p{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:14px}
   .mg{margin-bottom:10px}
-  .mg label{display:block;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:4px}
+  .mg label{display:block;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2px;color:var(--muted);margin-bottom:4px}
   .mg input{width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 11px;outline:none}
   .mg input:focus{border-color:var(--green)}
   .macts{display:flex;gap:7px}
@@ -456,10 +459,10 @@
   .money-tracker { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:12px; width:100%; }
   .mt-header { display:flex; align-items:center; gap:6px; margin-bottom:10px; }
   .mt-title { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:2px; color:var(--muted); flex:1; }
-  .mt-live { font-family:'DM Mono',monospace; font-size:10px; color:var(--green); background:rgba(10,168,96,0.08); border:1px solid rgba(10,168,96,0.2); border-radius:8px; padding:1px 7px; letter-spacing:1px; }
+  .mt-live { font-family:'DM Mono',monospace; font-size:12px; color:var(--green); background:rgba(10,168,96,0.08); border:1px solid rgba(10,168,96,0.2); border-radius:8px; padding:1px 7px; letter-spacing:1px; }
   .mt-row { display:flex; align-items:center; justify-content:space-around; }
   .mt-stat { text-align:center; flex:1; }
-  .mt-stat-lbl { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:4px; }
+  .mt-stat-lbl { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); letter-spacing:1px; margin-bottom:4px; }
   .mt-stat-val { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:1px; line-height:1; }
   .mt-stat-val.gold { color:var(--gold); }
   .mt-stat-val.green { color:var(--green); }
@@ -492,9 +495,9 @@
           <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
             <div class="home-title">FANTASY <span>HQ</span></div>
             <div class="season-pills" style="margin-top:4px;">
-              <span class="season-box" id="seasonBox" onclick="toggleSeasonSel()">25-26</span>
+              <span class="season-box" id="seasonBox" onclick="toggleSeasonSel()">26-27</span>
               <select id="seasonSel" style="display:none;background:var(--dark2);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:3px 6px;border-radius:0" onchange="pickSeason(this.value)">
-                <option>25-26</option><option>26-27</option><option>27-28</option><option>28-29</option>
+                <option>25-26</option><option selected>26-27</option><option>27-28</option><option>28-29</option>
               </select>
             </div>
           </div>
@@ -504,29 +507,8 @@
         <div class="home-scroll">
 
         <!-- 1. MONEY TRACKER -->
-        <div class="money-tracker">
-          <div class="mt-header">
-            <div class="status-dot"></div>
-            <span class="mt-title">LEAGUE TREASURY</span>
-            <span class="mt-live" style="color:var(--gold);background:rgba(184,134,11,0.08);border-color:rgba(184,134,11,0.2)">SEASON COMPLETE</span>
-          </div>
-          <div class="mt-row">
-            <div class="mt-stat">
-              <div class="mt-stat-lbl">TOTAL POT</div>
-              <div class="mt-stat-val gold">$365</div>
-            </div>
-            <div class="mt-divider"></div>
-            <div class="mt-stat">
-              <div class="mt-stat-lbl">PAID OUT</div>
-              <div class="mt-stat-val green">$365</div>
-            </div>
-            <div class="mt-divider"></div>
-            <div class="mt-stat">
-              <div class="mt-stat-lbl">REMAINING</div>
-              <div class="mt-stat-val orange">$0</div>
-            </div>
-          </div>
-        </div>
+        <div id="currentTreasury"><div class="money-tracker"><div class="mt-header"><div class="status-dot"></div><span class="mt-title">TREASURY · 26-27</span><span class="mt-live">SEASON IN PROGRESS</span></div><div class="mt-row"><div class="mt-stat"><div class="mt-stat-lbl">TOTAL POT</div><div class="mt-stat-val gold">$120</div></div><div class="mt-divider"></div><div class="mt-stat"><div class="mt-stat-lbl">PAID OUT</div><div class="mt-stat-val green">$0</div></div><div class="mt-divider"></div><div class="mt-stat"><div class="mt-stat-lbl">REMAINING</div><div class="mt-stat-val orange">$120</div></div></div></div></div>
+        <div id="priorTreasury" style="display:none"><div class="money-tracker"><div class="mt-header"><div class="status-dot"></div><span class="mt-title">TREASURY · 25-26</span><span class="mt-live" style="color:var(--gold);background:rgba(184,134,11,0.08);border-color:rgba(184,134,11,0.2)">SEASON COMPLETE</span></div><div class="mt-row"><div class="mt-stat"><div class="mt-stat-lbl">TOTAL POT</div><div class="mt-stat-val gold">$365</div></div><div class="mt-divider"></div><div class="mt-stat"><div class="mt-stat-lbl">PAID OUT</div><div class="mt-stat-val green">$365</div></div><div class="mt-divider"></div><div class="mt-stat"><div class="mt-stat-lbl">REMAINING</div><div class="mt-stat-val orange">$0</div></div></div></div></div>
 
         <!-- 2. THIS WEEK'S CATEGORY -->
         <div class="spin-banner" id="homeBanner">
@@ -540,7 +522,8 @@
 
         <!-- 3. SEASON STANDINGS with earnings -->
         <div class="sec-lbl">Season Standings</div>
-        <table class="standings-tbl">
+        <div id="currentSeasonStandings"><div style="text-align:center;padding:24px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">Season 26-27 in progress — standings update each week</div></div>
+        <div id="priorSeasonStandings" style="display:none"><table class="standings-tbl">
           <thead><tr><th></th><th>Manager</th><th>Record</th><th>Earned</th></tr></thead>
           <tbody>
             <tr style="background:rgba(10,168,96,0.04)"><td><div class="rank-chip r1">1</div></td><td style="font-weight:700;font-size:13px">Brayn B.</td><td><span class="rec">11-2-0</span></td><td><span class="earned">$177.50</span></td></tr>
@@ -550,9 +533,11 @@
             <tr style="background:rgba(224,49,49,0.04)"><td><div class="rank-chip rn">5</div></td><td style="font-weight:700;font-size:13px">Benjamin P.</td><td><span class="rec">4-9-0</span></td><td><span class="earned">$20.00</span></td></tr>
             <tr style="background:rgba(10,168,96,0.04)"><td><div class="rank-chip rn">6</div></td><td style="font-weight:700;font-size:13px">Izik M.</td><td><span class="rec">1-12-0</span></td><td><span class="earned">$15.00</span></td></tr>
           </tbody>
-        </table>
+        </table></div>
 
         <div class="sec-lbl">Weekly Winners</div>
+        <div id="currentSeasonWinners"><div style="text-align:center;padding:24px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">No weekly winners yet — first spin happens Week 1</div></div>
+        <div id="priorSeasonWinners" style="display:none">
         <div class="wk-grid">
 
           <div class="wk-chip paid">
@@ -722,6 +707,7 @@
           </div>
 
         </div><!-- end wk-grid -->
+        </div><!-- end priorSeasonWinners -->
 
         <!-- 4. RESPIN VOTE — bottom of scroll so it's available but not accidental -->
         <div style="width:100%;margin-bottom:16px;">
@@ -754,6 +740,7 @@
           <button class="news-pill active" onclick="filterNews('all',this)">All</button>
           <button class="news-pill" onclick="filterNews('league',this)">League</button>
           <button class="news-pill" onclick="filterNews('roster',this)">My Roster</button>
+          <button class="news-pill" onclick="showNotis(this)">Ben's Notis</button>
           <button class="news-pill" onclick="showSources(this)">More</button>
         </div>
 
@@ -764,36 +751,75 @@
             <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">Loading news...</div>
           </div>
           <div id="newsCards" style="display:flex;flex-direction:column;gap:10px"></div>
-          <div id="newsSources" style="display:none;margin:0 -14px"><a href="https://www.youtube.com/@thatsgoodsports" target="_blank" class="src-row featured">
+          <div id="newsNotis" style="display:none"></div>
+          <div id="newsSources" style="display:none;margin:0 -14px">
+          <div class="src-row featured" style="cursor:default">
             <div class="src-name">That's Good Sports — Brandon Perna <span class="src-ben">BEN'S PICK</span></div>
             <div class="src-desc">Entertaining NFL recaps and league-wide storylines. The weekly vibe check.</div>
-            <div class="src-url">youtube.com/@thatsgoodsports</div>
-          </a>
-          <a href="https://fantasydocs.com/" target="_blank" class="src-row">
+            <div class="src-links">
+              <a href="https://www.youtube.com/@thatsgoodsports" target="_blank" class="src-link-btn">YouTube</a>
+              <a href="https://www.instagram.com/thatsgoodsports/" target="_blank" class="src-link-btn">Instagram</a>
+              <a href="https://linktr.ee/thatsgoodsports" target="_blank" class="src-link-btn">Links</a>
+            </div>
+          </div>
+          <div class="src-row" style="cursor:default">
             <div class="src-name">FantasyDocs <span class="src-ben">BEN'S PICK</span></div>
-            <div class="src-desc">Physician-graded injury risk and player outlooks. Quick checks on IG/YouTube: @fantasydocs.</div>
-            <div class="src-url">fantasydocs.com · instagram.com/fantasydocs</div>
-          </a>
-          <a href="https://www.rotowire.com/football/injury-report.php" target="_blank" class="src-row">
+            <div class="src-desc">Physician-graded injury risk and player outlooks. Quick injury checks on Instagram and YouTube.</div>
+            <div class="src-links">
+              <a href="https://fantasydocs.com/" target="_blank" class="src-link-btn">Website</a>
+              <a href="https://www.instagram.com/fantasydocs/" target="_blank" class="src-link-btn">Instagram</a>
+              <a href="https://www.youtube.com/@fantasydocss" target="_blank" class="src-link-btn">YouTube</a>
+            </div>
+          </div>
+          <div class="src-row" style="cursor:default">
             <div class="src-name">RotoWire NFL</div>
             <div class="src-desc">Injury reports, player blurbs, and fantasy impact — fastest availability updates.</div>
-            <div class="src-url">rotowire.com/football</div>
-          </a>
-          <a href="https://www.theinjuryexpertz.com/" target="_blank" class="src-row">
+            <div class="src-links">
+              <a href="https://www.rotowire.com/football/injury-report.php" target="_blank" class="src-link-btn">Injury Report</a>
+              <a href="https://www.rotowire.com/football/" target="_blank" class="src-link-btn">Full Site</a>
+            </div>
+          </div>
+          <div class="src-row" style="cursor:default">
             <div class="src-name">The Injury Expertz — Dr. Jesse Morse</div>
             <div class="src-desc">Injury timelines, recovery outlooks, and return-to-play impact for fantasy.</div>
-            <div class="src-url">theinjuryexpertz.com</div>
-          </a>
-          <a href="https://www.theringer.com/nfl" target="_blank" class="src-row">
+            <div class="src-links">
+              <a href="https://www.theinjuryexpertz.com/" target="_blank" class="src-link-btn">Website</a>
+              <a href="https://www.instagram.com/theinjuryexpertz/" target="_blank" class="src-link-btn">Instagram</a>
+              <a href="https://www.youtube.com/@TheInjuryExpertz" target="_blank" class="src-link-btn">YouTube</a>
+            </div>
+          </div>
+          <div class="src-row" style="cursor:default">
+            <div class="src-name">SportsMedAnalytics — Dr. Deepak Chona</div>
+            <div class="src-desc">Medical injury analysis, injury risk, and return-to-play context for fantasy.</div>
+            <div class="src-links">
+              <a href="https://www.sportsmedanalytics.com/" target="_blank" class="src-link-btn">Website</a>
+              <a href="https://www.instagram.com/sportsmedanalytics/" target="_blank" class="src-link-btn">Instagram</a>
+            </div>
+          </div>
+          <div class="src-row" style="cursor:default">
             <div class="src-name">The Ringer NFL</div>
             <div class="src-desc">Longer-form NFL analysis, rankings, and podcasts for deeper storylines.</div>
-            <div class="src-url">theringer.com/nfl</div>
-          </a>
-          <a href="https://underdogfantasy.com/" target="_blank" class="src-row">
+            <div class="src-links">
+              <a href="https://www.theringer.com/nfl" target="_blank" class="src-link-btn">Website</a>
+            </div>
+          </div>
+          <div class="src-row" style="cursor:default">
             <div class="src-name">Underdog Fantasy Show</div>
             <div class="src-desc">Player roles, usage chatter, and best-ball discussion all season long.</div>
-            <div class="src-url">underdogfantasy.com</div>
-          </a></div>
+            <div class="src-links">
+              <a href="https://underdogfantasy.com/" target="_blank" class="src-link-btn">Website</a>
+              <a href="https://www.youtube.com/playlist?list=PL_FB85-ybxeznqk1jBh5jQNsB2alHTYRT" target="_blank" class="src-link-btn">YouTube</a>
+            </div>
+          </div>
+          <div class="src-row" style="cursor:default">
+            <div class="src-name">Establish The Run</div>
+            <div class="src-desc">Advanced fantasy roles, projections, usage analysis, and DFS context.</div>
+            <div class="src-links">
+              <a href="https://establishtherun.com/" target="_blank" class="src-link-btn">Website</a>
+              <a href="https://establishtherun.com/fantasy-football-rankings-hub/" target="_blank" class="src-link-btn">Rankings</a>
+            </div>
+          </div>
+        </div>
         </div>
 
       </div>
@@ -827,11 +853,7 @@
           <div class="mini-cal-days" id="miniCalDays"></div>
         </div>
         <div class="sec-lbl" style="font-size:12px;margin-top:4px">Upcoming</div>
-        <div class="upcoming-list">
-          <div class="upc-item rl"><div class="upc-date"><div class="upc-day">12</div><div class="upc-mon">MAR</div></div><div><div class="upc-name"> Roulette Spin</div><div class="upc-time">12:00 PM PST</div></div></div>
-          <div class="upc-item ff"><div class="upc-date"><div class="upc-day">15</div><div class="upc-mon">MAR</div></div><div><div class="upc-name">Fantasy Week 14 Starts</div><div class="upc-time">12:00 AM PST</div></div></div>
-          <div class="upc-item cu"><div class="upc-date"><div class="upc-day">22</div><div class="upc-mon">MAR</div></div><div><div class="upc-name">League Draft Night</div><div class="upc-time">7:00 PM PST</div></div></div>
-        </div>
+        <div class="upcoming-list" id="upcomingList" style="max-height:320px;overflow-y:auto;scrollbar-width:none"></div>
       </div>
     </div>
 
@@ -840,9 +862,9 @@
       <div class="chat-hdr">
         <div style="display:flex;align-items:center;gap:8px">
           <div class="chat-av">FLH</div>
-          <div><div class="chat-title">League Chat</div><div class="chat-online"><div class="chat-dot"></div><span>6 members</span></div></div>
+          <div><div class="chat-title">League Chat</div><div class="chat-online"></div></div>
         </div>
-        <div class="user-pill"><div class="up-av" id="chatAv">?</div><span class="up-name" id="chatUserName">Guest</span></div>
+        
       </div>
       <div class="chat-msgs" id="chatMsgs">
         <div class="cdiv">TODAY</div>
@@ -865,23 +887,24 @@
     <!-- ===== LEAGUE TAB ===== -->
 
 
-    <!-- ===== PREDICTOR V1.3 ===== -->
+    <!-- ===== PREDICTOR V1.3.1 ===== -->
     <div class="tab-panel" id="panel-predictor" style="position:relative">
       <div style="display:flex;flex-direction:column;height:100%;overflow:hidden">
         <div style="padding:12px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--dark)">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px">MODEL <span style="color:var(--green)">V1.3</span></div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px">MODEL <span style="color:var(--green)">V1.3.1</span></div>
           <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px">EXPERIMENTAL &middot; WEEKLY UPDATES BEGIN SEP 16 &middot; <span id="predStamp"></span></div>
         </div>
         <div style="display:flex;padding:8px 14px;flex-shrink:0" id="predTabs">
           <button class="news-pill active" onclick="predTab('rank',this)">Power Rankings</button>
           <button class="news-pill" onclick="predTab('match',this)">Matchups</button>
+          <button class="news-pill" onclick="predTab('pvm',this)">Player Value</button>
           <button class="news-pill" id="predReadsPill" onclick="predTab('reads',this)" style="display:none">Ben's Reads</button>
         </div>
         <div style="flex:1;overflow-y:auto;padding:12px 14px;scrollbar-width:none">
 
           <div class="pred-sub" id="pred-rank">
             <details open>
-              <summary class="sec-lbl" style="cursor:pointer">POWER RANKINGS <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">MODEL SUGGESTION &middot; PRESEASON V1.3 &middot; WEEKLY UPDATES BEGIN SEP 16 (AFTER WEEK 1) &middot; tap a team for profile</span></summary>
+              <summary class="sec-lbl" style="cursor:pointer">POWER RANKINGS <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">MODEL SUGGESTION &middot; PRESEASON V1.3.1 &middot; WEEKLY UPDATES BEGIN SEP 16 (AFTER WEEK 1) &middot; tap a team for profile</span></summary>
               <div id="predRankList" style="margin-top:6px"><div style="font-size:12px;font-family:'DM Mono',monospace">Loading teams&hellip;</div></div>
             </details>
             <div class="sec-lbl" style="margin-top:16px">CONTENDER BOARD</div>
@@ -911,6 +934,8 @@
             <div id="predMatchList"></div>
           </div>
 
+          <div class="pred-sub" id="pred-pvm" style="display:none"></div>
+
           <div class="pred-sub" id="pred-reads" style="display:none">
             <div class="sec-lbl">Ben's Reads (private)</div>
             <div id="predReadsList"></div>
@@ -920,7 +945,7 @@
         </div>
       </div>
             <div id="predGateOverlay" style="display:none;position:absolute;inset:0;background:var(--dark);z-index:70;overflow-y:auto;padding:18px">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px">MODEL <span style="color:var(--gold)">V1.3</span> &mdash; RESTRICTED</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px">MODEL <span style="color:var(--gold)">V1.3.1</span> &mdash; RESTRICTED</div>
         <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:1px;margin:4px 0 12px">VERSION 1.3 &middot; EXPERIMENTAL</div>
         <div style="font-size:13px;line-height:1.7;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 0;margin-bottom:12px">
           <b>Legal &amp; general disclosure:</b> This section is for information and entertainment only. It is not financial,
@@ -935,7 +960,8 @@
         </label>
         <div class="sec-lbl" id="predGatePwLbl">PASSWORD</div>
         <input class="pred-inp" type="password" id="predGatePw" onkeydown="if(event.key==='Enter')predGateUnlock()">
-        <div id="predGateErr" style="color:var(--red);font-size:12px;font-family:'DM Mono',monospace;margin-bottom:8px"></div>
+        <div id="predGateErr" style="color:var(--red);font-size:12px;font-family:'DM Mono',monospace;margin-bottom:4px"></div>
+        <div id="predGateResetLink" style="display:none;font-family:'DM Mono',monospace;font-size:11px;color:var(--blue);cursor:pointer;margin-bottom:8px" onclick="localStorage.removeItem('predPw');document.getElementById('predGatePwLbl').textContent='SET A NEW PASSWORD';this.style.display='none'">Forgot password? Click to reset</div>
         <button class="mbtn mbtn-p" onclick="predGateUnlock()">Unlock</button>
         <button class="mbtn" onclick="switchTab('home')" style="margin-left:6px">Back to Home</button>
       </div>
@@ -1282,14 +1308,7 @@
             <div id="evList" style="margin-top:8px"></div>
           </div>
 
-          <!-- LEAGUE ROSTERS (drives My Roster news) -->
-          <div class="comm-cats" style="width:100%">
-            <div class="comm-cats-title">LEAGUE ROSTERS</div>
-            <input class="pred-inp" id="rosterMember" placeholder="Member name (matches their sign-in)">
-            <textarea class="pred-inp" id="rosterPlayers" rows="4" placeholder="Player names, one per line"></textarea>
-            <button class="mbtn mbtn-p" onclick="commSaveRoster()">Save roster</button>
-            <div id="rosterSaved" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);margin-top:4px"></div>
-          </div>
+
 
 
           <!-- 1. PAYOUT TASKS -->
@@ -1542,7 +1561,7 @@ function applyTheme(key){
 const ALL_TABS=['home','news','calendar','chat','predictor','settings','commissioner'];
 
 
-// ═══ PREDICTOR V1.3 ═══
+// ═══ PREDICTOR V1.3.1 ═══
 
 const TEAM_NAMES = {LAR:"Los Angeles Rams",BUF:"Buffalo Bills",BAL:"Baltimore Ravens",SEA:"Seattle Seahawks",
 GB:"Green Bay Packers",LAC:"Los Angeles Chargers",HOU:"Houston Texans",KC:"Kansas City Chiefs",
@@ -1617,7 +1636,7 @@ function openTeamProfileAb(ab){
     +'<div style="font-size:13px;line-height:1.7">'+p.def+'</div>'+defT
     +'<div class="sec-lbl" style="margin-top:12px">KEY PLAYERS <span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--muted)">2025 STAT LINES</span></div>'
     +'<div style="font-size:13px;line-height:1.7;margin-bottom:4px">'+p.key+'</div>'+playT
-    +'<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);margin-top:14px">MODEL PROFILE &middot; PRESEASON V1.3 &middot; STATS FROM COMPILED 2025 DATABASE &middot; WEEKLY UPDATES BEGIN SEP 16</div>';
+    +'<div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted);margin-top:14px">MODEL PROFILE &middot; PRESEASON V1.3.1 &middot; STATS FROM COMPILED 2025 DATABASE &middot; WEEKLY UPDATES BEGIN SEP 16</div>';
   const id=ESPN_ID[ab];
   if(id){ fetch('https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/'+id).then(r=>r.json()).then(j=>{
     const t=j.team; const rec=(t.record&&t.record.items&&t.record.items[0])?t.record.items[0].summary:null;
@@ -1635,7 +1654,7 @@ function renderRanksOffline(){
     +'<span style="margin-left:auto;font-family:\'DM Mono\',monospace;font-size:12px" id="recab-'+ab+'">0-0</span></div>').join('');
 }
 
-// Model preseason ranks (V1.3) — next scheduled model update: Wed Sep 3, 2026
+// Model preseason ranks (V1.3.1) — next scheduled model update: Wed Sep 3, 2026
 const PRESEASON_RANKS = ["LAR","BUF","BAL","SEA","GB","LAC","HOU","KC","PHI","CIN","DET","SF",
   "MIN","TB","DEN","WAS","PIT","CHI","MIA","ATL","ARI","JAX","DAL","IND","NE","CAR","NYJ","NYG","NO","TEN","CLE","LV"];
 
@@ -1647,6 +1666,7 @@ function predTab(name, btn){
   document.getElementById('pred-'+name).style.display='block';
   if(name==='reads') predRenderReads();
   if(name==='match') predLoadWeek();
+  if(name==='pvm') renderPVM();
 }
 function predEnter(){
   // disclosure + password on EVERY entry (in-app overlay; popups are blocked in some browsers)
@@ -1655,8 +1675,9 @@ function predEnter(){
   document.getElementById('predGateAgree').checked=false;
   document.getElementById('predGatePw').value='';
   document.getElementById('predGateErr').textContent='';
-  document.getElementById('predGatePwLbl').textContent =
-    localStorage.getItem('predPw') ? 'PASSWORD' : 'CREATE A PASSWORD (FIRST-TIME SETUP)';
+  const _hasPw=localStorage.getItem('predPw');
+  document.getElementById('predGatePwLbl').textContent=_hasPw?'PASSWORD':'SET A PASSWORD (FIRST TIME)';
+  const _rl=document.getElementById('predGateResetLink'); if(_rl) _rl.style.display=_hasPw?'block':'none';
 }
 function predGateUnlock(){
   const err=document.getElementById('predGateErr');
@@ -1671,7 +1692,7 @@ function predGateUnlock(){
   document.getElementById('predReadsPill').style.display = predIsBen()?'':'none';
   predFetchTeams(); predBuildWeeks(); predTab('rank', document.querySelector('#predTabs .news-pill'));
 }
-function predUser(){ return (localStorage.getItem('signedInUser')||'').trim().toLowerCase(); }
+function predUser(){ const n=(localStorage.getItem('myName')||localStorage.getItem('signedInUser')||'').trim().toLowerCase(); return n.split(' ')[0]; }
 function predIsBen(){ return ['benjamin','benji','ben'].includes(predUser()); }
 function predData(){ try{return JSON.parse(localStorage.getItem('predData:'+predUser())||'{}');}catch(e){return {};} }
 function predSave(d){ localStorage.setItem('predData:'+predUser(), JSON.stringify(d)); }
@@ -1785,6 +1806,290 @@ function predRenderReads(){
 function predRUpd(i,f,v){ const d=predData(); d.reads=d.reads||[]; d.reads[i][f]=v; predSave(d); }
 function predAddRead(){ const d=predData(); d.reads=d.reads||[]; d.reads.push({r:'pending'}); predSave(d); predRenderReads(); }
 
+
+function seedStaticCalendar(){
+  if(localStorage.getItem('calSeeded2026v2')) return;
+  const ev=getHQEvents();
+  const add=(d,l,k)=>{if(!ev.find(e=>e.date===d&&e.label===l))ev.push({date:d,label:l,kind:k});};
+  // Federal holidays
+  add('2026-09-07','Labor Day','Custom'); add('2026-10-12','Columbus Day','Custom');
+  add('2026-11-11','Veterans Day','Custom'); add('2026-11-26','Thanksgiving','Custom');
+  add('2026-12-25','Christmas','Custom'); add('2027-01-01',"New Year's Day",'Custom');
+  add('2027-01-19','MLK Day','Custom'); add('2027-02-07','Super Bowl LXI','NFL');
+  // CA
+  add('2026-11-27','CA: Day After Thanksgiving','Custom');
+  // NFL 2026 weeks
+  [['2026-09-09','NFL Wk 1 Kickoff (Wed)'],['2026-09-17','NFL Wk 2'],['2026-09-24','NFL Wk 3'],
+   ['2026-10-01','NFL Wk 4'],['2026-10-08','NFL Wk 5'],['2026-10-15','NFL Wk 6'],
+   ['2026-10-22','NFL Wk 7'],['2026-10-29','NFL Wk 8'],['2026-11-05','NFL Wk 9'],
+   ['2026-11-12','NFL Wk 10'],['2026-11-19','NFL Wk 11'],['2026-11-26','NFL Wk 12 Thanksgiving'],
+   ['2026-12-03','NFL Wk 13'],['2026-12-10','NFL Wk 14'],['2026-12-17','NFL Wk 15'],
+   ['2026-12-24','NFL Wk 16'],['2026-12-31','NFL Wk 17'],['2027-01-03','NFL Wk 18'],
+   ['2027-01-10','Wild Card Weekend'],['2027-01-17','Divisional Round'],
+   ['2027-01-24','Conference Championships'],['2027-02-07','Super Bowl LXI']
+  ].forEach(([d,l])=>add(d,l,'NFL'));
+  // Fantasy roulette spins (Wednesdays Wk 1-18)
+  ['2026-09-16','2026-09-23','2026-09-30','2026-10-07','2026-10-14','2026-10-21','2026-10-28',
+   '2026-11-04','2026-11-11','2026-11-18','2026-11-25','2026-12-02','2026-12-09','2026-12-16',
+   '2026-12-23','2026-12-30','2027-01-06','2027-01-13'].forEach(d=>add(d,'Roulette Spin','Roulette'));
+  saveHQEvents(ev);
+  localStorage.setItem('calSeeded2026v2','1');
+}
+function buildUpcoming(){
+  const el=document.getElementById('upcomingList'); if(!el) return;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const all=getHQEvents()
+    .filter(e=>new Date(e.date+'T12:00:00')>=today)
+    .sort((a,b)=>new Date(a.date)-new Date(b.date));
+  const MO=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const cls={NFL:'nfl',Fantasy:'ff',Roulette:'rl',Custom:'cu'};
+  el.innerHTML=all.length?all.map(e=>{
+    const d=new Date(e.date+'T12:00:00');
+    return '<div class="upc-item '+(cls[e.kind]||'cu')+'"><div class="upc-date"><div class="upc-day">'+d.getDate()+'</div><div class="upc-mon">'+MO[d.getMonth()]+'</div></div><div><div class="upc-name">'+e.label+'</div><div class="upc-time">'+(e.kind||'Custom')+'</div></div></div>';
+  }).join(''):'<div style="font-family:monospace;font-size:12px;padding:10px 0;color:var(--muted)">No upcoming events</div>';
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// FANTASY HQ PLAYER VALUE MODEL — parallel layer beside NFL Predictor V1.3.1
+// Core rule: reads V1.3.1 team context; NEVER writes back into team predictions.
+// ═══════════════════════════════════════════════════════════
+
+// ── Scoring rules (standard / half-PPR / full PPR) ──
+const FHQ_SCORING = {
+  standard: {label:"Standard (non-PPR)", passYd:0.04, passTd:4, int:-2, rushYd:0.1, rushTd:6, rec:0, recYd:0.1, recTd:6, fumLost:-2, twoPt:2, note:"No reception bonus. TD and yardage heavy."},
+  half:     {label:"Half-PPR",           passYd:0.04, passTd:4, int:-2, rushYd:0.1, rushTd:6, rec:0.5, recYd:0.1, recTd:6, fumLost:-2, twoPt:2, note:"Middle ground; receiving volume matters more."},
+  ppr:      {label:"Full PPR",           passYd:0.04, passTd:4, int:-2, rushYd:0.1, rushTd:6, rec:1.0, recYd:0.1, recTd:6, fumLost:-2, twoPt:2, note:"Catches heavily boost slot WR, TE, receiving RB."}
+};
+function fhqScore(stats, fmt){
+  const r = FHQ_SCORING[fmt]||FHQ_SCORING.ppr;
+  return (stats.passYd||0)*r.passYd + (stats.passTd||0)*r.passTd + (stats.int||0)*r.int
+       + (stats.rushYd||0)*r.rushYd + (stats.rushTd||0)*r.rushTd
+       + (stats.rec||0)*r.rec + (stats.recYd||0)*r.recYd + (stats.recTd||0)*r.recTd
+       + (stats.fumLost||0)*r.fumLost + (stats.twoPt||0)*r.twoPt;
+}
+
+// ── Beginner label dictionary ──
+const FHQ_LABELS = [
+  ["Safe Starter","Reliable weekly role and floor. Good if you want less risk."],
+  ["Boom/Bust","Can have big weeks but can also disappear. Upside with a risky floor."],
+  ["PPR Helper","Gains value from catches even without big yards or touchdowns."],
+  ["TD Dependent","Needs touchdowns to matter. Risky if scoring chances drop."],
+  ["Waiver Watch","Not a must-add yet, but role or team context is improving."],
+  ["Injury Opportunity","Another player being hurt may create touches or targets for this player."],
+  ["Rising Role","Usage is trending up over recent weeks."],
+  ["Draft Value","Likely being drafted below what the role suggests."],
+  ["Avoid Overhype","Name or news attention may be bigger than the real fantasy opportunity."]
+];
+
+// ── Fantasy usefulness score components ──
+const FHQ_USEFULNESS = [
+  ["Floor Score","snap %, route %, target share, carry share, receptions, team implied points","How safe the player is each week. The most important number for beginners."],
+  ["Ceiling Score","air yards, red-zone targets, goal-line carries, explosive offense, matchup total","How likely the player is to have a big week."],
+  ["PPR Boost","receptions, target share, routes, receiving-RB or slot role","Flags players worth more in PPR than raw yards and TDs show."],
+  ["TD Dependency","TD share, low catch volume, low yardage floor, red-zone-only role","Flags players who need touchdowns to matter."],
+  ["Usage Trend","last 3 weeks of targets, carries, routes, snaps","Catches risers before public rankings adjust."],
+  ["Team Context Boost","V1.3.1 team rank, matchup, implied points, offense stability","Lets this model talk to V1.3.1 without changing team predictions."],
+  ["News Impact","injuries, depth chart, coaching comments, Ben&#39;s Noti feed","Turns news into player opportunity suggestions."],
+  ["Beginner Recommendation","floor + usage trend + news impact + your scoring format","The final label you see: Start / Watch / Add / Avoid."]
+];
+
+// ── Play-caller / offensive system layer (FHQ-4 placeholder) ──
+const FHQ_PLAYCALLER_COLS = [
+  "Head coach","Offensive coordinator","Primary play caller","Scheme family","Pace rank",
+  "Neutral pass rate","Neutral run rate","Motion usage","11 personnel rate","12 personnel rate",
+  "Target concentration","RB committee tendency","TE usage tendency","Screen tendency",
+  "Red-zone tendency","Fantasy impact note"
+];
+
+// ── Import roadmap ──
+const FHQ_ROADMAP = [
+  ["FHQ-0","Starter schema","COMPLETE","Fantasy tables, scoring rules, Ben&#39;s Noti, model bridge defined."],
+  ["FHQ-1","Historical player weekly stats","PENDING","Load 1999-2025 weekly stats; compute standard / half / PPR points."],
+  ["FHQ-2","Season fantasy summaries","PENDING","Totals, points per game, position rank, boom/bust, consistency."],
+  ["FHQ-3","Opportunity / usage layer","PENDING","Snaps, routes, targets, carries, red-zone and goal-line usage."],
+  ["FHQ-4","Play-caller / system layer","PENDING","OC and play-caller tendencies, pace, pass rate, target spread."],
+  ["FHQ-5","Bridge to V1.3.1","SCHEMA READY","Reads team rankings as context only. One-way street."],
+  ["FHQ-6","Ben&#39;s Noti engine","LIVE (v0)","Beginner picks, waiver watches, start checks from news + context."],
+  ["FHQ-7","Draft and season management","FUTURE","Draft board, roster, waivers, start/sit in one app."]
+];
+
+// ── BRIDGE: read-only team context from NFL Predictor V1.3.1 ──
+// does_change_prediction_model: always no
+function fhqTeamContext(ab){
+  const rank = PRESEASON_RANKS.indexOf(ab)+1;
+  if(rank<1) return {rank:null, tier:"Unranked", offense:"No model read yet", boost:0, warning:""};
+  const tier = rank<=4?"Tier 1 Contender":rank<=7?"Tier 2 Value":rank<=9?"Tier 3 Veteran Threat":rank<=12?"Tier 4 Ceiling Watch":rank<=20?"Middle Field":"Rebuilding Range";
+  const boost = rank<=4?0.9:rank<=7?0.75:rank<=12?0.6:rank<=20?0.4:0.2;
+  const st = (typeof TEAM_STATS!=="undefined")&&TEAM_STATS[ab];
+  const offense = st ? (st.o.epa>=0.08?"Strong offense environment":st.o.epa>=0?"Stable offense environment":st.o.epa>=-0.08?"Shaky offense environment":"Struggling offense environment") : "Offense data pending";
+  return {rank, tier, offense, boost, warning: st&&st.o.epa<-0.1?"Falling offense — be careful with pass catchers here":""};
+}
+
+// ── BEN'S NOTIS ──
+const NOTI_TYPES = ["Ben's Pick","Ben's Keep an Eye On","Ben's Waiver Watch","Ben's Start Check","Ben's Injury Opportunity","Ben's Risk Alert","Ben's Rising Role"];
+const NOTI_ACTIONS = ["Add","Watch","Start","Bench Risk","Draft Value","Avoid"];
+function getBensNotis(){ try{return JSON.parse(localStorage.getItem('bensNotis')||'[]');}catch(e){return [];} }
+function saveBensNotis(n){ localStorage.setItem('bensNotis', JSON.stringify(n)); }
+
+// v0 auto-classifier: news → optional noti. Only fires on fantasy-impact news.
+function classifyNewsForNoti(n){
+  const t = ((n.headline||'')+' '+(n.impact||'')).toLowerCase();
+  const rules = [
+    [/injur|questionable|doubtful|\bout\b|\bir\b|carted|concussion|hamstring|acl|mcl|ankle|sprain/, "Ben's Injury Opportunity","Watch",
+      "An injury here can shift touches and targets to teammates. Watch who steps into the role before adding anyone."],
+    [/cleared|activated|returns|return to practice|full participant/, "Ben's Keep an Eye On","Watch",
+      "A player being cleared does not mean start him right away — it means his usage this week is worth watching."],
+    [/depth chart|first-team|first team|starter|starting job|rb1|wr1|qb1 job|promoted/, "Ben's Rising Role","Watch",
+      "Depth chart moves change who actually gets the ball. Rising roles are how waiver steals happen."],
+    [/trade[sd]?|acquir|sign(s|ed|ing)|release[sd]?|waive[sd]?|cut\b/, "Ben's Waiver Watch","Watch",
+      "Roster moves reshuffle opportunity on both teams. Check who gains targets or carries from this."],
+    [/coordinator|play.?caller|head coach|offensive system|scheme|fired|hired/, "Ben's Keep an Eye On","Watch",
+      "A new play caller can change pass rate, pace, and who gets featured — that moves fantasy value."],
+    [/suspend|arrest|legal|banned/, "Ben's Risk Alert","Bench Risk",
+      "Missed-game risk. Do not rely on this player until his availability is clear."],
+    [/target share|snap count|snaps|carries|touches|usage|workload/, "Ben's Rising Role","Watch",
+      "Usage is the best predictor of fantasy points. Follow the touches, not the highlights."],
+    [/quarterback change|new qb|benched|qb switch/, "Ben's Keep an Eye On","Watch",
+      "A QB change affects every pass catcher on the team, up or down."]
+  ];
+  for(const [re,type,action,beginner] of rules){
+    if(re.test(t)){
+      return {type, action, confidence:"Low", beginner,
+        reason:"Auto-generated from news keywords + V1.3.1 team context. Ben upgrades confidence manually after film/model review.",
+        tags:["ESPN news","auto"], link:n.link||null, headline:n.headline};
+    }
+  }
+  return null;
+}
+
+function notiCardHTML(o, idx, manual){
+  const conf = o.confidence||'Low';
+  const confColor = conf==='High'?'var(--green)':conf==='Medium'?'var(--gold)':'var(--muted)';
+  const resSel = (predIsBen()&&manual) ? `
+      <select class="pred-inp" style="width:auto;margin:6px 0 0;font-size:11px" onchange="notiSetResult(${idx},this.value)">
+        ${['Pending','Hit','Miss','Mixed'].map(r=>`<option ${o.result===r?'selected':''}>${r}</option>`).join('')}
+      </select>` : (o.result&&o.result!=='Pending'?`<div style="font-family:'DM Mono',monospace;font-size:11px;margin-top:6px;color:${o.result==='Hit'?'var(--green)':o.result==='Miss'?'var(--red)':'var(--gold)'}">RESULT: ${o.result.toUpperCase()}</div>`:'');
+  return `
+    <div style="border:1px solid var(--border);border-left:3px solid var(--green);padding:12px 14px;margin-bottom:10px;background:var(--card)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;color:var(--green);font-weight:700">${o.type||"BEN'S NOTI"}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:${confColor}">${conf.toUpperCase()} CONFIDENCE</span>
+      </div>
+      ${o.player?`<div style="font-size:15px;font-weight:700;margin-top:6px">${o.player} <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${o.team||''} ${o.pos||''} ${o.week?'&middot; Wk '+o.week:''}</span></div>`:''}
+      ${o.headline&&!o.player?`<div style="font-size:13px;font-weight:700;margin-top:6px">${o.headline}</div>`:''}
+      <div style="display:flex;gap:8px;margin-top:6px;font-family:'DM Mono',monospace;font-size:11px">
+        <span style="border:1px solid var(--border);padding:2px 8px">${o.action||'Watch'}</span>
+        ${(o.tags||[]).map(tg=>`<span style="color:var(--muted);padding:2px 0">${tg}</span>`).join(' ')}
+      </div>
+      <div style="font-size:13px;line-height:1.6;margin-top:8px">${o.beginner||''}</div>
+      <details style="margin-top:6px"><summary style="font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;color:var(--muted)">MODEL REASON</summary>
+        <div style="font-size:12px;line-height:1.6;margin-top:4px;color:var(--muted)">${o.reason||''}</div></details>
+      ${o.link?`<div style="font-family:'DM Mono',monospace;font-size:11px;margin-top:6px"><a href="${o.link}" target="_blank" style="color:var(--blue);text-decoration:none">RELATED ARTICLE &#8599;</a></div>`:''}
+      ${resSel}
+    </div>`;
+}
+
+function renderNotis(){
+  const el=document.getElementById('newsNotis'); if(!el) return;
+  const manual = getBensNotis();
+  const auto = (allNewsItems||[]).map(classifyNewsForNoti).filter(Boolean).slice(0,8);
+  let html = `<div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:1px;margin:4px 0 12px">COMMISSIONER-STYLE FANTASY NOTES &middot; BEGINNER FRIENDLY &middot; POWERED BY PLAYER VALUE MODEL + V1.3.1 CONTEXT</div>`;
+  if(predIsBen()){
+    html += `<button class="mbtn mbtn-p" style="margin-bottom:12px" onclick="notiOpenForm()">+ New Ben&#39;s Noti</button>
+    <div id="notiForm" style="display:none;border:1px solid var(--border);padding:12px;margin-bottom:12px;background:var(--dark2)">
+      <input class="pred-inp" id="ntPlayer" placeholder="Player">
+      <div style="display:flex;gap:6px"><input class="pred-inp" id="ntTeam" placeholder="Team (e.g. LAR)"><input class="pred-inp" id="ntPos" placeholder="Pos"><input class="pred-inp" id="ntWeek" placeholder="Week"></div>
+      <select class="pred-inp" id="ntType">${NOTI_TYPES.map(t=>`<option>${t}</option>`).join('')}</select>
+      <select class="pred-inp" id="ntAction">${NOTI_ACTIONS.map(t=>`<option>${t}</option>`).join('')}</select>
+      <select class="pred-inp" id="ntConf"><option>Low</option><option>Medium</option><option>High</option></select>
+      <textarea class="pred-inp" id="ntBeginner" rows="2" placeholder="Beginner explanation (plain English why it matters)"></textarea>
+      <textarea class="pred-inp" id="ntReason" rows="2" placeholder="Model reason (technical, shown when expanded)"></textarea>
+      <button class="mbtn mbtn-p" onclick="notiSave()">Save Noti</button>
+    </div>`;
+  }
+  if(manual.length) html += `<div class="sec-lbl" style="font-size:13px">BEN&#39;S CALLS</div>` + manual.map((o,i)=>notiCardHTML(o,i,true)).join('');
+  html += `<div class="sec-lbl" style="font-size:13px;margin-top:${manual.length?'14px':'0'}">FROM TODAY&#39;S NEWS <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">AUTO &middot; LOW CONFIDENCE UNTIL BEN REVIEWS</span></div>`;
+  html += auto.length ? auto.map((o,i)=>notiCardHTML(o,-1,false)).join('')
+    : `<div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);padding:10px 0">No fantasy-impact news right now. Only injuries, role changes, trades, and system news generate notis &mdash; regular headlines stay quiet on purpose.</div>`;
+  el.innerHTML = html;
+}
+function notiOpenForm(){ const f=document.getElementById('notiForm'); if(f) f.style.display=f.style.display==='none'?'block':'none'; }
+function notiSave(){
+  const g=id=>document.getElementById(id).value.trim();
+  const o={player:g('ntPlayer'),team:g('ntTeam').toUpperCase(),pos:g('ntPos').toUpperCase(),week:g('ntWeek'),
+    type:document.getElementById('ntType').value,action:document.getElementById('ntAction').value,
+    confidence:document.getElementById('ntConf').value,beginner:g('ntBeginner'),reason:g('ntReason'),
+    tags:["Benjamin Read"],result:'Pending',ts:Date.now()};
+  if(!o.player&&!o.beginner) return;
+  const ctx=o.team?fhqTeamContext(o.team):null;
+  if(ctx&&ctx.rank) o.reason=(o.reason?o.reason+' ':'')+`[V1.3.1 context: ${o.team} rank #${ctx.rank}, ${ctx.tier}, ${ctx.offense.toLowerCase()}.]`;
+  const all=getBensNotis(); all.unshift(o); saveBensNotis(all); renderNotis();
+}
+function notiSetResult(i,v){ const all=getBensNotis(); if(all[i]){ all[i].result=v; saveBensNotis(all); } }
+function showNotis(btn){
+  document.querySelectorAll('.news-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('newsCards').style.display='none';
+  const L=document.getElementById('newsLoading'); if(L) L.style.display='none';
+  const S=document.getElementById('newsSources'); if(S) S.style.display='none';
+  document.getElementById('newsNotis').style.display='block';
+  if(!newsLoaded){ fetchESPNNews().then(renderNotis); } else renderNotis();
+}
+
+// ── PLAYER VALUE subtab render ──
+function renderPVM(){
+  const el=document.getElementById('pred-pvm'); if(!el) return;
+  const th = c=>`<th style="padding:6px 8px;border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-align:left;background:var(--dark2)">${c}</th>`;
+  const td = c=>`<td style="padding:6px 8px;border:1px solid var(--border);font-size:12px">${c}</td>`;
+  const scoreRows = Object.values(FHQ_SCORING).map(r=>
+    `<tr>${td('<b>'+r.label+'</b>')}${td(r.rec)}${td(r.passYd+' / '+r.passTd)}${td(r.rushYd+' / '+r.rushTd)}${td(r.recYd+' / '+r.recTd)}${td(r.int+' / '+r.fumLost)}</tr>`).join('');
+  el.innerHTML = `
+    <div class="sec-lbl">FANTASY HQ PLAYER VALUE MODEL</div>
+    <div style="font-size:13px;line-height:1.7;margin-bottom:10px">
+      This is the player layer of Fantasy HQ. It sits <b>beside</b> NFL Predictor V1.3.1, not inside it.
+      The team model handles power rankings and matchups. This model handles the fantasy questions:
+      who to draft, who to add, who to start, and why &mdash; explained in plain English.
+    </div>
+    <div style="border:1px solid var(--border);padding:10px 12px;margin-bottom:14px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.8">
+      BRIDGE RULE &middot; ONE-WAY STREET<br>
+      V1.3.1 team rank &rarr; player context: <span style="color:var(--green)">YES</span><br>
+      Fantasy data &rarr; team predictions: <span style="color:var(--red)">NEVER</span>
+    </div>
+
+    <div class="sec-lbl">SCORING FORMATS</div>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:6px">
+      <tr>${th('Format')}${th('Per catch')}${th('Pass yd/TD')}${th('Rush yd/TD')}${th('Rec yd/TD')}${th('INT/Fum')}</tr>
+      ${scoreRows}
+    </table>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:14px">FULL PPR MAKES CATCHES WORTH A FULL POINT &mdash; SLOT WRs, TEs, AND PASS-CATCHING RBs JUMP IN VALUE</div>
+
+    <div class="sec-lbl">BEGINNER LABELS <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">WHAT THE TAGS MEAN</span></div>
+    ${FHQ_LABELS.map(([l,m])=>`<div class="pr-row"><b style="color:var(--green)">${l}</b> &mdash; ${m}</div>`).join('')}
+
+    <div class="sec-lbl" style="margin-top:16px">HOW THE USEFULNESS SCORE WORKS</div>
+    ${FHQ_USEFULNESS.map(([n,inp,why])=>`<div class="pr-row"><b>${n}</b><div style="font-size:12px;margin-top:2px">${why}</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px">READS: ${inp}</div></div>`).join('')}
+
+    <div class="sec-lbl" style="margin-top:16px">PLAY CALLER / SYSTEM LAYER <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold)">IMPORT PENDING &middot; FHQ-4</span></div>
+    <div style="font-size:13px;line-height:1.6;margin-bottom:6px">Who calls the plays decides who eats. This table tracks each offense&#39;s tendencies once the data import lands:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
+      ${FHQ_PLAYCALLER_COLS.map(c=>`<span style="font-family:'DM Mono',monospace;font-size:11px;border:1px solid var(--border);padding:3px 8px">${c}</span>`).join('')}
+    </div>
+
+    <div class="sec-lbl">TEAM CONTEXT SAMPLE <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">LIVE FROM V1.3.1 BRIDGE &middot; READ ONLY</span></div>
+    <table style="border-collapse:collapse;width:100%;margin-bottom:14px">
+      <tr>${th('Team')}${th('Rank')}${th('Tier')}${th('Offense read')}${th('Player boost')}</tr>
+      ${['LAR','BUF','SEA','KC','DAL','CLE'].map(ab=>{const c=fhqTeamContext(ab);
+        return `<tr>${td('<b>'+ab+'</b>')}${td('#'+c.rank)}${td(c.tier)}${td(c.offense)}${td(c.boost)}</tr>`;}).join('')}
+    </table>
+
+    <div class="sec-lbl">BUILD ROADMAP</div>
+    ${FHQ_ROADMAP.map(([id,n,st,d])=>{
+      const col = st==='COMPLETE'||st.indexOf('LIVE')===0?'var(--green)':st==='SCHEMA READY'?'var(--gold)':st==='FUTURE'?'var(--muted)':'var(--orange)';
+      return `<div class="pr-row"><span style="font-family:'DM Mono',monospace;font-size:11px">${id}</span> <b>${n}</b> <span style="font-family:'DM Mono',monospace;font-size:11px;color:${col};margin-left:6px">${st}</span><div style="font-size:12px;margin-top:2px">${d}</div></div>`;}).join('')}
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:14px">NEXT IMPORT TARGET: NFLREADR PLAYER WEEKLY STATS 1999-2025 &middot; THEN SNAPS &middot; INJURIES &middot; ROUTES &middot; ADP</div>`;
+}
+
 function switchTab(tab){
   ALL_TABS.forEach(t=>{
     const p=document.getElementById('panel-'+t);
@@ -1793,12 +2098,12 @@ function switchTab(tab){
     if(b) b.classList.toggle('active',t===tab);
   });
   document.getElementById('screen').scrollTop=0;
-  if(tab==='calendar') drawMiniCal();
+  if(tab==='calendar'){ drawMiniCal(); buildUpcoming(); }
 
 (function(){
-  const n = localStorage.getItem('signedInUser') || 'Guest';
-  const el=document.getElementById('chatUserName'); if(el) el.textContent=n;
-  const av=document.getElementById('chatAv'); if(av) av.textContent=(n[0]||'?').toUpperCase();
+  const n = localStorage.getItem('myName') || me?.name || '';
+  const el=document.getElementById('chatSignedInLabel'); if(el) el.textContent=n;
+  const oc=document.getElementById('chatOnlineCount'); if(oc) oc.textContent='';
 })();
 
   if(tab==='news') fetchESPNNews();
@@ -2256,6 +2561,7 @@ const ROSTER_MEMBERS = [
   { name:'L. Duque',    espn:['lduque','l duque','duque'] },
   { name:'Benjamin P.', espn:['benjaminp','benjamin p','benp','ben p','bperez'] },
   { name:'Izik M.',     espn:['izikm','izik m'] },
+  { name:'Alex T.',     espn:['alext','alex t','alextest'] },
 ];
 
 function matchName(input){
@@ -2677,7 +2983,7 @@ function getPlaceholderNews(){
 // ── League rosters (commissioner-managed) drive My Roster news ──
 function getLeagueRosters(){ try{return JSON.parse(localStorage.getItem('leagueRosters')||'{}');}catch(e){return {};} }
 function getMyRosterPlayers(){
-  const me=(localStorage.getItem('signedInUser')||'').trim().toLowerCase();
+  const me=(localStorage.getItem('myName')||'').trim().toLowerCase();
   const R=getLeagueRosters();
   const key=Object.keys(R).find(k=>k.trim().toLowerCase()===me);
   return key ? R[key].map(p=>p.trim().toLowerCase()).filter(Boolean) : [];
@@ -2701,14 +3007,23 @@ function renderNewsCards(filter){
     return;
   }
 
-  container.innerHTML = filtered.map(n=>`
+  container.innerHTML = filtered.map(n=>{
+    const noti = classifyNewsForNoti(n);
+    const notiBlock = noti ? `
+      <details onclick="event.stopPropagation()" style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">
+        <summary style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;color:var(--green);cursor:pointer;font-weight:700">BEN&#39;S NOTI &middot; ${noti.type.replace("Ben's ","").toUpperCase()}</summary>
+        <div style="font-size:13px;line-height:1.6;margin-top:6px">${noti.beginner}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:4px">ACTION: ${noti.action.toUpperCase()} &middot; CONFIDENCE: LOW (AUTO)</div>
+      </details>` : '';
+    return `
     <div class="news-card ${n.type}" ${n.link ? `onclick="window.open('${n.link}','_blank')"` : ''} style="${n.link?'cursor:pointer':''}">
       <div class="news-tag ${n.type}">${n.tag}</div>
       <div class="news-headline">${n.headline}</div>
       <div class="news-meta">${n.meta}</div>
       ${n.impact ? `<div class="news-impact">${n.impact}</div>` : ''}
       ${n.link ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);margin-top:6px;letter-spacing:1px">READ ON ESPN ↗</div>` : ''}
-    </div>`).join('');
+      ${notiBlock}
+    </div>`;}).join('');
 }
 
 function showSources(btn){
@@ -2716,12 +3031,14 @@ function showSources(btn){
   btn.classList.add('active');
   document.getElementById('newsCards').style.display='none';
   const L=document.getElementById('newsLoading'); if(L) L.style.display='none';
+  const N=document.getElementById('newsNotis'); if(N) N.style.display='none';
   document.getElementById('newsSources').style.display='block';
 }
 function filterNews(type, btn){
   document.querySelectorAll('.news-pill').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
   const S=document.getElementById('newsSources'); if(S) S.style.display='none';
+  const N=document.getElementById('newsNotis'); if(N) N.style.display='none';
   document.getElementById('newsCards').style.display='flex';
   renderNewsCards(type);
 }
@@ -3063,7 +3380,7 @@ function sendDemoMsg(text, isGif=false){
   const msgs = document.getElementById('chatMsgs');
   if(!msgs) return;
   const t = new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-  const name = localStorage.getItem('signedInUser') || 'You';
+  const name = localStorage.getItem('myName') || localStorage.getItem('signedInUser') || 'You';
   const div = document.createElement('div');
   div.className = 'cmsg own';
   if(isGif){
@@ -3115,7 +3432,9 @@ function sendGif(url){
 checkSignIn();
 initNotifToggles();
 initHomeWheel();
+seedStaticCalendar();
 drawMiniCal();
+buildUpcoming();
 updateAllVoteUI();
 
 </script>
