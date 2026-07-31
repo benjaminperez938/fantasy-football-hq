@@ -696,7 +696,7 @@
         <!-- Sticky header -->
         <div class="home-header-fixed">
           <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
-            <div class="home-title">FANTASY <span>HQ</span> <span class="v2-badge" style="font-size:11px;vertical-align:middle;">V2</span></div>
+            <div class="home-title">FANTASY <span>HQ</span></div>
             <div class="season-pills" style="margin-top:4px;">
               <span class="season-box" id="seasonBox" onclick="toggleSeasonSel()">26-27</span>
               <select id="seasonSel" style="display:none;background:var(--dark2);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:3px 6px;border-radius:0" onchange="pickSeason(this.value)">
@@ -1644,7 +1644,7 @@
             </div>
 
             <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:10px;text-align:center;">
-              2026 ADP &middot; <span class="v2-chip v2-chip-orange">LIVE PROVISIONAL</span> &middot; Model V1.3.1 team context applied
+              2026 ADP &middot; Model V1.3.1 &middot; Updates weekly
             </div>
           </div>
 
@@ -1696,7 +1696,7 @@
                 After the Aug 24 draft, each manager receives a Draft Intelligence Report with:<br><br>
                 Overall draft grade &middot; League rank &middot; Roster identity &middot; Strengths &middot; Weaknesses &middot; Best pick &middot; Biggest reach &middot; Sleeper/value pick &middot; Risk meter &middot; Bye week analysis &middot; Position balance &middot; Bench strength &middot; Championship outlook
               </div>
-              <div style="margin-top:10px;"><span class="v2-chip v2-chip-dim">UI READY / WAITING FOR DRAFT DATA</span></div>
+              <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Available after the draft.</div>
             </div>
 
             <div class="v2-sec">WHAT FEEDS POWER RANKINGS</div>
@@ -1761,7 +1761,7 @@
             <button class="v2-modal-close" onclick="v2CloseModal('v2DraftWhyModal')">&#x2715;</button>
           </div>
           <div id="v2DraftWhyBody" style="font-size:13px;line-height:1.65;"></div>
-          <div style="margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">MODEL V1.3.1 &middot; FORMULA-BASED &middot; NOT AI</div>
+          <div style="margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Scoring: Full PPR &middot; Model V1.3.1</div>
         </div>
       </div>
     </div><!-- end panel-draft -->
@@ -1961,7 +1961,7 @@
               <span class="v2-label v2-lbl-add">INJ OPP</span>
               <button class="v2-btn v2-btn-p v2-btn-sm">Add</button>
             </div>
-            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:10px;text-align:center;"><span class="v2-chip v2-chip-dim">DATA-DEPENDENT &middot; UPDATES WEEKLY AFTER WAIVERS</span></div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:10px;text-align:center;">Updates weekly after waivers process.</div>
           </div>
 
           <!-- TRADES SUB -->
@@ -1990,7 +1990,7 @@
               </div>
               <!-- Trade scorecard -->
               <div style="margin-top:10px;padding:10px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;">
-                <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;">TRADE SCORECARD &middot; <span class="v2-chip v2-chip-dim">FORMULA-BASED &middot; NOT AI</span></div>
+                <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;">TRADE SCORECARD</div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                   <div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">YOUR GRADE</div><div class="v2-grade v2-grade-D">D</div><div style="font-size:11px;color:var(--muted);">Giving more model value than receiving. McBride (82) &gt; Jacobs (71).</div></div>
                   <div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">THEIR GRADE</div><div class="v2-grade v2-grade-A">A</div><div style="font-size:11px;color:var(--muted);">Acquiring TE depth at a discount. Net model gain: +11.</div></div>
@@ -2022,7 +2022,7 @@
             <button class="v2-btn v2-btn-p" onclick="v2CloseModal('v2TeamWhyModal')">Apply</button>
             <button class="v2-btn" onclick="v2CloseModal('v2TeamWhyModal')">Keep My Lineup</button>
           </div>
-          <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">MODEL V1.3.1 &middot; SCORING: FULL PPR &middot; NOT AI</div>
+          <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Model V1.3.1 &middot; Full PPR</div>
         </div>
       </div>
     </div><!-- end panel-myteam -->
@@ -2144,7 +2144,7 @@
               <rect x="138" y="34" width="30" height="11" rx="2" fill="rgba(10,168,96,0.15)"/>
               <text x="153" y="42" text-anchor="middle" font-size="7" fill="#0aa860" font-weight="bold">SPIKE</text>
             </svg>
-            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;">Tap a dot to see week explanation &middot; <span class="v2-chip v2-chip-green" style="font-size:9px;">VERIFIED HISTORICAL 2025</span></div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;">Tap a dot to see week explanation &middot; 1999-2025 historical data</div>
           </div>
 
           <!-- Dot explanation card -->
@@ -2370,7 +2370,7 @@ function applyTheme(key){
   const k=localStorage.getItem('hqTheme'); if(k&&THEMES[k]) applyTheme(k);
 })();
 
-const ALL_TABS=['home','news','calendar','chat','predictor','settings','draft','commissioner'];
+const ALL_TABS=['home','news','calendar','chat','predictor','settings','draft','myteam','compare','commissioner'];
 
 
 // ═══ PREDICTOR V1.3.1 ═══
@@ -4703,7 +4703,7 @@ function v2ShowWhy(player, reason, label){
   if(t) t.textContent = 'WHY? — ' + player;
   if(b) b.innerHTML = `<div style="margin-bottom:8px;"><span class="v2-label v2-lbl-start">${label}</span></div>`
     + `<div style="font-size:13px;line-height:1.65;">${reason}</div>`
-    + `<div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">This recommendation is formula-based using Model V1.3.1 team context + scoring format (Full PPR). Not AI-generated.</div>`;
+    + `<div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Model V1.3.1 &middot; Full PPR</div>`;
   const ov=document.getElementById('v2TeamWhyModal');
   if(ov) ov.classList.add('on');
 }
@@ -4720,32 +4720,9 @@ document.addEventListener('click', function(e){
   }
 });
 
-// Add My Team and Compare to switchTab
+// V2: extend original switchTab to handle V2 tabs
 const _v2OrigSwitch = switchTab;
 function switchTab(tab){
-  // Handle new V2 tabs that aren't in V1's ALL_TABS set
-  if(tab==='myteam'||tab==='compare'){
-    ALL_TABS.forEach(t=>{
-      const p=document.getElementById('panel-'+t);
-      const b=document.getElementById('bb-'+t);
-      if(p) p.classList.remove('active');
-      if(b) b.classList.remove('active');
-    });
-    // Also hide myteam/compare panels before switching
-    ['panel-myteam','panel-compare'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.classList.remove('active');
-    });
-    const target=document.getElementById('panel-'+tab);
-    if(target){ target.classList.add('active'); }
-    document.getElementById('screen').scrollTop=0;
-    return;
-  }
-  // Hide V2 extras when switching back to V1 tabs
-  ['panel-myteam','panel-compare'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.classList.remove('active');
-  });
   _v2OrigSwitch(tab);
   if(tab==='draft') v2RenderDraftBoard();
 }
@@ -4758,27 +4735,12 @@ function v2AddHomeLinks(){
   wrap.id = 'v2HomeLinks';
   wrap.style.cssText = 'width:100%;margin-bottom:14px;';
   wrap.innerHTML = `
-    <div class="sec-lbl">V2 FEATURES</div>
+    <div class="sec-lbl">2026 SEASON</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('draft')">
-        Draft Room
-        <span class="v2-badge" style="margin-left:4px;">V2</span>
-      </button>
-      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('myteam')">
-        My Team
-        <span class="v2-badge" style="margin-left:4px;">V2</span>
-      </button>
-      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('compare')">
-        Compare Lab
-        <span class="v2-badge" style="margin-left:4px;">V2</span>
-      </button>
-      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('myteam');v2TeamTab('trades',null)">
-        Trade Center
-        <span class="v2-badge" style="margin-left:4px;">V2</span>
-      </button>
-    </div>
-    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:center;margin-top:6px;">
-      FANTASY HQ V2 &middot; DEV BUILD 2026.07.31 &middot; V1 FEATURES ABOVE UNTOUCHED
+      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('draft')">Draft Room</button>
+      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('myteam')">My Team</button>
+      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('compare')">Compare Lab</button>
+      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('myteam');v2TeamTab('trades',null)">Trade Center</button>
     </div>`;
   // Insert right after the treasury block
   const treasury = document.getElementById('currentTreasury');
