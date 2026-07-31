@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Fantasy League HQ</title>
+<title>Fantasy HQ V2</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -472,7 +472,210 @@
   /* ── EARNED COLUMN ── */
   .earned { font-family:'DM Mono',monospace; font-size:11px; font-weight:700; color:var(--green); }
 
+  /* ================================================================
+     FANTASY HQ V2 — NEW STYLES
+     All V2 additions stay here. V1 rules above are untouched.
+     ================================================================ */
 
+  /* V2 badge in header */
+  .v2-badge { display:inline-block; background:var(--green); color:#fff; font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:1px; padding:1px 6px; border-radius:2px; margin-left:6px; vertical-align:middle; }
+
+  /* V2 data label chips */
+  .v2-chip { display:inline-block; font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:1px; padding:1px 7px; border:1px solid; border-radius:0; }
+  .v2-chip-green  { color:var(--green);  border-color:rgba(10,168,96,0.4);  background:rgba(10,168,96,0.06); }
+  .v2-chip-gold   { color:var(--gold);   border-color:rgba(184,134,11,0.4); background:rgba(184,134,11,0.06); }
+  .v2-chip-red    { color:var(--red);    border-color:rgba(224,49,49,0.4);  background:rgba(224,49,49,0.06); }
+  .v2-chip-orange { color:var(--orange); border-color:rgba(232,114,12,0.4); background:rgba(232,114,12,0.06); }
+  .v2-chip-dim    { color:var(--muted);  border-color:var(--border);        background:transparent; }
+  .v2-chip-blue   { color:var(--blue);   border-color:rgba(26,95,208,0.4);  background:rgba(26,95,208,0.06); }
+
+  /* V2 panel layout */
+  .v2-panel-wrap  { display:flex; flex-direction:column; height:100%; overflow:hidden; }
+  .v2-panel-head  { background:var(--dark); border-bottom:1px solid var(--border); padding:12px 14px 10px; flex-shrink:0; }
+  .v2-panel-title { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:3px; }
+  .v2-panel-sub   { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; margin-top:2px; }
+  .v2-panel-scroll{ flex:1; overflow-y:auto; padding:12px 14px 20px; scrollbar-width:none; }
+  .v2-panel-scroll::-webkit-scrollbar { display:none; }
+
+  /* V2 pill tabs (same style as .news-pill) */
+  .v2-pills { display:flex; gap:6px; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
+  .v2-pills::-webkit-scrollbar { display:none; }
+
+  /* V2 section label (same style as .sec-lbl) */
+  .v2-sec { font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:2px; color:var(--muted); margin:14px 0 8px; display:flex; align-items:center; gap:7px; }
+  .v2-sec::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* V2 card */
+  .v2-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:12px 14px; margin-bottom:10px; }
+  .v2-card-title { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1.5px; color:var(--muted); margin-bottom:8px; }
+
+  /* V2 alert row */
+  .v2-alert { display:flex; align-items:center; gap:10px; padding:11px 14px; border-top:1px solid var(--border); }
+  .v2-alert:last-child { border-bottom:1px solid var(--border); }
+  .v2-alert-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .v2-alert-dot.green  { background:var(--green); box-shadow:0 0 5px var(--green); }
+  .v2-alert-dot.red    { background:var(--red);   box-shadow:0 0 5px var(--red); }
+  .v2-alert-dot.orange { background:var(--orange);}
+  .v2-alert-dot.gold   { background:var(--gold);  }
+  .v2-alert-body { flex:1; }
+  .v2-alert-name { font-size:13px; font-weight:600; }
+  .v2-alert-sub  { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:2px; }
+
+  /* V2 player row */
+  .v2-player { display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); }
+  .v2-player:last-child { border-bottom:none; }
+  .v2-player-av { width:34px; height:34px; border-radius:50%; background:var(--dark3); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:12px; color:var(--muted); flex-shrink:0; overflow:hidden; }
+  .v2-player-av img { width:100%; height:100%; object-fit:cover; object-position:top; }
+  .v2-player-info { flex:1; min-width:0; }
+  .v2-player-name { font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .v2-player-meta { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:1px; }
+  .pos-pill { font-family:'DM Mono',monospace; font-size:10px; font-weight:700; padding:1px 5px; border-radius:2px; flex-shrink:0; }
+  .pos-QB  { background:rgba(26,95,208,0.12);  color:var(--blue); }
+  .pos-RB  { background:rgba(10,168,96,0.1);   color:var(--green); }
+  .pos-WR  { background:rgba(184,134,11,0.1);  color:var(--gold); }
+  .pos-TE  { background:rgba(232,114,12,0.12); color:var(--orange); }
+  .pos-K   { background:rgba(138,148,158,0.15);color:var(--silver); }
+  .pos-DST { background:rgba(224,49,49,0.1);   color:var(--red); }
+  .pos-FLEX{ background:var(--dark3);           color:var(--muted); }
+
+  /* V2 action label */
+  .v2-label { font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.5px; padding:2px 7px; border-radius:2px; white-space:nowrap; }
+  .v2-lbl-start  { background:rgba(10,168,96,0.1);   color:var(--green);  border:1px solid rgba(10,168,96,0.3); }
+  .v2-lbl-bench  { background:var(--dark3);           color:var(--muted);  border:1px solid var(--border); }
+  .v2-lbl-risk   { background:rgba(224,49,49,0.08);   color:var(--red);    border:1px solid rgba(224,49,49,0.3); }
+  .v2-lbl-watch  { background:rgba(184,134,11,0.08);  color:var(--gold);   border:1px solid rgba(184,134,11,0.3); }
+  .v2-lbl-add    { background:rgba(26,95,208,0.08);   color:var(--blue);   border:1px solid rgba(26,95,208,0.3); }
+  .v2-lbl-ir     { background:rgba(232,114,12,0.08);  color:var(--orange); border:1px solid rgba(232,114,12,0.3); }
+  .v2-lbl-new    { background:rgba(10,168,96,0.1);    color:var(--green);  border:1px solid var(--green); }
+  .v2-lbl-data   { background:transparent; color:var(--muted); border:1px dashed var(--border); font-style:italic; }
+  .v2-lbl-prov   { background:rgba(232,114,12,0.08);  color:var(--orange); border:1px solid rgba(232,114,12,0.3); }
+  .v2-lbl-verif  { background:rgba(10,168,96,0.08);   color:var(--green);  border:1px solid rgba(10,168,96,0.3); }
+  .v2-lbl-spike  { background:rgba(10,168,96,0.1);    color:var(--green);  border:1px solid rgba(10,168,96,0.3); }
+  .v2-lbl-drop   { background:rgba(224,49,49,0.08);   color:var(--red);    border:1px solid rgba(224,49,49,0.3); }
+  .v2-lbl-synced { background:rgba(10,168,96,0.08);   color:var(--green);  border:1px solid rgba(10,168,96,0.3); }
+  .v2-lbl-conf   { background:rgba(224,49,49,0.06);   color:var(--red);    border:1px solid rgba(224,49,49,0.25); }
+
+  /* WHY button */
+  .v2-why { font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.5px; padding:3px 8px; background:none; border:1px solid var(--border); color:var(--muted); cursor:pointer; transition:all 0.15s; border-radius:2px; }
+  .v2-why:hover { border-color:var(--green); color:var(--green); }
+
+  /* Progress bar */
+  .v2-bar-wrap { height:5px; background:var(--dark3); border-radius:2px; overflow:hidden; }
+  .v2-bar-fill { height:100%; border-radius:2px; transition:width 0.4s ease; }
+  .v2-bar-green  { background:var(--green); }
+  .v2-bar-gold   { background:var(--gold); }
+  .v2-bar-red    { background:var(--red); }
+  .v2-bar-orange { background:var(--orange); }
+
+  /* Risk meter pips */
+  .v2-risk { display:flex; gap:3px; align-items:center; }
+  .v2-pip  { width:18px; height:5px; border-radius:1px; background:var(--dark3); }
+  .v2-pip.green  { background:var(--green); }
+  .v2-pip.gold   { background:var(--gold); }
+  .v2-pip.orange { background:var(--orange); }
+  .v2-pip.red    { background:var(--red); }
+
+  /* V2 table */
+  .v2-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .v2-table th { background:var(--dark3); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--muted); padding:6px 8px; text-align:left; border-bottom:1px solid var(--border); }
+  .v2-table td { padding:9px 8px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .v2-table tr:last-child td { border-bottom:none; }
+  .v2-table tr:hover td { background:var(--dark2); }
+
+  /* V2 input / select */
+  .v2-inp { background:var(--dark3); border:1px solid var(--border); border-radius:5px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:12px; padding:7px 10px; width:100%; outline:none; }
+  .v2-inp:focus { border-color:var(--green); }
+  .v2-sel { background:var(--dark3); border:1px solid var(--border); border-radius:5px; color:var(--text); font-family:'DM Mono',monospace; font-size:11px; padding:6px 8px; cursor:pointer; }
+  .v2-sel:focus { outline:none; border-color:var(--green); }
+
+  /* V2 button */
+  .v2-btn { font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600; padding:7px 14px; border-radius:5px; border:1px solid var(--border); background:var(--dark3); color:var(--text); cursor:pointer; transition:all 0.15s; }
+  .v2-btn:hover { border-color:var(--green); color:var(--green); }
+  .v2-btn-p { background:var(--green); color:#fff; border-color:var(--green); }
+  .v2-btn-p:hover { background:var(--green-dim); color:#fff; }
+  .v2-btn-o { background:var(--orange); color:#fff; border-color:var(--orange); }
+  .v2-btn-sm { padding:4px 10px; font-size:11px; }
+  .v2-btn-r { background:rgba(224,49,49,0.08); color:var(--red); border:1px solid rgba(224,49,49,0.3); }
+
+  /* Ledger sync dot */
+  .v2-sync-row { display:flex; align-items:center; gap:8px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); background:var(--dark3); border:1px solid var(--border); border-radius:5px; padding:6px 10px; }
+  .v2-sync-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .v2-sync-dot.on  { background:var(--green); box-shadow:0 0 5px var(--green); animation:pulse 2s infinite; }
+  .v2-sync-dot.off { background:var(--gold); }
+  .v2-sync-dot.err { background:var(--red); }
+
+  /* Draft timer */
+  .v2-timer { font-family:'Bebas Neue',sans-serif; font-size:48px; letter-spacing:3px; color:var(--orange); text-align:center; line-height:1; }
+  .v2-timer.urgent { color:var(--red); }
+
+  /* Compare lab SVG chart container */
+  .v2-chart-wrap { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:12px; position:relative; overflow:hidden; }
+  .v2-chart-wrap svg { display:block; width:100%; }
+
+  /* Trade grade */
+  .v2-grade { font-family:'Bebas Neue',sans-serif; font-size:42px; letter-spacing:2px; line-height:1; }
+  .v2-grade-A { color:var(--green); }
+  .v2-grade-B { color:var(--blue); }
+  .v2-grade-C { color:var(--gold); }
+  .v2-grade-D { color:var(--red); }
+
+  /* Power rankings row */
+  .v2-pr-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .v2-pr-row:last-child { border-bottom:none; }
+  .v2-pr-num { font-family:'DM Mono',monospace; font-size:18px; font-weight:700; min-width:26px; text-align:center; }
+  .v2-pr-delta { font-family:'DM Mono',monospace; font-size:11px; min-width:20px; }
+  .v2-pr-delta.up   { color:var(--green); }
+  .v2-pr-delta.dn   { color:var(--red); }
+  .v2-pr-delta.flat { color:var(--muted); }
+
+  /* V2 modal */
+  .v2-modal-overlay { display:none; position:absolute; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:150; align-items:center; justify-content:center; padding:20px; border-radius:38px; }
+  .v2-modal-overlay.on { display:flex; }
+  .v2-modal { background:var(--dark2); border:1px solid var(--border); border-top:2px solid var(--green); border-radius:12px; padding:18px; width:100%; max-height:80vh; overflow-y:auto; animation:su 0.2s ease; }
+  .v2-modal h3 { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; margin-bottom:4px; }
+  .v2-modal-close { float:right; background:none; border:none; font-size:18px; color:var(--muted); cursor:pointer; margin-top:-2px; }
+
+  /* Matchup card */
+  .v2-matchup { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px; }
+  .v2-mx-teams { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px; }
+  .v2-mx-team { text-align:center; }
+  .v2-mx-name { font-size:13px; font-weight:700; }
+  .v2-mx-pts  { font-family:'Bebas Neue',sans-serif; font-size:36px; letter-spacing:1px; line-height:1; }
+  .v2-mx-pts.win { color:var(--green); }
+  .v2-mx-pts.dim { color:var(--muted); }
+  .v2-mx-vs   { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); text-align:center; }
+  .v2-mx-divider { width:1px; height:44px; background:var(--border); margin:0 auto; }
+
+  /* V2 stat grid */
+  .v2-stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .v2-stat-box { background:var(--dark3); border:1px solid var(--border); border-radius:6px; padding:9px; text-align:center; }
+  .v2-stat-lbl { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:3px; }
+  .v2-stat-val { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1px; line-height:1; }
+
+  /* V2 divider */
+  .v2-div { height:1px; background:var(--border); margin:12px 0; }
+
+  /* V2 draft pick row */
+  .v2-draft-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); }
+  .v2-draft-row:last-child { border-bottom:none; }
+  .v2-draft-num { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); min-width:28px; }
+  .v2-draft-row.clock { background:rgba(232,114,12,0.06); margin:0 -14px; padding:8px 14px; border-left:3px solid var(--orange); }
+
+  /* Roster slot label */
+  .v2-slot { font-family:'DM Mono',monospace; font-size:10px; font-weight:700; color:var(--muted); min-width:30px; letter-spacing:0.5px; }
+
+  /* V2 form label */
+  .v2-flbl { display:block; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; color:var(--muted); margin-bottom:4px; }
+
+  /* Audit log row */
+  .v2-audit-row { display:flex; align-items:flex-start; gap:8px; padding:8px 0; border-bottom:1px solid var(--border); font-size:12px; }
+  .v2-audit-row:last-child { border-bottom:none; }
+  .v2-audit-ts { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); min-width:110px; }
+
+  /* Scores/standings row coloring */
+  .v2-pos1 { background:rgba(184,134,11,0.04); }
+  .v2-pos2 { background:rgba(138,148,158,0.04); }
+  .v2-pos3 { background:rgba(176,113,58,0.04); }
 
 </style>
 </head>
@@ -493,7 +696,7 @@
         <!-- Sticky header -->
         <div class="home-header-fixed">
           <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
-            <div class="home-title">FANTASY <span>HQ</span></div>
+            <div class="home-title">FANTASY <span>HQ</span> <span class="v2-badge" style="font-size:11px;vertical-align:middle;">V2</span></div>
             <div class="season-pills" style="margin-top:4px;">
               <span class="season-box" id="seasonBox" onclick="toggleSeasonSel()">26-27</span>
               <select id="seasonSel" style="display:none;background:var(--dark2);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:3px 6px;border-radius:0" onchange="pickSeason(this.value)">
@@ -1378,6 +1581,613 @@
       </div>
     </div>
 
+    <!-- ===================================================================
+         FANTASY HQ V2 — NEW TAB PANELS
+         Injected into V1 shell. V1 panels above are untouched.
+         =================================================================== -->
+
+    <!-- ===== V2: DRAFT TAB ===== -->
+    <div class="tab-panel" id="panel-draft" style="position:relative">
+      <div class="v2-panel-wrap">
+
+        <div class="v2-panel-head">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="v2-panel-title">DRAFT <span style="color:var(--green)">ROOM</span></div>
+            <span class="v2-badge">V2</span>
+          </div>
+          <div class="v2-panel-sub">SNAKE DRAFT &middot; AUG 24 2026 &middot; FULL PPR &middot; 90 SEC TIMER</div>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+            <button class="news-pill active" onclick="v2DraftTab('board',this)">Draft Board</button>
+            <button class="news-pill" onclick="v2DraftTab('queue',this)">My Queue</button>
+            <button class="news-pill" onclick="v2DraftTab('roster',this)">My Roster</button>
+            <button class="news-pill" onclick="v2DraftTab('report',this)">Report Card</button>
+            <button class="news-pill" onclick="v2DraftTab('auto',this)">Auto-Draft</button>
+          </div>
+        </div>
+
+        <div class="v2-panel-scroll">
+
+          <!-- DRAFT BOARD SUB -->
+          <div id="v2d-board">
+            <!-- Timer + on-the-clock -->
+            <div class="v2-card" style="text-align:center;border-top:2px solid var(--orange);">
+              <div class="v2-card-title">ON THE CLOCK</div>
+              <div class="v2-timer">1:24</div>
+              <div style="font-size:14px;font-weight:700;margin-top:4px;">Pigskin Prophets</div>
+              <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px;">Pick 7 of 140 &middot; Round 1</div>
+              <div class="v2-bar-wrap" style="margin-top:10px;"><div class="v2-bar-fill v2-bar-orange" style="width:5%"></div></div>
+            </div>
+
+            <!-- Search + filter -->
+            <div style="display:flex;gap:6px;margin-bottom:10px;">
+              <input class="v2-inp" id="draftSearch" placeholder="Search player..." style="flex:1;" oninput="v2FilterDraftBoard()">
+              <select class="v2-sel" id="draftPosFilter" onchange="v2FilterDraftBoard()">
+                <option value="">All</option>
+                <option>QB</option><option>RB</option><option>WR</option><option>TE</option><option>K</option><option>D/ST</option>
+              </select>
+            </div>
+
+            <!-- Column headers -->
+            <div style="display:grid;grid-template-columns:24px 36px 1fr 44px 44px 54px 54px;gap:6px;padding:5px 0;border-bottom:2px solid var(--border);">
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">RK</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">POS</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">PLAYER</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right;">ADP</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right;">PPR</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:right;">MODEL</div>
+              <div></div>
+            </div>
+
+            <!-- Players -->
+            <div id="v2DraftBoardRows">
+              <!-- Populated by v2RenderDraftBoard() -->
+            </div>
+
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:10px;text-align:center;">
+              2026 ADP &middot; <span class="v2-chip v2-chip-orange">LIVE PROVISIONAL</span> &middot; Model V1.3.1 team context applied
+            </div>
+          </div>
+
+          <!-- QUEUE SUB -->
+          <div id="v2d-queue" style="display:none">
+            <div class="v2-sec">MY DRAFT QUEUE</div>
+            <div id="v2QueueList">
+              <div class="v2-draft-row">
+                <div class="v2-draft-num">1</div>
+                <span class="pos-pill pos-WR">WR</span>
+                <div style="flex:1">
+                  <div class="v2-player-name">D. Smith</div>
+                  <div class="v2-player-meta">PHI &middot; Model: 86 &middot; ADP 2.3</div>
+                </div>
+                <span class="v2-label v2-lbl-start">QUEUE</span>
+                <button class="v2-why" onclick="v2RemoveQueue(this)">Remove</button>
+              </div>
+              <div class="v2-draft-row">
+                <div class="v2-draft-num">2</div>
+                <span class="pos-pill pos-TE">TE</span>
+                <div style="flex:1">
+                  <div class="v2-player-name">T. Kelce</div>
+                  <div class="v2-player-meta">KC &middot; Model: 83 &middot; ADP 3.4</div>
+                </div>
+                <span class="v2-label v2-lbl-start">QUEUE</span>
+                <button class="v2-why" onclick="v2RemoveQueue(this)">Remove</button>
+              </div>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:12px;">When your pick comes, auto-draft picks your first available queue player. If queue is empty, auto-draft uses Best Model Value + Roster Need.</div>
+          </div>
+
+          <!-- MY ROSTER SUB -->
+          <div id="v2d-roster" style="display:none">
+            <div class="v2-sec">MY ROSTER <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">0 PICKS MADE &middot; 14 SLOTS REMAINING</span></div>
+            <div id="v2RosterSlots">
+              <div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);text-align:center;padding:24px 0;">No picks yet &mdash; draft starts Aug 24.</div>
+            </div>
+            <div style="margin-top:10px;padding:10px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);line-height:1.7;">
+              ROSTER SLOTS: QB 1 &middot; RB 2 &middot; WR 2 &middot; TE 1 &middot; FLEX 1 &middot; K 1 &middot; D/ST 1 &middot; BENCH 5 &middot; IR 2
+            </div>
+          </div>
+
+          <!-- REPORT CARD SUB -->
+          <div id="v2d-report" style="display:none">
+            <div class="v2-sec">DRAFT INTELLIGENCE REPORT <span class="v2-chip v2-chip-dim" style="margin-left:8px;">POST-DRAFT</span></div>
+            <div class="v2-card" style="border-top:2px solid var(--border);">
+              <div class="v2-card-title">DRAFT REPORT CARDS</div>
+              <div style="font-size:13px;line-height:1.6;color:var(--muted);">
+                After the Aug 24 draft, each manager receives a Draft Intelligence Report with:<br><br>
+                Overall draft grade &middot; League rank &middot; Roster identity &middot; Strengths &middot; Weaknesses &middot; Best pick &middot; Biggest reach &middot; Sleeper/value pick &middot; Risk meter &middot; Bye week analysis &middot; Position balance &middot; Bench strength &middot; Championship outlook
+              </div>
+              <div style="margin-top:10px;"><span class="v2-chip v2-chip-dim">UI READY / WAITING FOR DRAFT DATA</span></div>
+            </div>
+
+            <div class="v2-sec">WHAT FEEDS POWER RANKINGS</div>
+            <div class="v2-card">
+              <div style="font-family:'DM Mono',monospace;font-size:11px;line-height:1.8;color:var(--muted);">
+                ROSTER QUALITY &middot; STARTER STRENGTH &middot; BENCH DEPTH &middot; POSITION BALANCE &middot; INJURY RISK &middot; BYE WEEK HEALTH &middot; DRAFT GRADE &middot; MODEL CONFIDENCE
+              </div>
+            </div>
+          </div>
+
+          <!-- AUTO-DRAFT SUB -->
+          <div id="v2d-auto" style="display:none">
+            <div class="v2-sec">AUTO-DRAFT SETTINGS</div>
+            <div class="v2-card">
+              <div class="v2-card-title">STRATEGY</div>
+              <label class="v2-flbl" style="margin-top:4px;">Auto-Draft Strategy</label>
+              <select class="v2-sel" style="width:100%;margin-bottom:12px;">
+                <option selected>Best Model Value + Roster Need (Default / Beginner)</option>
+                <option>Stars and Scrubs</option>
+                <option>Zero RB</option>
+                <option>Robust RB</option>
+                <option>Custom</option>
+              </select>
+              <label class="v2-flbl">Timer Behavior</label>
+              <select class="v2-sel" style="width:100%;margin-bottom:12px;">
+                <option>Queue first, then auto-draft</option>
+                <option selected>Queue first, then Best Model Value + Roster Need</option>
+                <option>Always manual (no auto-draft)</option>
+              </select>
+              <div class="v2-div"></div>
+              <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);line-height:1.8;">
+                AUTO-DRAFT RULES:<br>
+                &bull; Never drafts injured players<br>
+                &bull; Never creates bye week stack on same week<br>
+                &bull; Never bids above model max value (auction)<br>
+                &bull; Always fills required roster positions before bench<br>
+                &bull; Every auto-pick is logged in the audit trail
+              </div>
+            </div>
+
+            <div class="v2-sec">THURSDAY LINEUP PROTECTION</div>
+            <div class="v2-card">
+              <label class="v2-flbl">Mode</label>
+              <select class="v2-sel" style="width:100%;margin-bottom:8px;" id="thuProtectMode">
+                <option>Off</option>
+                <option>Reminder Only</option>
+                <option selected>Recommend Only</option>
+                <option>Auto-Apply (Commissioner must enable)</option>
+              </select>
+              <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">Every Thursday morning a recommended lineup is generated. Default: Recommend Only &mdash; you apply it yourself.</div>
+            </div>
+          </div>
+
+        </div><!-- end v2-panel-scroll -->
+      </div><!-- end v2-panel-wrap -->
+
+      <!-- WHY modal (draft) -->
+      <div class="v2-modal-overlay" id="v2DraftWhyModal">
+        <div class="v2-modal">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <h3 id="v2DraftWhyTitle">WHY THIS PLAYER?</h3>
+            <button class="v2-modal-close" onclick="v2CloseModal('v2DraftWhyModal')">&#x2715;</button>
+          </div>
+          <div id="v2DraftWhyBody" style="font-size:13px;line-height:1.65;"></div>
+          <div style="margin-top:12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">MODEL V1.3.1 &middot; FORMULA-BASED &middot; NOT AI</div>
+        </div>
+      </div>
+    </div><!-- end panel-draft -->
+
+
+    <!-- ===== V2: MY TEAM (in Model tab as sub-view, or standalone if you want to add a tab) ===== -->
+    <!-- V2 My Team is surfaced inside the Settings > League HQ sub-panel system as "Team" -->
+    <!-- Full My Team panel added here as panel-myteam for direct link from command center -->
+    <div class="tab-panel" id="panel-myteam">
+      <div class="v2-panel-wrap">
+        <div class="v2-panel-head">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="v2-panel-title">MY <span style="color:var(--green)">TEAM</span></div>
+            <span class="v2-badge">V2</span>
+          </div>
+          <div class="v2-panel-sub">ROSTER MANAGEMENT &middot; 2026 SEASON</div>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+            <button class="news-pill active" onclick="v2TeamTab('starters',this)">Starters</button>
+            <button class="news-pill" onclick="v2TeamTab('bench',this)">Bench</button>
+            <button class="news-pill" onclick="v2TeamTab('analysis',this)">Analysis</button>
+            <button class="news-pill" onclick="v2TeamTab('waiver',this)">Waivers</button>
+            <button class="news-pill" onclick="v2TeamTab('trades',this)">Trades</button>
+          </div>
+        </div>
+        <div class="v2-panel-scroll">
+
+          <!-- Action bar -->
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:10px;">
+            <button class="v2-btn v2-btn-p">Fix My Lineup</button>
+            <button class="v2-why">WHY?</button>
+            <span style="margin-left:auto;">
+              <div class="v2-risk">
+                <div class="v2-pip green"></div>
+                <div class="v2-pip green"></div>
+                <div class="v2-pip gold"></div>
+                <div class="v2-pip"></div>
+                <div class="v2-pip"></div>
+              </div>
+            </span>
+            <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);">MEDIUM RISK</span>
+          </div>
+
+          <!-- STARTERS SUB -->
+          <div id="v2t-starters">
+            <div class="v2-sec">STARTERS <span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:400;">PROJ: 118.4 PPR</span></div>
+
+            <div class="v2-player">
+              <div class="v2-slot">QB</div>
+              <div class="v2-player-av"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/3139477.png" onerror="this.style.display='none'"></div>
+              <div class="v2-player-info"><div class="v2-player-name">P. Mahomes</div><div class="v2-player-meta">KC &middot; Proj: 24.6 pts</div></div>
+              <span class="v2-label v2-lbl-start">START</span>
+              <button class="v2-why" onclick="v2ShowWhy('P. Mahomes','Higher projection + elite matchup vs MIN secondary','START')">WHY?</button>
+            </div>
+            <div class="v2-player">
+              <div class="v2-slot">RB</div>
+              <div class="v2-player-av"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/4569618.png" onerror="this.style.display='none'"></div>
+              <div class="v2-player-info"><div class="v2-player-name">B. Robinson</div><div class="v2-player-meta">ATL &middot; Proj: 16.2 pts</div></div>
+              <span class="v2-label v2-lbl-start">START</span>
+              <button class="v2-why" onclick="v2ShowWhy('B. Robinson','Safe floor, high snap share, zone-run workload expected','START')">WHY?</button>
+            </div>
+            <div class="v2-player">
+              <div class="v2-slot">RB</div>
+              <div class="v2-player-av"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/4362887.png" onerror="this.style.display='none'"></div>
+              <div class="v2-player-info"><div class="v2-player-name">C. Kenneth-Walker</div><div class="v2-player-meta">SEA &middot; Proj: 18.6 pts &middot; <span style="color:var(--gold)">Bye Wk 5</span></div></div>
+              <span class="v2-label v2-lbl-watch">WATCH</span>
+              <button class="v2-why" onclick="v2ShowWhy('C. Kenneth-Walker','Model value 74 — lower than ADP suggests. Bye week 5 conflicts with your other RBs. Watchlist.','WATCH')">WHY?</button>
+            </div>
+            <div class="v2-player">
+              <div class="v2-slot">WR</div>
+              <div class="v2-player-av"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/4379399.png" onerror="this.style.display='none'"></div>
+              <div class="v2-player-info"><div class="v2-player-name">D. Smith</div><div class="v2-player-meta">PHI &middot; Proj: 14.8 pts</div></div>
+              <span class="v2-label v2-lbl-start">START</span>
+              <button class="v2-why" onclick="v2ShowWhy('D. Smith','Top target in a top-5 offense. Hurts-Smith connection. Favorable matchup.','START')">WHY?</button>
+            </div>
+            <div class="v2-player">
+              <div class="v2-slot">WR</div>
+              <div class="v2-player-av"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/4361307.png" onerror="this.style.display='none'"></div>
+              <div class="v2-player-info"><div class="v2-player-name">T. McBride</div><div class="v2-player-meta">ARI &middot; Proj: 12.1 pts</div></div>
+              <span class="v2-label v2-lbl-start">START</span>
+              <button class="v2-why" onclick="v2ShowWhy('T. McBride','Emerging TE target monster. Starting over your WR3 based on PPR floor and usage trend.','START')">WHY?</button>
+            </div>
+            <div class="v2-player">
+              <div class="v2-slot">TE</div>
+              <div class="v2-player-av"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/3054211.png" onerror="this.style.display='none'"></div>
+              <div class="v2-player-info"><div class="v2-player-name">T. Kelce</div><div class="v2-player-meta">KC &middot; Proj: 12.8 pts</div></div>
+              <span class="v2-label v2-lbl-start">START</span>
+              <button class="v2-why" onclick="v2ShowWhy('T. Kelce','Elite TE. Mahomes connection. High red zone role.','START')">WHY?</button>
+            </div>
+            <div class="v2-player">
+              <div class="v2-slot">FLX</div>
+              <div class="v2-player-av"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/4361741.png" onerror="this.style.display='none'"></div>
+              <div class="v2-player-info"><div class="v2-player-name">J. Smith-Njigba</div><div class="v2-player-meta">SEA &middot; Proj: 13.2 pts</div></div>
+              <span class="v2-label v2-lbl-start">START</span>
+              <button class="v2-why" onclick="v2ShowWhy('J. Smith-Njigba','Highest target share on SEA. Volume makes him your best FLEX option this week.','START')">WHY?</button>
+            </div>
+            <div class="v2-player">
+              <div class="v2-slot">K</div>
+              <div class="v2-player-av"></div>
+              <div class="v2-player-info"><div class="v2-player-name">B. Aubrey</div><div class="v2-player-meta">DAL &middot; Proj: 8.2 pts</div></div>
+              <span class="v2-label v2-lbl-start">START</span>
+              <button class="v2-why" onclick="v2ShowWhy('B. Aubrey','Only kicker on your roster. DAL projects for good scoring volume.','START')">WHY?</button>
+            </div>
+            <div class="v2-player">
+              <div class="v2-slot">DST</div>
+              <div class="v2-player-av"></div>
+              <div class="v2-player-info"><div class="v2-player-name">SF Defense</div><div class="v2-player-meta">SFO &middot; Proj: 9.0 pts</div></div>
+              <span class="v2-label v2-lbl-start">START</span>
+              <button class="v2-why" onclick="v2ShowWhy('SF Defense','Top-3 fantasy defense. Faces a low-scoring offense this week.','START')">WHY?</button>
+            </div>
+          </div>
+
+          <!-- BENCH SUB -->
+          <div id="v2t-bench" style="display:none">
+            <div class="v2-sec">BENCH</div>
+            <div class="v2-player">
+              <div class="v2-slot">WR</div>
+              <div class="v2-player-av"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/4426515.png" onerror="this.style.display='none'"></div>
+              <div class="v2-player-info"><div class="v2-player-name">P. Nacua</div><div class="v2-player-meta">LAR &middot; Proj: 10.2 pts</div></div>
+              <span class="v2-label v2-lbl-bench">BENCH</span>
+            </div>
+            <div class="v2-player">
+              <div class="v2-slot">RB</div>
+              <div class="v2-player-av"></div>
+              <div class="v2-player-info"><div class="v2-player-name">J. Jacobs</div><div class="v2-player-meta">GB &middot; <span style="color:var(--red)">Risk — Limited</span></div></div>
+              <span class="v2-label v2-lbl-risk">RISK</span>
+              <button class="v2-why" onclick="v2ShowWhy('J. Jacobs','Questionable this week. Do not start until he is confirmed active.','RISK')">WHY?</button>
+            </div>
+            <div class="v2-player">
+              <div class="v2-slot">WR</div>
+              <div class="v2-player-av"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/3054234.png" onerror="this.style.display='none'"></div>
+              <div class="v2-player-info"><div class="v2-player-name">J. Jefferson</div><div class="v2-player-meta">MIN &middot; <span style="color:var(--orange)">IR ELIGIBLE</span></div></div>
+              <span class="v2-label v2-lbl-ir">IR ELIGIBLE</span>
+              <button class="v2-btn v2-btn-sm" style="background:rgba(232,114,12,0.1);color:var(--orange);border:1px solid rgba(232,114,12,0.3)">Move to IR</button>
+            </div>
+          </div>
+
+          <!-- ANALYSIS SUB -->
+          <div id="v2t-analysis" style="display:none">
+            <div class="v2-sec">ROSTER ANALYSIS</div>
+            <div class="v2-card">
+              <div class="v2-card-title">POSITION STRENGTH</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+                  <span style="min-width:60px;font-family:'DM Mono',monospace;font-size:11px;">QB</span>
+                  <div class="v2-bar-wrap" style="flex:1;"><div class="v2-bar-fill v2-bar-green" style="width:88%"></div></div>
+                  <span style="font-family:'DM Mono',monospace;font-size:11px;min-width:24px;text-align:right;">88</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+                  <span style="min-width:60px;font-family:'DM Mono',monospace;font-size:11px;">RB DEPTH</span>
+                  <div class="v2-bar-wrap" style="flex:1;"><div class="v2-bar-fill v2-bar-green" style="width:72%"></div></div>
+                  <span style="font-family:'DM Mono',monospace;font-size:11px;min-width:24px;text-align:right;">72</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+                  <span style="min-width:60px;font-family:'DM Mono',monospace;font-size:11px;">WR DEPTH</span>
+                  <div class="v2-bar-wrap" style="flex:1;"><div class="v2-bar-fill v2-bar-gold" style="width:56%"></div></div>
+                  <span style="font-family:'DM Mono',monospace;font-size:11px;min-width:24px;text-align:right;">56</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+                  <span style="min-width:60px;font-family:'DM Mono',monospace;font-size:11px;">TE</span>
+                  <div class="v2-bar-wrap" style="flex:1;"><div class="v2-bar-fill v2-bar-green" style="width:84%"></div></div>
+                  <span style="font-family:'DM Mono',monospace;font-size:11px;min-width:24px;text-align:right;">84</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+                  <span style="min-width:60px;font-family:'DM Mono',monospace;font-size:11px;">BYE HLTH</span>
+                  <div class="v2-bar-wrap" style="flex:1;"><div class="v2-bar-fill v2-bar-red" style="width:40%"></div></div>
+                  <span style="font-family:'DM Mono',monospace;font-size:11px;min-width:24px;text-align:right;">40</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
+                  <span style="min-width:60px;font-family:'DM Mono',monospace;font-size:11px;">INJ RISK</span>
+                  <div class="v2-bar-wrap" style="flex:1;"><div class="v2-bar-fill v2-bar-gold" style="width:62%"></div></div>
+                  <span style="font-family:'DM Mono',monospace;font-size:11px;min-width:24px;text-align:right;">62</span>
+                </div>
+              </div>
+              <div class="v2-div"></div>
+              <div style="font-size:12px;color:var(--muted);">Team identity: <b style="color:var(--text);">Balanced — WR depth needed by Week 6.</b></div>
+            </div>
+          </div>
+
+          <!-- WAIVERS SUB -->
+          <div id="v2t-waiver" style="display:none">
+            <div class="v2-sec">PLAYER MARKET / WAIVERS</div>
+            <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+              <input class="v2-inp" placeholder="Search player..." style="flex:1;min-width:140px;">
+              <select class="v2-sel"><option>All</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select>
+            </div>
+            <div class="v2-player">
+              <span class="pos-pill pos-WR">WR</span>
+              <div class="v2-player-av"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/4426515.png" onerror="this.style.display='none'"></div>
+              <div class="v2-player-info"><div class="v2-player-name">P. Nacua</div><div class="v2-player-meta">LAR &middot; Free Agent &middot; Proj: 11.4</div></div>
+              <span class="v2-label v2-lbl-watch">RISING ROLE</span>
+              <button class="v2-btn v2-btn-p v2-btn-sm">Add</button>
+            </div>
+            <div class="v2-player">
+              <span class="pos-pill pos-RB">RB</span>
+              <div class="v2-player-av"></div>
+              <div class="v2-player-info"><div class="v2-player-name">Z. White</div><div class="v2-player-meta">PIT &middot; Free Agent &middot; Injury Opp</div></div>
+              <span class="v2-label v2-lbl-add">INJ OPP</span>
+              <button class="v2-btn v2-btn-p v2-btn-sm">Add</button>
+            </div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:10px;text-align:center;"><span class="v2-chip v2-chip-dim">DATA-DEPENDENT &middot; UPDATES WEEKLY AFTER WAIVERS</span></div>
+          </div>
+
+          <!-- TRADES SUB -->
+          <div id="v2t-trades" style="display:none">
+            <div class="v2-sec">TRADE CENTER</div>
+            <div class="v2-card" style="border-top:2px solid var(--red);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <div style="font-weight:700;">Incoming Trade Offer</div>
+                <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">from Pigskin Prophets &middot; 72h left</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div>
+                  <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--red);margin-bottom:5px;">YOU GIVE</div>
+                  <div class="v2-player" style="padding:6px;background:var(--dark3);border-radius:5px;border:1px solid var(--border);">
+                    <span class="pos-pill pos-WR">WR</span>
+                    <div class="v2-player-info"><div class="v2-player-name">T. McBride</div><div class="v2-player-meta">Model: 82</div></div>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--green);margin-bottom:5px;">YOU GET</div>
+                  <div class="v2-player" style="padding:6px;background:var(--dark3);border-radius:5px;border:1px solid var(--border);">
+                    <span class="pos-pill pos-RB">RB</span>
+                    <div class="v2-player-info"><div class="v2-player-name">J. Jacobs</div><div class="v2-player-meta">Model: 71</div></div>
+                  </div>
+                </div>
+              </div>
+              <!-- Trade scorecard -->
+              <div style="margin-top:10px;padding:10px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;">
+                <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;">TRADE SCORECARD &middot; <span class="v2-chip v2-chip-dim">FORMULA-BASED &middot; NOT AI</span></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                  <div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">YOUR GRADE</div><div class="v2-grade v2-grade-D">D</div><div style="font-size:11px;color:var(--muted);">Giving more model value than receiving. McBride (82) &gt; Jacobs (71).</div></div>
+                  <div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">THEIR GRADE</div><div class="v2-grade v2-grade-A">A</div><div style="font-size:11px;color:var(--muted);">Acquiring TE depth at a discount. Net model gain: +11.</div></div>
+                </div>
+                <div class="v2-div"></div>
+                <div style="font-size:12px;color:var(--muted);">Positional impact: You gain RB depth but lose your TE2. WR depth gap widens.</div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px;">
+                <button class="v2-btn v2-btn-r">Reject</button>
+                <button class="v2-btn">Counter</button>
+                <button class="v2-btn v2-btn-p">Accept</button>
+              </div>
+            </div>
+            <button class="v2-btn v2-btn-p" style="width:100%;margin-top:6px;">Propose New Trade</button>
+          </div>
+
+        </div><!-- end v2-panel-scroll -->
+      </div>
+
+      <!-- WHY modal (team) -->
+      <div class="v2-modal-overlay" id="v2TeamWhyModal">
+        <div class="v2-modal">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <h3 id="v2TeamWhyTitle">WHY?</h3>
+            <button class="v2-modal-close" onclick="v2CloseModal('v2TeamWhyModal')">&#x2715;</button>
+          </div>
+          <div id="v2TeamWhyBody" style="font-size:13px;line-height:1.65;"></div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="v2-btn v2-btn-p" onclick="v2CloseModal('v2TeamWhyModal')">Apply</button>
+            <button class="v2-btn" onclick="v2CloseModal('v2TeamWhyModal')">Keep My Lineup</button>
+          </div>
+          <div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">MODEL V1.3.1 &middot; SCORING: FULL PPR &middot; NOT AI</div>
+        </div>
+      </div>
+    </div><!-- end panel-myteam -->
+
+
+    <!-- ===== V2: COMPARE LAB (inside predictor as sub-tab, also added as standalone panel) ===== -->
+    <div class="tab-panel" id="panel-compare">
+      <div class="v2-panel-wrap">
+        <div class="v2-panel-head">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="v2-panel-title">COMPARE <span style="color:var(--green)">LAB</span></div>
+            <span class="v2-badge">V2</span>
+          </div>
+          <div class="v2-panel-sub">WEEKLY FANTASY POINTS &middot; HISTORICAL COMPARISON &middot; 1999-2025</div>
+        </div>
+
+        <div class="v2-panel-scroll">
+          <!-- Filters -->
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+            <select class="v2-sel" id="cmpScoring" onchange="v2RenderCompare()">
+              <option value="ppr" selected>Full PPR</option>
+              <option value="half">Half PPR</option>
+              <option value="standard">Standard</option>
+            </select>
+            <select class="v2-sel" id="cmpPos" onchange="v2RenderCompare()">
+              <option value="" selected>All Pos</option>
+              <option>QB</option><option>RB</option><option>WR</option><option>TE</option>
+            </select>
+            <select class="v2-sel" id="cmpSeason">
+              <option>2025</option><option>2024</option><option>2023</option><option>All</option>
+            </select>
+            <select class="v2-sel" id="cmpSort">
+              <option>Avg Points</option><option>Boom Rate</option><option>Consistency</option><option>Model Value</option>
+            </select>
+            <input class="v2-inp" id="cmpSearch" placeholder="Search..." style="flex:1;min-width:120px;" oninput="v2RenderCompare()">
+          </div>
+
+          <!-- Mode toggle -->
+          <div style="display:flex;gap:6px;margin-bottom:12px;">
+            <button class="v2-btn" style="border-color:var(--green);color:var(--green);font-size:11px;" onclick="v2CmpMode('compare')">Selected Compare (3 max)</button>
+            <button class="v2-btn" style="font-size:11px;" onclick="v2CmpMode('pool')">Filtered Pool View</button>
+          </div>
+
+          <!-- Selected players -->
+          <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0;"></div>
+            <span style="font-size:13px;font-weight:600;">C. Kenneth-Walker</span>
+            <span class="pos-pill pos-RB">RB</span>
+            <button class="v2-why" style="margin-left:auto;">Remove</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0;"></div>
+            <span style="font-size:13px;font-weight:600;">B. Robinson</span>
+            <span class="pos-pill pos-RB">RB</span>
+            <button class="v2-why" style="margin-left:auto;">Remove</button>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:12px;">+ Add 1 more RB (same position only)</div>
+
+          <!-- Chart -->
+          <div class="v2-chart-wrap">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;">RB WEEKLY PPR POINTS &mdash; 2025</div>
+              <div style="margin-left:auto;display:flex;gap:10px;">
+                <div style="display:flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:10px;"><div style="width:12px;height:3px;background:var(--green);border-radius:1px;"></div>CKW</div>
+                <div style="display:flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:10px;"><div style="width:12px;height:3px;background:var(--blue);border-radius:1px;"></div>BRob</div>
+              </div>
+            </div>
+            <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;font-family:'DM Mono',monospace;">
+              <!-- Axes -->
+              <line x1="36" y1="12" x2="36" y2="158" stroke="#dfe4e9" stroke-width="1"/>
+              <line x1="36" y1="158" x2="312" y2="158" stroke="#dfe4e9" stroke-width="1"/>
+              <!-- Grid -->
+              <line x1="36" y1="108" x2="312" y2="108" stroke="#eaeef2" stroke-width="0.8" stroke-dasharray="3,3"/>
+              <line x1="36" y1="58" x2="312" y2="58" stroke="#eaeef2" stroke-width="0.8" stroke-dasharray="3,3"/>
+              <!-- Y labels -->
+              <text x="28" y="162" text-anchor="end" font-size="8" fill="#8a949e">0</text>
+              <text x="28" y="112" text-anchor="end" font-size="8" fill="#8a949e">10</text>
+              <text x="28" y="62" text-anchor="end" font-size="8" fill="#8a949e">20</text>
+              <text x="28" y="16" text-anchor="end" font-size="8" fill="#8a949e">30</text>
+              <!-- X week labels -->
+              <text x="57"  y="170" text-anchor="middle" font-size="7" fill="#8a949e">W1</text>
+              <text x="82"  y="170" text-anchor="middle" font-size="7" fill="#8a949e">W2</text>
+              <text x="107" y="170" text-anchor="middle" font-size="7" fill="#8a949e">W3</text>
+              <text x="132" y="170" text-anchor="middle" font-size="7" fill="#8a949e">W4</text>
+              <text x="157" y="170" text-anchor="middle" font-size="7" fill="#8a949e">W5</text>
+              <text x="182" y="170" text-anchor="middle" font-size="7" fill="#8a949e">W6</text>
+              <text x="207" y="170" text-anchor="middle" font-size="7" fill="#8a949e">W7</text>
+              <text x="232" y="170" text-anchor="middle" font-size="7" fill="#8a949e">W8</text>
+              <text x="257" y="170" text-anchor="middle" font-size="7" fill="#8a949e">W9</text>
+              <text x="282" y="170" text-anchor="middle" font-size="7" fill="#8a949e">W10</text>
+              <text x="307" y="170" text-anchor="middle" font-size="7" fill="#8a949e">W11</text>
+              <!-- CKW line (green) -->
+              <polyline points="57,118 82,93 107,73 132,108 157,48 182,128 207,83 232,68 257,98 282,73 307,48" fill="none" stroke="#0aa860" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="57"  cy="118" r="4" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="82"  cy="93"  r="4" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="107" cy="73"  r="4" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="132" cy="108" r="4" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="157" cy="48"  r="6" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="182" cy="128" r="4" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="207" cy="83"  r="4" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="232" cy="68"  r="4" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="257" cy="98"  r="4" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="282" cy="73"  r="4" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="307" cy="48"  r="4" fill="#0aa860" stroke="#fff" stroke-width="1.5"/>
+              <!-- BRob line (blue) -->
+              <polyline points="57,103 82,83 107,98 132,118 157,103 182,73 207,93 232,78 257,63 282,88 307,68" fill="none" stroke="#1a5fd0" stroke-width="2" stroke-linejoin="round"/>
+              <circle cx="57"  cy="103" r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="82"  cy="83"  r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="107" cy="98"  r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="132" cy="118" r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="157" cy="103" r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="182" cy="73"  r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="207" cy="93"  r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="232" cy="78"  r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="257" cy="63"  r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="282" cy="88"  r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="307" cy="68"  r="4" fill="#1a5fd0" stroke="#fff" stroke-width="1.5"/>
+              <!-- Spike label on CKW W5 -->
+              <rect x="138" y="34" width="30" height="11" rx="2" fill="rgba(10,168,96,0.15)"/>
+              <text x="153" y="42" text-anchor="middle" font-size="7" fill="#0aa860" font-weight="bold">SPIKE</text>
+            </svg>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px;">Tap a dot to see week explanation &middot; <span class="v2-chip v2-chip-green" style="font-size:9px;">VERIFIED HISTORICAL 2025</span></div>
+          </div>
+
+          <!-- Dot explanation card -->
+          <div class="v2-card" style="border-left:3px solid var(--green);margin-top:10px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--green);"></div>
+              <div style="font-weight:700;font-size:13px;">C. Kenneth-Walker &mdash; Week 5 vs DAL</div>
+              <span class="v2-label v2-lbl-spike">SPIKE</span>
+              <div style="margin-left:auto;font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--green);">31.4</div>
+            </div>
+            <div class="v2-div"></div>
+            <div style="font-size:12px;line-height:1.7;">
+              <b>Stat line:</b> 24 car / 138 rush yds / 2 TD / 5 rec / 42 rec yds<br>
+              <b>Opponent:</b> DAL — Rank 28 vs RB (model DB 1999–2025)<br>
+              <b>Role change:</b> Darrell Taylor inactive &middot; CKW snap share 94%<br>
+              <b>Game script:</b> SEA led by 14+ in Q3 — heavy run volume maintained
+            </div>
+            <div style="background:var(--dark3);border:1px solid var(--border);border-radius:5px;padding:9px;margin-top:8px;font-size:12px;line-height:1.6;">
+              <b>Why this week:</b> Maximum opportunity with key blocker out. Dallas run defense ranked poorly. Comfortable lead kept the ground game active through Q4. Target share also elevated.
+            </div>
+            <div style="margin-top:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">
+              Labels: <span class="v2-label v2-lbl-spike">TARGET JUMP</span>&nbsp;<span class="v2-label v2-lbl-watch">MATCHUP BOOST</span>&nbsp;&middot;&nbsp;Confidence: <span style="color:var(--green);font-weight:700;">HIGH</span>
+            </div>
+          </div>
+
+          <!-- Summary stat cards -->
+          <div class="v2-stat-grid" style="margin-top:10px;">
+            <div class="v2-stat-box">
+              <div class="v2-stat-lbl">CKW AVG PPR</div>
+              <div class="v2-stat-val" style="color:var(--green);">18.6</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Boom 42% &middot; Bust 28%</div>
+            </div>
+            <div class="v2-stat-box">
+              <div class="v2-stat-lbl">BROB AVG PPR</div>
+              <div class="v2-stat-val" style="color:var(--blue);">15.2</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">Boom 31% &middot; Bust 19%</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- end panel-compare -->
+
   </div><!-- end screen -->
 
   <!-- Wheel Expand Backdrop -->
@@ -1448,6 +2258,7 @@
     <div class="bb-tab" id="bb-predictor" onclick="switchTab('predictor')"><div class="bb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V6M4 20h16"/><path d="M8 16l3-4 3 2 5-7"/></svg></div><div class="bb-label">MODEL</div></div>
     <div class="bb-tab" id="bb-settings" onclick="switchTab('settings')"><div class="bb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></div><div class="bb-label">SETTINGS</div></div>
     <!-- Commissioner tab — hidden by default -->
+    <div class="bb-tab" id="bb-draft" onclick="switchTab('draft')"><div class="bb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 9h18M9 21V9"/></svg></div><div class="bb-label">DRAFT</div></div>
     <div class="bb-tab" id="bb-commissioner" onclick="switchTab('commissioner')" style="display:none"><div class="bb-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div><div class="bb-label">COMM</div></div>
   </div>
 
@@ -1559,7 +2370,7 @@ function applyTheme(key){
   const k=localStorage.getItem('hqTheme'); if(k&&THEMES[k]) applyTheme(k);
 })();
 
-const ALL_TABS=['home','news','calendar','chat','predictor','settings','commissioner'];
+const ALL_TABS=['home','news','calendar','chat','predictor','settings','draft','commissioner'];
 
 
 // ═══ PREDICTOR V1.3.1 ═══
@@ -3769,6 +4580,215 @@ function sendGif(url){
 
 
 
+// ================================================================
+// FANTASY HQ V2 — JAVASCRIPT
+// All V2 logic lives here. V1 functions above are untouched.
+// ================================================================
+
+// ── Draft board player data (2026 provisional) ──
+const V2_DRAFT_PLAYERS = [
+  {rank:1,  pos:'QB',  name:'P. Mahomes',          team:'KC',  adp:1.1, proj:26.8, model:96, notes:'Elite QB1. KC offense near top of V1.3.1 model.',  warn:''},
+  {rank:2,  pos:'RB',  name:'S. Barkley',           team:'PHI', adp:1.2, proj:22.4, model:94, notes:'Barkley behind PHI OL — elite opportunity.',         warn:''},
+  {rank:3,  pos:'RB',  name:'B. Hall',              team:'NYJ', adp:1.9, proj:19.8, model:91, notes:'Rookie bell-cow in NYJ backfield.',                  warn:'ROOKIE'},
+  {rank:4,  pos:'WR',  name:'J. Jefferson',         team:'MIN', adp:2.0, proj:18.6, model:90, notes:'Elite WR1. McCarthy scheme feeds him.',              warn:''},
+  {rank:5,  pos:'WR',  name:'D. Smith',             team:'PHI', adp:2.3, proj:17.8, model:86, notes:'Hurts-Smith connection in a top-5 offense.',         warn:''},
+  {rank:6,  pos:'RB',  name:'B. Robinson',          team:'ATL', adp:2.5, proj:17.2, model:84, notes:'Safe floor. Zone-run workload. PPR value.',          warn:''},
+  {rank:7,  pos:'TE',  name:'T. Kelce',             team:'KC',  adp:3.1, proj:15.4, model:83, notes:'TE1 gold standard. Mahomes synergy.',                warn:''},
+  {rank:8,  pos:'RB',  name:'C. Kenneth-Walker',   team:'SEA', adp:3.0, proj:18.6, model:74, notes:'Model flags overpay risk vs ADP.',                   warn:'OVERPAY RISK'},
+  {rank:9,  pos:'WR',  name:'J. Smith-Njigba',     team:'SEA', adp:3.4, proj:16.2, model:80, notes:'Top target share in SEA. Young star.',               warn:''},
+  {rank:10, pos:'QB',  name:'J. Herbert',           team:'LAC', adp:3.8, proj:24.1, model:82, notes:'Elite dual-threat floor. LAC offense stable.',       warn:''},
+  {rank:11, pos:'WR',  name:'C. Lamb',              team:'DAL', adp:2.1, proj:17.5, model:88, notes:'Alpha WR on a pass-heavy team.',                     warn:''},
+  {rank:12, pos:'RB',  name:'D. Henry',             team:'BAL', adp:2.8, proj:19.1, model:86, notes:'Elite power back in BAL run scheme.',                warn:''},
+  {rank:13, pos:'WR',  name:'T. McBride',           team:'ARI', adp:4.2, proj:13.6, model:79, notes:'Rising TE target monster. Strong PPR floor.',        warn:''},
+  {rank:14, pos:'DST', name:'SF Defense',           team:'SFO', adp:8.0, proj:9.2,  model:77, notes:'Top-3 fantasy defense per V1.3.1 context.',         warn:''},
+  {rank:15, pos:'WR',  name:'P. Nacua',             team:'LAR', adp:4.8, proj:14.1, model:74, notes:'LAR passing volume. Role solidifying.',              warn:''},
+];
+
+let v2DraftQueue = [];
+let v2DraftRoster = [];
+
+function v2RenderDraftBoard(){
+  const search = (document.getElementById('draftSearch')||{value:''}).value.toLowerCase();
+  const pos    = (document.getElementById('draftPosFilter')||{value:''}).value;
+  const el     = document.getElementById('v2DraftBoardRows');
+  if(!el) return;
+  const filtered = V2_DRAFT_PLAYERS.filter(p=>
+    (!pos || p.pos === pos) &&
+    (!search || p.name.toLowerCase().includes(search) || p.team.toLowerCase().includes(search))
+  );
+  el.innerHTML = filtered.map(p=>{
+    const inQueue = v2DraftQueue.includes(p.name);
+    const modelColor = p.model>=85?'var(--green)':p.model>=75?'var(--text)':'var(--red)';
+    const warnTag = p.warn ? `<span class="v2-chip v2-chip-gold" style="font-size:9px;margin-left:3px;">${p.warn}</span>` : '';
+    return `<div class="v2-draft-row">
+      <div class="v2-draft-num">${p.rank}</div>
+      <span class="pos-pill pos-${p.pos.replace('/','')}">${p.pos}</span>
+      <div style="flex:1;min-width:0;">
+        <div class="v2-player-name" style="font-size:12px;">${p.name}${warnTag}</div>
+        <div class="v2-player-meta">${p.team}</div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;text-align:right;min-width:30px;">${p.adp}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;text-align:right;min-width:30px;color:var(--green);">${p.proj}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;text-align:right;min-width:34px;font-weight:700;color:${modelColor};">${p.model}</div>
+      <div style="min-width:48px;text-align:right;">
+        ${inQueue
+          ? `<span class="v2-label v2-lbl-watch">Queued</span>`
+          : `<button class="v2-btn v2-btn-sm" onclick="v2AddToQueue('${p.name}')">+ Queue</button>`}
+      </div>
+    </div>`;
+  }).join('') || `<div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);text-align:center;padding:20px 0;">No players match this filter.</div>`;
+}
+
+function v2FilterDraftBoard(){ v2RenderDraftBoard(); }
+
+function v2AddToQueue(name){
+  if(!v2DraftQueue.includes(name)) v2DraftQueue.push(name);
+  v2RenderDraftBoard();
+}
+
+function v2RemoveQueue(btn){
+  const name = btn.closest('.v2-draft-row').querySelector('.v2-player-name').textContent.trim();
+  v2DraftQueue = v2DraftQueue.filter(n=>n!==name);
+  v2RenderDraftQueuePanel();
+}
+
+function v2RenderDraftQueuePanel(){
+  const el = document.getElementById('v2QueueList');
+  if(!el) return;
+  if(!v2DraftQueue.length){ el.innerHTML='<div style="font-family:\'DM Mono\',monospace;font-size:12px;color:var(--muted);text-align:center;padding:16px 0;">Queue empty. Add players from the Draft Board.</div>'; return; }
+  el.innerHTML = v2DraftQueue.map((name,i)=>{
+    const p = V2_DRAFT_PLAYERS.find(x=>x.name===name)||{pos:'?',team:'?',model:'?',adp:'?'};
+    return `<div class="v2-draft-row">
+      <div class="v2-draft-num">${i+1}</div>
+      <span class="pos-pill pos-${(p.pos||'').replace('/','')}">${p.pos}</span>
+      <div style="flex:1;">
+        <div class="v2-player-name" style="font-size:12px;">${name}</div>
+        <div class="v2-player-meta">${p.team} &middot; Model: ${p.model} &middot; ADP ${p.adp}</div>
+      </div>
+      <button class="v2-why" onclick="v2RemoveQueue(this)">Remove</button>
+    </div>`;
+  }).join('');
+}
+
+// Draft tab sub-navigation
+function v2DraftTab(sub, btn){
+  document.querySelectorAll('#panel-draft .news-pill').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  ['board','queue','roster','report','auto'].forEach(s=>{
+    const el=document.getElementById('v2d-'+s);
+    if(el) el.style.display = s===sub?'block':'none';
+  });
+  if(sub==='queue') v2RenderDraftQueuePanel();
+  if(sub==='board') v2RenderDraftBoard();
+}
+
+// Team tab sub-navigation
+function v2TeamTab(sub, btn){
+  document.querySelectorAll('#panel-myteam .news-pill').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  ['starters','bench','analysis','waiver','trades'].forEach(s=>{
+    const el=document.getElementById('v2t-'+s);
+    if(el) el.style.display = s===sub?'block':'none';
+  });
+}
+
+// Compare lab
+function v2RenderCompare(){ /* chart data is static SVG in V2 — data-dependent */ }
+function v2CmpMode(mode){ /* toggle pool vs compare mode */ }
+
+// WHY modal
+function v2ShowWhy(player, reason, label){
+  const t=document.getElementById('v2TeamWhyTitle');
+  const b=document.getElementById('v2TeamWhyBody');
+  if(t) t.textContent = 'WHY? — ' + player;
+  if(b) b.innerHTML = `<div style="margin-bottom:8px;"><span class="v2-label v2-lbl-start">${label}</span></div>`
+    + `<div style="font-size:13px;line-height:1.65;">${reason}</div>`
+    + `<div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);">This recommendation is formula-based using Model V1.3.1 team context + scoring format (Full PPR). Not AI-generated.</div>`;
+  const ov=document.getElementById('v2TeamWhyModal');
+  if(ov) ov.classList.add('on');
+}
+
+function v2CloseModal(id){
+  const el=document.getElementById(id);
+  if(el) el.classList.remove('on');
+}
+
+// Close V2 modals on backdrop click
+document.addEventListener('click', function(e){
+  if(e.target.classList.contains('v2-modal-overlay')){
+    e.target.classList.remove('on');
+  }
+});
+
+// Add My Team and Compare to switchTab
+const _v2OrigSwitch = switchTab;
+function switchTab(tab){
+  // Handle new V2 tabs that aren't in V1's ALL_TABS set
+  if(tab==='myteam'||tab==='compare'){
+    ALL_TABS.forEach(t=>{
+      const p=document.getElementById('panel-'+t);
+      const b=document.getElementById('bb-'+t);
+      if(p) p.classList.remove('active');
+      if(b) b.classList.remove('active');
+    });
+    // Also hide myteam/compare panels before switching
+    ['panel-myteam','panel-compare'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.classList.remove('active');
+    });
+    const target=document.getElementById('panel-'+tab);
+    if(target){ target.classList.add('active'); }
+    document.getElementById('screen').scrollTop=0;
+    return;
+  }
+  // Hide V2 extras when switching back to V1 tabs
+  ['panel-myteam','panel-compare'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.remove('active');
+  });
+  _v2OrigSwitch(tab);
+  if(tab==='draft') v2RenderDraftBoard();
+}
+
+// Hook up V2 links on the home screen — add command center quick links
+function v2AddHomeLinks(){
+  const scroll = document.querySelector('.home-scroll');
+  if(!scroll||document.getElementById('v2HomeLinks')) return;
+  const wrap = document.createElement('div');
+  wrap.id = 'v2HomeLinks';
+  wrap.style.cssText = 'width:100%;margin-bottom:14px;';
+  wrap.innerHTML = `
+    <div class="sec-lbl">V2 FEATURES</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('draft')">
+        Draft Room
+        <span class="v2-badge" style="margin-left:4px;">V2</span>
+      </button>
+      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('myteam')">
+        My Team
+        <span class="v2-badge" style="margin-left:4px;">V2</span>
+      </button>
+      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('compare')">
+        Compare Lab
+        <span class="v2-badge" style="margin-left:4px;">V2</span>
+      </button>
+      <button class="v2-btn" style="width:100%;justify-content:center;padding:10px;" onclick="switchTab('myteam');v2TeamTab('trades',null)">
+        Trade Center
+        <span class="v2-badge" style="margin-left:4px;">V2</span>
+      </button>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);text-align:center;margin-top:6px;">
+      FANTASY HQ V2 &middot; DEV BUILD 2026.07.31 &middot; V1 FEATURES ABOVE UNTOUCHED
+    </div>`;
+  // Insert right after the treasury block
+  const treasury = document.getElementById('currentTreasury');
+  if(treasury&&treasury.parentNode){
+    treasury.parentNode.insertBefore(wrap, treasury.nextSibling.nextSibling||null);
+  } else {
+    scroll.prepend(wrap);
+  }
+}
+
 // ===== INIT =====
 checkSignIn();
 initNotifToggles();
@@ -3777,6 +4797,9 @@ seedStaticCalendar();
 drawMiniCal();
 buildUpcoming();
 updateAllVoteUI();
+// V2 init
+v2AddHomeLinks();
+v2RenderDraftBoard();
 
 </script>
 </body>
