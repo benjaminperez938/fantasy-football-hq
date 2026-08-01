@@ -441,7 +441,8 @@
 
   /* MODALS */
   .overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);z-index:100;align-items:center;justify-content:center;padding:20px;border-radius:38px}
-  .overlay.on{display:flex}
+  .overlay.on{display:flex;pointer-events:auto}
+  .overlay:not(.on){pointer-events:none}
   .modal{background:var(--dark2);border:1px solid var(--border);border-top:2px solid var(--green);border-radius:12px;padding:20px;width:100%;animation:su 0.2s ease}
   @keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   .modal h2{font-family:Impact,'Arial Narrow',sans-serif;font-size:22px;letter-spacing:2px;margin-bottom:6px}
@@ -2536,7 +2537,8 @@ function renderPVM(){
 
 // Fun Fact generator removed from V1.1. It will be redesigned for V2.
 
-function switchTab(tab){
+function baseSwitchTab(tab){
+  if(!ALL_TABS.includes(tab)) return;
   ALL_TABS.forEach(t=>{
     const p=document.getElementById('panel-'+t);
     const b=document.getElementById('bb-'+t);
@@ -3020,33 +3022,57 @@ function matchName(input){
 }
 
 function doSignIn(){
-  const val = document.getElementById('signInName').value;
+  const input = document.getElementById('signInName');
+  const err = document.getElementById('signInErr');
+  const val = input ? input.value : '';
   const match = matchName(val);
   if(!match){
-    document.getElementById('signInErr').style.display='block';
+    if(err) err.style.display='block';
     return;
   }
+  if(err) err.style.display='none';
   localStorage.setItem('myName', match.name);
   me = { name: match.name };
-  document.getElementById('signInOv').classList.remove('on');
-  if(match.name === 'Benjamin P.'){
-    isCommissioner = true;
-    document.getElementById('bb-commissioner').style.display='flex';
-  }
+  isCommissioner = match.name === 'Benjamin P.';
+  const commTab = document.getElementById('bb-commissioner');
+  if(commTab) commTab.style.display = isCommissioner ? 'flex' : 'none';
+  const overlay = document.getElementById('signInOv');
+  if(overlay) overlay.classList.remove('on');
   renderProfile();
   updateAllVoteUI();
+  switchTab('home');
+}
+
+function signOut(){
+  localStorage.removeItem('myName');
+  me = null;
+  isCommissioner = false;
+  const commTab = document.getElementById('bb-commissioner');
+  if(commTab) commTab.style.display='none';
+  const input = document.getElementById('signInName');
+  if(input) input.value='';
+  const overlay = document.getElementById('signInOv');
+  if(overlay) overlay.classList.add('on');
 }
 
 function checkSignIn(){
   const saved = localStorage.getItem('myName');
   const match = saved ? ROSTER_MEMBERS.find(m => m.name === saved) : null;
-  me = match ? { name: match.name } : { name: 'Guest Manager' };
-  if(match && match.name === 'Benjamin P.'){
-    isCommissioner = true;
-    const commTab=document.getElementById('bb-commissioner');
-    if(commTab) commTab.style.display='flex';
+  const overlay = document.getElementById('signInOv');
+  const commTab = document.getElementById('bb-commissioner');
+
+  if(!match){
+    me = null;
+    isCommissioner = false;
+    if(commTab) commTab.style.display='none';
+    if(overlay) overlay.classList.add('on');
+    setTimeout(()=>document.getElementById('signInName')?.focus(), 50);
+    return;
   }
-  const overlay=document.getElementById('signInOv');
+
+  me = { name: match.name };
+  isCommissioner = match.name === 'Benjamin P.';
+  if(commTab) commTab.style.display = isCommissioner ? 'flex' : 'none';
   if(overlay) overlay.classList.remove('on');
 }
 
@@ -3954,7 +3980,13 @@ function v2AddHomeLinks(){
     </div>`;
   scroll.prepend(wrap);
 }
-const _v2OrigSwitch=switchTab;function switchTab(tab){_v2OrigSwitch(tab);if(tab==='draft')v2RenderDraftBoard();if(tab==='myteam')renderTeam();if(tab==='transactions')showTxn('all',null);if(tab==='compare')initCompare()}
+function switchTab(tab){
+  baseSwitchTab(tab);
+  if(tab==='draft') v2RenderDraftBoard();
+  if(tab==='myteam') renderTeam();
+  if(tab==='transactions') showTxn('all',null);
+  if(tab==='compare') initCompare();
+}
 // ===== INIT =====
 checkSignIn();
 initNotifToggles();
