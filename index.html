@@ -699,6 +699,23 @@
   .why-detail{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.why-stat{background:var(--dark3);padding:8px;border-radius:5px}.why-stat b{display:block;font-size:10px;color:var(--muted);font-family:'Courier New',monospace;margin-bottom:3px}
   @media(max-width:560px){.filter-grid{grid-template-columns:1fr 1fr}.draft-table-head,.draft-player-row{grid-template-columns:28px 36px minmax(105px,1fr) 46px 46px}.draft-table-head>:nth-child(6),.draft-player-row>:nth-child(6){display:none}.why-detail{grid-template-columns:1fr}}
 
+
+  /* V1.1 functional draft engine */
+  .draft-clock{font-family:'Courier New',monospace;font-size:28px;font-weight:800;color:var(--green);min-width:78px;text-align:right}
+  .draft-clock.warning{color:var(--orange)} .draft-clock.danger{color:var(--red)}
+  .draft-setup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .draft-setup-grid label{font:10px 'Courier New',monospace;color:var(--muted);letter-spacing:1px;display:flex;flex-direction:column;gap:4px}
+  .draft-help{font:11px 'Courier New',monospace;color:var(--muted);line-height:1.5;margin-top:9px}
+  .draft-turn-banner{display:flex;justify-content:space-between;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(10,168,96,.12),var(--card));border:1px solid rgba(10,168,96,.35);border-left:4px solid var(--green);padding:12px 14px;margin-bottom:9px}
+  .draft-turn-kicker{font:10px 'Courier New',monospace;color:var(--green);letter-spacing:1px}.draft-turn-name{font-weight:800;font-size:16px;margin-top:2px}.draft-next{font:11px 'Courier New',monospace;color:var(--muted);text-align:right}
+  .draft-tabs{display:flex;border:1px solid var(--border);background:var(--card);margin-bottom:8px;overflow-x:auto}.draft-tab{flex:1;min-width:80px;padding:8px;border:0;border-right:1px solid var(--border);background:none;font:11px 'Courier New',monospace;cursor:pointer;color:var(--muted)}.draft-tab:last-child{border-right:0}.draft-tab.active{color:var(--green);font-weight:800;background:rgba(10,168,96,.06)}
+  .draft-table-head.draft-table-live,.draft-player-row.draft-live-row{grid-template-columns:30px 42px minmax(150px,1fr) 58px 52px 98px}.draft-table-head.draft-table-live>div:nth-child(n+4){text-align:right}
+  .draft-player-row.drafted{opacity:.35}.draft-action{display:flex;justify-content:flex-end;gap:4px}.draft-pick-btn{padding:4px 7px;font-size:10px}.draft-pick-btn:disabled{opacity:.4;cursor:not-allowed}
+  .queue-row,.pick-log-row{display:flex;align-items:center;gap:9px;border-bottom:1px solid var(--border);padding:9px 2px}.queue-row:last-child,.pick-log-row:last-child{border-bottom:0}.queue-handle{font-family:'Courier New',monospace;color:var(--muted);min-width:20px}.queue-actions{margin-left:auto;display:flex;gap:4px}
+  .draft-roster-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.draft-roster-card{border:1px solid var(--border);background:var(--card);padding:10px}.draft-roster-card.me{border-top:3px solid var(--green)}.draft-roster-head{display:flex;justify-content:space-between;gap:6px;font-weight:800;margin-bottom:6px}.draft-roster-player{display:flex;gap:6px;justify-content:space-between;padding:4px 0;border-top:1px solid var(--border);font-size:11px}
+  .pick-log-row.me{background:rgba(10,168,96,.06)}.pick-number{font:11px 'Courier New',monospace;color:var(--muted);min-width:48px}.pick-manager{min-width:100px;font-size:11px}.pick-player{flex:1;font-weight:700}.pick-reason{font:10px 'Courier New',monospace;color:var(--muted)}
+  .draft-audit-card{margin-top:14px}.draft-audit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}.audit-stat{background:var(--dark3);padding:7px;text-align:center}.audit-stat b{display:block;font-size:16px}.audit-stat span{font:9px 'Courier New',monospace;color:var(--muted)}
+  @media(max-width:700px){.draft-setup-grid{grid-template-columns:1fr 1fr}.draft-table-head.draft-table-live,.draft-player-row.draft-live-row{grid-template-columns:27px 38px minmax(105px,1fr) 48px 78px}.draft-table-head.draft-table-live>:nth-child(5),.draft-player-row.draft-live-row>:nth-child(5){display:none}.draft-roster-grid{grid-template-columns:1fr}.draft-audit-grid{grid-template-columns:repeat(2,1fr)}.pick-reason{display:none}}
 </style>
 </head>
 <body>
@@ -1604,45 +1621,63 @@
       <div class="v2-panel-wrap">
         <div class="v2-panel-head">
           <button class="v2-back" onclick="switchTab('home')">← HOME</button>
-          <div style="display:flex;align-items:center;gap:10px"><div class="v2-panel-title">DRAFT <span style="color:var(--green)">ROOM</span></div><span class="v2-badge">PRE-DRAFT</span></div>
-          <div class="v2-panel-sub">MANAGER PREPARATION &middot; FULL PPR &middot; COMMISSIONER START</div>
+          <div style="display:flex;align-items:center;gap:10px"><div class="v2-panel-title">DRAFT <span style="color:var(--green)">ROOM</span></div><span class="v2-badge" id="draftModeBadge">PRE-DRAFT</span></div>
+          <div class="v2-panel-sub">ESPN-STYLE LOCAL ENGINE · SNAKE ORDER · FULL PPR · QB/RB/WR/TE/FLEX/K/DST</div>
         </div>
         <div class="v2-panel-scroll">
           <div class="v2-card draft-status">
-            <div class="v2-card-title">LEAGUE DRAFT STATUS</div>
-            <div style="font-size:18px;font-weight:800" id="draftStateLabel">Ready for managers</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:4px" id="draftStateSub">Build a queue, review projections, or run a private practice draft. No league picks have been made.</div>
-            <div class="comm-controls">
-              <button class="v2-btn v2-btn-p" id="startDraftBtn" onclick="startLeagueDraft()">Commissioner: Start Draft</button>
-              <button class="v2-btn" onclick="toggleMockSetup()">Practice vs Bots</button>
-              <button class="v2-btn" onclick="clearDraftPrep()">Reset Prep</button>
+            <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+              <div><div class="v2-card-title">DRAFT STATUS</div><div style="font-size:18px;font-weight:800" id="draftStateLabel">Ready for managers</div><div style="font-size:12px;color:var(--muted);margin-top:4px" id="draftStateSub">Review the pool, build a queue, or launch a practice draft.</div></div>
+              <div class="draft-clock" id="draftClock">--:--</div>
+            </div>
+            <div class="comm-controls" id="draftPreControls">
+              <button class="v2-btn v2-btn-p" id="startDraftBtn" onclick="openDraftSetup('league')">Commissioner: Start Local Draft</button>
+              <button class="v2-btn" onclick="openDraftSetup('mock')">Practice vs Bots</button>
+              <button class="v2-btn" onclick="clearDraftPrep()">Clear Queue</button>
+            </div>
+            <div class="comm-controls" id="draftLiveControls" style="display:none">
+              <button class="v2-btn v2-btn-p" id="pauseDraftBtn" onclick="toggleDraftPause()">Pause</button>
+              <button class="v2-btn" onclick="undoDraftPick()">Undo Pick</button>
+              <button class="v2-btn v2-btn-r" onclick="resetDraftEngine()">End / Reset</button>
             </div>
           </div>
-          <div id="mockSetup" class="v2-card" style="display:none;border-top:2px solid var(--blue)">
-            <div class="v2-card-title">PRACTICE DRAFT</div>
-            <div class="filter-grid" style="grid-template-columns:repeat(3,1fr)">
-              <select class="v2-sel" id="mockSlot"><option value="1">Pick 1</option><option value="4">Pick 4</option><option value="7" selected>Pick 7</option><option value="10">Pick 10</option></select>
-              <select class="v2-sel" id="mockRounds"><option value="3">3 rounds</option><option value="5" selected>5 rounds</option></select>
-              <button class="v2-btn v2-btn-p" onclick="runMockDraft()">Run Mock</button>
+
+          <div id="draftSetup" class="v2-card" style="display:none;border-top:2px solid var(--blue)">
+            <div class="v2-card-title" id="draftSetupTitle">PRACTICE DRAFT SETUP</div>
+            <div class="draft-setup-grid">
+              <label>YOUR SLOT<select class="v2-sel" id="mockSlot"></select></label>
+              <label>TEAMS<select class="v2-sel" id="draftTeamCount"><option value="8">8</option><option value="10" selected>10</option><option value="12">12</option></select></label>
+              <label>ROUNDS<select class="v2-sel" id="mockRounds"><option value="5">5 test rounds</option><option value="10">10 rounds</option><option value="14" selected>14 rounds</option><option value="16">16 rounds</option></select></label>
+              <label>PICK CLOCK<select class="v2-sel" id="draftTimerSetting"><option value="30">30 sec</option><option value="60">60 sec</option><option value="90" selected>90 sec</option><option value="120">120 sec</option></select></label>
             </div>
-            <div style="font:11px 'Courier New',monospace;color:var(--muted)">Bots use positional need, value, scarcity, and distinct strategies—not random picks.</div>
-            <div id="mockDraftLog" class="mock-log" style="display:none"></div>
+            <div style="display:flex;gap:7px;margin-top:10px"><button class="v2-btn v2-btn-p" onclick="beginConfiguredDraft()">Enter Draft</button><button class="v2-btn" onclick="closeDraftSetup()">Cancel</button></div>
+            <div class="draft-help">Mock and local commissioner testing use the same engine. Bots pick one at a time; your turn waits for a manual selection or queue auto-pick when the clock expires.</div>
           </div>
-          <div class="v2-sec">PLAYER POOL</div>
-          <div class="filter-grid">
-            <input class="v2-inp" id="draftSearch" placeholder="Search player, team, position..." oninput="v2RenderDraftBoard()">
-            <select class="v2-sel" id="draftPosFilter" onchange="v2RenderDraftBoard()"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option><option>K</option><option>DST</option></select>
-            <select class="v2-sel" id="draftSeason" onchange="v2RenderDraftBoard()"><option value="2026">2026 projected</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option></select>
-            <select class="v2-sel" id="draftSort" onchange="v2RenderDraftBoard()"><option value="proj">Projected points</option><option value="rank">Overall rank</option><option value="name">Player name</option><option value="team">NFL team</option></select>
+
+          <div id="draftWorkspace" style="display:none">
+            <div class="draft-turn-banner"><div><div class="draft-turn-kicker" id="draftRoundPick">ROUND 1 · PICK 1</div><div class="draft-turn-name" id="draftOnClock">Manager 1 is on the clock</div></div><div class="draft-next" id="draftNextUp">Next: Manager 2</div></div>
+            <div class="draft-tabs"><button class="draft-tab active" onclick="showDraftView('players',this)">Players</button><button class="draft-tab" onclick="showDraftView('queue',this)">Queue <span id="queueCount">0</span></button><button class="draft-tab" onclick="showDraftView('rosters',this)">Rosters</button><button class="draft-tab" onclick="showDraftView('picks',this)">Picks</button></div>
           </div>
-          <div class="draft-table-head"><div>★</div><div>POS</div><div>PLAYER</div><div style="text-align:right">PTS</div><div style="text-align:right">BYE</div><div style="text-align:right">ADP</div></div>
-          <div id="v2DraftBoardRows"></div>
-          <div style="font:10px 'Courier New',monospace;color:var(--muted);margin-top:10px;text-align:center"><span id="draftDataStatus">Loading live 2026 player pool&hellip;</span></div>
+
+          <div id="draftPlayersView" class="draft-view">
+            <div class="v2-sec">PLAYER POOL</div>
+            <div class="filter-grid">
+              <input class="v2-inp" id="draftSearch" placeholder="Search player, team, position..." oninput="v2RenderDraftBoard()">
+              <select class="v2-sel" id="draftPosFilter" onchange="v2RenderDraftBoard()"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option><option>K</option><option>DST</option></select>
+              <select class="v2-sel" id="draftSeason" onchange="v2RenderDraftBoard()"><option value="2026">2026 projected</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option></select>
+              <select class="v2-sel" id="draftSort" onchange="v2RenderDraftBoard()"><option value="adp">ADP</option><option value="proj">Projected points</option><option value="rank">Overall rank</option><option value="name">Player name</option><option value="team">NFL team</option></select>
+            </div>
+            <div class="draft-table-head draft-table-live"><div>★</div><div>POS</div><div>PLAYER</div><div>PTS</div><div>ADP</div><div>ACTION</div></div>
+            <div id="v2DraftBoardRows"></div>
+          </div>
+          <div id="draftQueueView" class="draft-view" style="display:none"><div class="v2-sec">YOUR QUEUE</div><div id="draftQueueRows"></div></div>
+          <div id="draftRostersView" class="draft-view" style="display:none"><div class="v2-sec">TEAM ROSTERS</div><div id="draftRosterGrid"></div></div>
+          <div id="draftPicksView" class="draft-view" style="display:none"><div class="v2-sec">DRAFT BOARD</div><div id="draftPickLog"></div></div>
+
+          <div class="v2-card draft-audit-card"><div class="v2-card-title">PLAYER POOL AUDIT</div><div id="draftDataStatus">Loading live ESPN fantasy player pool…</div><div id="draftPoolAudit" class="draft-audit-grid"></div></div>
         </div>
       </div>
     </div>
-
-
 
 
     <!-- ===== WEEKLY MATCHUP / TEAM PAGE ===== -->
@@ -3950,15 +3985,77 @@ async function loadDraftPlayerPool(){
     console.warn('Draft player pool:',err);
   }
   refreshCompareOptions();
+  renderDraftPoolAudit();
   v2RenderDraftBoard();
 }
 let v2DraftQueue=[], draftFavorites=new Set(), leagueDraftStarted=false;
-function v2RenderDraftBoard(){const el=document.getElementById('v2DraftBoardRows');if(!el)return;const q=(document.getElementById('draftSearch')?.value||'').toLowerCase(),pos=document.getElementById('draftPosFilter')?.value||'',season=document.getElementById('draftSeason')?.value||'2026',sort=document.getElementById('draftSort')?.value||'proj';let rows=DRAFT_PLAYERS.filter(p=>(!pos||p.pos===pos)&&(!q||(`${p.name} ${p.team} ${p.pos}`).toLowerCase().includes(q)));rows.sort((a,b)=>sort==='name'?a.name.localeCompare(b.name):sort==='team'?a.team.localeCompare(b.team):sort==='rank'?a.rank-b.rank:(b.years[season]||0)-(a.years[season]||0));el.innerHTML=rows.map(p=>`<div class="draft-player-row"><button class="star-btn ${draftFavorites.has(p.name)?'on':''}" onclick="toggleFavorite('${p.name.replaceAll("'","\\'")}')">★</button><span class="pos-pill pos-${p.pos}">${p.pos}</span><div><div class="draft-name">${p.name}</div><div class="draft-meta">${p.team} · ${season==='2026'?'PROJECTED POINTS':'HISTORICAL AVG'} ${season}</div></div><div style="text-align:right;font-weight:700;color:var(--green)">${(p.years[season]||0).toFixed(1)}</div><div style="text-align:right">${p.bye}</div><div style="text-align:right">${p.adp>=999?'—':p.adp.toFixed(1)}</div></div>`).join('')||'<div class="v2-player-meta" style="padding:20px;text-align:center">No players match.</div>'}
+const DRAFT_STRATEGIES=['Best Available','Zero RB','Hero RB','WR Heavy','Balanced','QB Early','TE Edge','Value Hunter','RB Heavy','Upside'];
+let draftSetupMode='mock', draftTimerHandle=null, botPickHandle=null;
+let draftEngine={active:false,paused:false,mode:null,teams:10,rounds:14,userSlot:7,timerSeconds:90,timeLeft:90,currentPick:0,picks:[],rosters:[],available:new Set(),strategies:[]};
+function playerKey(p){return String(p.espnId||`${p.name}|${p.team}|${p.pos}`)}
+function safeDraftText(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function playerByKey(k){return DRAFT_PLAYERS.find(p=>playerKey(p)===String(k))}
+function isMyTurn(){return draftEngine.active&&!draftEngine.paused&&draftCurrentTeam()===draftEngine.userSlot-1}
+function draftCurrentTeam(){if(!draftEngine.active)return -1;const r=Math.floor(draftEngine.currentPick/draftEngine.teams),within=draftEngine.currentPick%draftEngine.teams;return r%2===0?within:draftEngine.teams-1-within}
+function draftRound(){return Math.floor(draftEngine.currentPick/draftEngine.teams)+1}
+function draftPickInRound(){return draftEngine.currentPick%draftEngine.teams+1}
+function draftOverallLimit(){return draftEngine.teams*draftEngine.rounds}
+function managerName(i){return i===draftEngine.userSlot-1?'YOU':`BOT ${i+1}`}
+function populateDraftSlots(){const sel=document.getElementById('mockSlot'),n=+(document.getElementById('draftTeamCount')?.value||10);if(!sel)return;const old=+sel.value||Math.min(7,n);sel.innerHTML=Array.from({length:n},(_,i)=>`<option value="${i+1}" ${i+1===Math.min(old,n)?'selected':''}>Pick ${i+1}</option>`).join('')}
+function openDraftSetup(mode){draftSetupMode=mode;const box=document.getElementById('draftSetup');box.style.display='block';document.getElementById('draftSetupTitle').textContent=mode==='mock'?'PRACTICE DRAFT SETUP':'COMMISSIONER LOCAL DRAFT TEST';populateDraftSlots();box.scrollIntoView({behavior:'smooth',block:'nearest'})}
+function closeDraftSetup(){document.getElementById('draftSetup').style.display='none'}
+document.getElementById('draftTeamCount')?.addEventListener('change',populateDraftSlots);
+function beginConfiguredDraft(){
+  if(DRAFT_PLAYERS.length<100&&!confirm('The live player pool appears incomplete. Start with the emergency pool anyway?'))return;
+  clearDraftTimers();
+  const teams=+document.getElementById('draftTeamCount').value,rounds=+document.getElementById('mockRounds').value,userSlot=+document.getElementById('mockSlot').value,timer=+document.getElementById('draftTimerSetting').value;
+  draftEngine={active:true,paused:false,mode:draftSetupMode,teams,rounds,userSlot,timerSeconds:timer,timeLeft:timer,currentPick:0,picks:[],rosters:Array.from({length:teams},()=>[]),available:new Set(DRAFT_PLAYERS.map(playerKey)),strategies:Array.from({length:teams},(_,i)=>DRAFT_STRATEGIES[i%DRAFT_STRATEGIES.length])};
+  leagueDraftStarted=draftSetupMode==='league';closeDraftSetup();document.getElementById('draftWorkspace').style.display='block';document.getElementById('draftPreControls').style.display='none';document.getElementById('draftLiveControls').style.display='flex';document.getElementById('draftModeBadge').textContent=draftSetupMode==='mock'?'MOCK DRAFT':'LOCAL LEAGUE TEST';
+  showDraftView('players',document.querySelector('.draft-tab'));renderDraftEverything();advanceDraftTurn();
+}
+function startLeagueDraft(){openDraftSetup('league')}
+function clearDraftTimers(){if(draftTimerHandle)clearInterval(draftTimerHandle);if(botPickHandle)clearTimeout(botPickHandle);draftTimerHandle=botPickHandle=null}
+function advanceDraftTurn(){
+  clearDraftTimers();
+  if(!draftEngine.active||draftEngine.paused)return;
+  if(draftEngine.currentPick>=draftOverallLimit()||draftEngine.available.size===0){finishDraft();return}
+  draftEngine.timeLeft=draftEngine.timerSeconds;renderDraftStatus();
+  if(isMyTurn()){
+    draftTimerHandle=setInterval(()=>{if(!draftEngine.active||draftEngine.paused)return;draftEngine.timeLeft--;renderDraftClock();if(draftEngine.timeLeft<=0){clearDraftTimers();autoPickForUser()}},1000);
+  }else botPickHandle=setTimeout(()=>makeBotPick(draftCurrentTeam()),650);
+}
+function toggleDraftPause(){if(!draftEngine.active)return;draftEngine.paused=!draftEngine.paused;document.getElementById('pauseDraftBtn').textContent=draftEngine.paused?'Resume':'Pause';if(draftEngine.paused){clearDraftTimers()}else{advanceDraftTurn()}renderDraftStatus()}
+function resetDraftEngine(){if(draftEngine.picks.length&&!confirm('End this draft and clear every pick?'))return;clearDraftTimers();draftEngine.active=false;draftEngine.paused=false;draftEngine.picks=[];draftEngine.rosters=[];draftEngine.available=new Set();leagueDraftStarted=false;document.getElementById('draftWorkspace').style.display='none';document.getElementById('draftPreControls').style.display='flex';document.getElementById('draftLiveControls').style.display='none';document.getElementById('draftModeBadge').textContent='PRE-DRAFT';document.getElementById('draftClock').textContent='--:--';document.getElementById('draftStateLabel').textContent='Ready for managers';document.getElementById('draftStateSub').textContent='Review the pool, build a queue, or launch a practice draft.';v2RenderDraftBoard()}
+function finishDraft(){clearDraftTimers();draftEngine.active=false;document.getElementById('draftStateLabel').textContent='Draft complete';document.getElementById('draftStateSub').textContent=`${draftEngine.picks.length} selections completed. Review rosters and the draft board.`;document.getElementById('draftClock').textContent='DONE';document.getElementById('pauseDraftBtn').disabled=true;renderDraftEverything()}
+function clearDraftPrep(){v2DraftQueue=[];draftFavorites.clear();renderDraftEverything()}
+function toggleMockSetup(){openDraftSetup('mock')}
+function runMockDraft(){openDraftSetup('mock')}
 function toggleFavorite(n){draftFavorites.has(n)?draftFavorites.delete(n):draftFavorites.add(n);v2RenderDraftBoard()}
-function startLeagueDraft(){leagueDraftStarted=!leagueDraftStarted;document.getElementById('draftStateLabel').textContent=leagueDraftStarted?'Draft opened by commissioner':'Ready for managers';document.getElementById('draftStateSub').textContent=leagueDraftStarted?'The live draft is now active. Commissioner controls remain available.':'Build a queue, review projections, or run a private practice draft. No league picks have been made.';document.getElementById('startDraftBtn').textContent=leagueDraftStarted?'Commissioner: Pause Draft':'Commissioner: Start Draft'}
-function clearDraftPrep(){draftFavorites.clear();document.getElementById('mockDraftLog').style.display='none';v2RenderDraftBoard()}
-function toggleMockSetup(){const e=document.getElementById('mockSetup');e.style.display=e.style.display==='none'?'block':'none'}
-function runMockDraft(){const slot=+document.getElementById('mockSlot').value,rounds=+document.getElementById('mockRounds').value,teams=10,available=[...DRAFT_PLAYERS].sort((a,b)=>a.adp-b.adp),rosters=Array.from({length:teams},()=>[]),strategies=['Best Available','Zero RB','Hero RB','WR Heavy','Balanced','QB Early','TE Edge','Value Hunter','RB Heavy','Youth'];let picks=[];for(let r=1;r<=rounds;r++){let order=[...Array(teams).keys()];if(r%2===0)order.reverse();for(const ti of order){let candidates=available.slice(0,20);if(!candidates.length)break;let strategy=strategies[ti],pick;if(ti===slot-1){pick=candidates.find(p=>draftFavorites.has(p.name))||candidates[0]}else{let score=p=>100-(Number.isFinite(p.adp)?p.adp:999)+(strategy==='RB Heavy'&&p.pos==='RB'?18:0)+(strategy==='WR Heavy'&&p.pos==='WR'?18:0)+(strategy==='Zero RB'&&r<3&&p.pos==='WR'?22:0)+(strategy==='QB Early'&&r<3&&p.pos==='QB'?20:0)+(strategy==='TE Edge'&&r<3&&p.pos==='TE'?16:0)-rosters[ti].filter(x=>x.pos===p.pos).length*8;pick=candidates.sort((a,b)=>score(b)-score(a))[0]}available.splice(available.indexOf(pick),1);rosters[ti].push(pick);picks.push({n:picks.length+1,team:ti+1,player:pick,strategy,me:ti===slot-1})}}const log=document.getElementById('mockDraftLog');log.style.display='block';log.innerHTML=picks.map(x=>`<div class="mock-pick ${x.me?'me':''}"><b>${x.n}.</b><span style="min-width:55px">${x.me?'YOU':'BOT '+x.team}</span><span style="flex:1"><b>${x.player.name}</b> <span class="v2-player-meta">${x.player.pos} · ${x.player.team}</span></span><span class="v2-player-meta">${x.me?'Favorite/value':x.strategy}</span></div>`).join('')}
+function toggleQueue(k){const key=String(k),i=v2DraftQueue.indexOf(key);if(i>=0)v2DraftQueue.splice(i,1);else if(draftEngine.available.size===0||draftEngine.available.has(key))v2DraftQueue.push(key);renderDraftEverything()}
+function moveQueue(k,dir){const i=v2DraftQueue.indexOf(String(k)),j=i+dir;if(i<0||j<0||j>=v2DraftQueue.length)return;[v2DraftQueue[i],v2DraftQueue[j]]=[v2DraftQueue[j],v2DraftQueue[i]];renderDraftQueue()}
+function draftPlayer(k){if(!isMyTurn())return;const p=playerByKey(k);if(!p||!draftEngine.available.has(playerKey(p)))return;commitDraftPick(p,draftEngine.userSlot-1,'Manual selection')}
+function commitDraftPick(p,team,reason){
+  const k=playerKey(p);if(!draftEngine.available.has(k))return;clearDraftTimers();draftEngine.available.delete(k);v2DraftQueue=v2DraftQueue.filter(x=>x!==k);draftEngine.rosters[team].push(p);draftEngine.picks.push({overall:draftEngine.currentPick+1,round:draftRound(),pick:draftPickInRound(),team,player:p,reason});draftEngine.currentPick++;renderDraftEverything();advanceDraftTurn();
+}
+function autoPickForUser(){const queued=v2DraftQueue.map(playerByKey).find(p=>p&&draftEngine.available.has(playerKey(p)));const p=queued||bestAvailableForTeam(draftEngine.userSlot-1,'Best Available');if(p)commitDraftPick(p,draftEngine.userSlot-1,queued?'Queue auto-pick':'Clock auto-pick')}
+function rosterNeedScore(team,p,round){const roster=draftEngine.rosters[team]||[],counts=roster.reduce((m,x)=>(m[x.pos]=(m[x.pos]||0)+1,m),{}),targets={QB:1,RB:4,WR:5,TE:2,K:1,DST:1};let need=Math.max(0,(targets[p.pos]||1)-(counts[p.pos]||0))*7;if(round<=8&&(p.pos==='K'||p.pos==='DST'))need-=35;if((counts.QB||0)>=1&&p.pos==='QB'&&round<10)need-=18;if((counts.TE||0)>=1&&p.pos==='TE'&&round<8)need-=10;return need}
+function botPlayerScore(team,p,strategy){const round=draftRound(),adp=Number.isFinite(p.adp)&&p.adp<999?p.adp:(p.rank||500),value=220-adp+(p.proj||0)*1.2;let bonus=rosterNeedScore(team,p,round);if(strategy==='RB Heavy'&&p.pos==='RB')bonus+=18;if(strategy==='WR Heavy'&&p.pos==='WR')bonus+=18;if(strategy==='Zero RB'&&round<=5)bonus+=p.pos==='WR'?22:p.pos==='RB'?-20:0;if(strategy==='Hero RB')bonus+=round===1&&p.pos==='RB'?25:(round<=5&&p.pos==='RB'?-8:0);if(strategy==='QB Early'&&round<=4&&p.pos==='QB')bonus+=24;if(strategy==='TE Edge'&&round<=4&&p.pos==='TE')bonus+=20;if(strategy==='Upside')bonus+=(p.proj||0)*.5;return value+bonus+Math.random()*4}
+function bestAvailableForTeam(team,strategy){const pool=DRAFT_PLAYERS.filter(p=>draftEngine.available.has(playerKey(p))).slice();pool.sort((a,b)=>botPlayerScore(team,b,strategy)-botPlayerScore(team,a,strategy));return pool[0]}
+function makeBotPick(team){if(!draftEngine.active||draftEngine.paused||team!==draftCurrentTeam())return;const strategy=draftEngine.strategies[team]||'Balanced',p=bestAvailableForTeam(team,strategy);if(p)commitDraftPick(p,team,strategy)}
+function undoDraftPick(){if(!draftEngine.picks.length)return;clearDraftTimers();const last=draftEngine.picks.pop();draftEngine.currentPick--;draftEngine.rosters[last.team]=draftEngine.rosters[last.team].filter((_,i)=>i!==draftEngine.rosters[last.team].length-1);draftEngine.available.add(playerKey(last.player));renderDraftEverything();advanceDraftTurn()}
+function showDraftView(view,btn){document.querySelectorAll('.draft-view').forEach(x=>x.style.display='none');const el=document.getElementById('draft'+view[0].toUpperCase()+view.slice(1)+'View');if(el)el.style.display='block';document.querySelectorAll('.draft-tab').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active')}
+function renderDraftClock(){const e=document.getElementById('draftClock');if(!e)return;const n=Math.max(0,draftEngine.timeLeft),m=Math.floor(n/60),sec=String(n%60).padStart(2,'0');e.textContent=`${m}:${sec}`;e.className='draft-clock'+(n<=10?' danger':n<=30?' warning':'')}
+function renderDraftStatus(){
+  if(!draftEngine.active)return;const team=draftCurrentTeam(),round=draftRound(),pick=draftPickInRound(),nextPick=draftEngine.currentPick+1,nextTeam=(()=>{const r=Math.floor(nextPick/draftEngine.teams),w=nextPick%draftEngine.teams;return r%2===0?w:draftEngine.teams-1-w})();document.getElementById('draftStateLabel').textContent=draftEngine.paused?'Draft paused':`${managerName(team)} is on the clock`;document.getElementById('draftStateSub').textContent=`${draftEngine.mode==='mock'?'Practice':'Local league test'} · ${draftEngine.teams} teams · ${draftEngine.rounds} rounds · Snake draft`;document.getElementById('draftRoundPick').textContent=`ROUND ${round} · PICK ${pick} · OVERALL ${draftEngine.currentPick+1}`;document.getElementById('draftOnClock').textContent=`${managerName(team)} is on the clock`;document.getElementById('draftNextUp').textContent=draftEngine.currentPick+1<draftOverallLimit()?`Next: ${managerName(nextTeam)}`:'Final selection';renderDraftClock()
+}
+function v2RenderDraftBoard(){
+  const el=document.getElementById('v2DraftBoardRows');if(!el)return;const q=(document.getElementById('draftSearch')?.value||'').toLowerCase(),pos=document.getElementById('draftPosFilter')?.value||'',season=document.getElementById('draftSeason')?.value||'2026',sort=document.getElementById('draftSort')?.value||'adp';let rows=DRAFT_PLAYERS.filter(p=>(!draftEngine.active||draftEngine.available.has(playerKey(p)))&&(!pos||p.pos===pos)&&(!q||(`${p.name} ${p.team} ${p.pos}`).toLowerCase().includes(q)));rows.sort((a,b)=>sort==='name'?a.name.localeCompare(b.name):sort==='team'?a.team.localeCompare(b.team):sort==='rank'?(a.rank||999)-(b.rank||999):sort==='adp'?(a.adp||999)-(b.adp||999):(b.years[season]||0)-(a.years[season]||0));el.innerHTML=rows.map(p=>{const k=playerKey(p),queued=v2DraftQueue.includes(k);return `<div class="draft-player-row draft-live-row"><button class="star-btn ${draftFavorites.has(p.name)?'on':''}" onclick="toggleFavorite(${JSON.stringify(p.name)})">★</button><span class="pos-pill pos-${p.pos}">${p.pos}</span><div><div class="draft-name">${safeDraftText(p.name)}</div><div class="draft-meta">${safeDraftText(p.team)} · ${season==='2026'?'PROJECTION':'HISTORICAL AVG'} ${season}</div></div><div style="text-align:right;font-weight:700;color:var(--green)">${Number(p.years[season]||0).toFixed(1)}</div><div style="text-align:right">${p.adp>=999?'—':Number(p.adp).toFixed(1)}</div><div class="draft-action"><button class="v2-btn v2-btn-sm" onclick='toggleQueue(${JSON.stringify(k)})'>${queued?'Queued':'Queue'}</button>${draftEngine.active?`<button class="v2-btn v2-btn-p v2-btn-sm draft-pick-btn" onclick='draftPlayer(${JSON.stringify(k)})' ${isMyTurn()?'':'disabled'}>Draft</button>`:''}</div></div>`}).join('')||'<div class="v2-player-meta" style="padding:20px;text-align:center">No available players match.</div>'
+}
+function renderDraftQueue(){const el=document.getElementById('draftQueueRows');if(!el)return;v2DraftQueue=v2DraftQueue.filter(k=>!draftEngine.active||draftEngine.available.has(k));document.getElementById('queueCount').textContent=v2DraftQueue.length;el.innerHTML=v2DraftQueue.map((k,i)=>{const p=playerByKey(k);if(!p)return'';return `<div class="queue-row"><span class="queue-handle">${i+1}</span><span class="pos-pill pos-${p.pos}">${p.pos}</span><div style="flex:1"><b>${safeDraftText(p.name)}</b><div class="draft-meta">${p.team} · ADP ${p.adp>=999?'—':Number(p.adp).toFixed(1)}</div></div><div class="queue-actions"><button class="v2-btn v2-btn-sm" onclick='moveQueue(${JSON.stringify(k)},-1)'>↑</button><button class="v2-btn v2-btn-sm" onclick='moveQueue(${JSON.stringify(k)},1)'>↓</button><button class="v2-btn v2-btn-r v2-btn-sm" onclick='toggleQueue(${JSON.stringify(k)})'>×</button>${isMyTurn()?`<button class="v2-btn v2-btn-p v2-btn-sm" onclick='draftPlayer(${JSON.stringify(k)})'>Draft</button>`:''}</div></div>`}).join('')||'<div class="v2-card" style="text-align:center">Your queue is empty. Add players from the Players tab.</div>'}
+function renderDraftRosters(){const el=document.getElementById('draftRosterGrid');if(!el)return;if(!draftEngine.rosters.length){el.innerHTML='<div class="v2-card">Start a draft to populate rosters.</div>';return}el.className='draft-roster-grid';el.innerHTML=draftEngine.rosters.map((r,i)=>`<div class="draft-roster-card ${i===draftEngine.userSlot-1?'me':''}"><div class="draft-roster-head"><span>${managerName(i)}</span><span>${r.length}/${draftEngine.rounds}</span></div>${r.map((p,j)=>`<div class="draft-roster-player"><span>${j+1}. <b>${safeDraftText(p.name)}</b></span><span class="pos-pill pos-${p.pos}">${p.pos}</span></div>`).join('')||'<div class="draft-meta">No picks yet</div>'}</div>`).join('')}
+function renderDraftPicks(){const el=document.getElementById('draftPickLog');if(!el)return;el.innerHTML=[...draftEngine.picks].reverse().map(x=>`<div class="pick-log-row ${x.team===draftEngine.userSlot-1?'me':''}"><span class="pick-number">${x.round}.${String(x.pick).padStart(2,'0')}</span><span class="pick-manager">${managerName(x.team)}</span><span class="pick-player">${safeDraftText(x.player.name)} <span class="pos-pill pos-${x.player.pos}">${x.player.pos}</span></span><span class="pick-reason">${safeDraftText(x.reason)}</span></div>`).join('')||'<div class="v2-card" style="text-align:center">No selections yet.</div>'}
+function renderDraftEverything(){renderDraftStatus();v2RenderDraftBoard();renderDraftQueue();renderDraftRosters();renderDraftPicks()}
+function renderDraftPoolAudit(){const el=document.getElementById('draftPoolAudit');if(!el)return;const counts=DRAFT_PLAYERS.reduce((m,p)=>(m[p.pos]=(m[p.pos]||0)+1,m),{}),dupes=DRAFT_PLAYERS.length-new Set(DRAFT_PLAYERS.map(playerKey)).size,missingProj=DRAFT_PLAYERS.filter(p=>!(p.proj>0)).length,dst=counts.DST||0;const verified=DRAFT_PLAYERS.length>=400&&dst===32&&!dupes;el.innerHTML=[['TOTAL',DRAFT_PLAYERS.length],['QB',counts.QB||0],['RB',counts.RB||0],['WR',counts.WR||0],['TE',counts.TE||0],['K',counts.K||0],['D/ST',dst],['NO PROJ',missingProj]].map(x=>`<div class="audit-stat"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('');const status=document.getElementById('draftDataStatus');if(status)status.innerHTML=`${draftDataSource==='espn'?'ESPN player pool received':'Emergency local pool'} · <b>${verified?'completeness checks passed':'completeness not verified'}</b> · ${dupes} duplicate IDs`}
 
 const TEAM_STARTERS=[['QB','Josh Allen','BUF',24.8,'Elite rushing floor and high team total.'],['RB','Bijan Robinson','ATL',20.7,'Three-down workload and receiving usage.'],['RB','Saquon Barkley','PHI',19.8,'Goal-line role behind a strong offensive line.'],['WR','Justin Jefferson','MIN',19.9,'Target dominance provides the safest WR floor.'],['WR','DeVonta Smith','PHI',15.4,'Strong route participation and favorable coverage matchup.'],['TE','Trey McBride','ARI',14.8,'High target share relative to the TE position.'],['FLEX','Puka Nacua','LAR',17.6,'Volume makes him stronger than the remaining RB/WR options.'],['K','Brandon Aubrey','DAL',9.4,'Reliable long-range opportunity in a productive offense.'],['DST','Steelers D/ST','PIT',8.5,'Pressure rate and turnover upside improve the matchup.']];
 const TEAM_BENCH=[['RB','Josh Jacobs','GB',16.3,'Limited practice creates workload uncertainty.'],['WR','Jaxon Smith-Njigba','SEA',15.1,'Good option, but current starters project slightly higher.'],['TE','Travis Kelce','KC',13.2,'Close decision; McBride has the stronger projected target share.'],['QB','Joe Burrow','CIN',22.4,'Excellent backup, but Allen carries more rushing upside.']];
@@ -4055,6 +4152,8 @@ renderTeam();
 showTxn('all',null);
 initCompare();
 
+
+window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraftPoolAudit();renderDraftEverything()});
 </script>
 </body>
 </html>
