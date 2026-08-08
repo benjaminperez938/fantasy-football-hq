@@ -1843,6 +1843,7 @@
       <div class="filter-grid"><select class="v2-sel" id="cmpSeason" onchange="renderCompareLab()"><option>2026</option><option selected>2025</option><option>2024</option><option>2023</option><option>2022</option><option>2021</option></select><select class="v2-sel" id="cmpMetric" onchange="renderCompareLab()"><option value="fantasy">Fantasy points</option><option value="targets">Targets / opportunities</option><option value="yards">Total yards</option><option value="snaps">Snap %</option></select><select class="v2-sel" id="cmpWeeks" onchange="renderCompareLab()"><option value="3">Last 3 weeks</option><option value="6">Last 6 weeks</option><option value="18" selected>Full season</option></select><select class="v2-sel" id="cmpScoring" onchange="renderCompareLab()"><option value="ppr">PPR</option><option value="half">Half PPR</option><option value="standard">Standard</option></select></div>
       <div class="cmp-add-wrap"><div class="v2-card"><div class="v2-card-title">ADD UP TO 4 PLAYERS OR TEAM DEFENSES</div><div class="cmp-search-row"><input class="v2-inp" id="cmpAddPlayer" list="cmpPlayerOptions" placeholder="Search player or D/ST…" onkeydown="if(event.key==='Enter')addComparePlayer()"><datalist id="cmpPlayerOptions"></datalist><button class="v2-btn v2-btn-p" onclick="addComparePlayer()">Add</button></div></div></div>
       <div class="cmp-data-note" id="cmpDataNote">Player Lab only charts verified weekly data. Synthetic lines have been removed.</div>
+      <div class="v2-card" style="margin:8px 0 10px;padding:10px 12px"><div style="display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap"><div><b>2021-2025 HISTORICAL FANTASY DATA</b><div id="historyLoadStatus" class="v2-player-meta" style="margin-top:3px">Checking local cache…</div></div><button class="v2-btn" onclick="loadHistoricalPlayerData(true)">Refresh verified data</button></div></div>
       <div class="cmp-stage"><div id="cmpSelected" class="compare-selected cmp-overlay"></div><button class="cmp-overlay-toggle" id="cmpOverlayToggle" onclick="toggleCompareOverlay()" title="Hide or show player tiles">−</button><div id="cmpChart" class="cmp-chart"></div></div><div id="cmpSummary" class="cmp-summary-wrap" style="margin-top:10px"></div>
     </div></div></div>
 
@@ -4061,7 +4062,7 @@ function sendGif(url){
 
 
 // ================================================================
-// FANTASY HQ V1.1 — JAVASCRIPT
+// FANTASY HQ V1.1.2 — JAVASCRIPT
 // V1.1 navigation and league-preparation logic.
 // ================================================================
 
@@ -4076,7 +4077,7 @@ const FALLBACK_DRAFT_PLAYERS=[
  ['TE','Trey McBride','ARI',14.8,8,21,15.3,14.1,12.8,8.7,0],['TE','Brock Bowers','LV',14.3,8,24,14.8,14.6,0,0,0],['TE','Travis Kelce','KC',13.2,10,30,12.8,14.9,15.6,18.1,17.3],['TE','George Kittle','SF',12.9,14,45,13.4,12.6,13.2,12.8,14.1],
  ['K','Brandon Aubrey','DAL',9.4,10,135,9.8,9.1,8.9,0,0],['K','Harrison Butker','KC',8.7,10,142,8.9,9.2,8.4,8.1,8.5],
  ['DST','49ers D/ST','SF',8.8,14,120,8.4,9.1,10.2,9.8,8.7],['DST','Steelers D/ST','PIT',8.5,5,124,8.9,8.7,9.5,8.3,9.0],['DST','Ravens D/ST','BAL',8.2,7,128,8.5,8.1,9.3,8.9,8.6]
-].map((r,i)=>{const years={2026:r[3],2025:r[6],2024:r[7],2023:r[8],2022:r[9],2021:r[10]};const vals=[r[6],r[7],r[8],r[9],r[10]].filter(v=>v>0);const avg=n=>{const a=vals.slice(0,n);return a.length?+(a.reduce((x,y)=>x+y,0)/a.length).toFixed(1):null};return {rank:i+1,pos:r[0],name:r[1],team:r[2],proj:r[3],bye:r[4],adp:r[5],years,avg2:avg(2),avg3:avg(3),avg5:avg(5),careerAvg:vals.length?+(vals.reduce((x,y)=>x+y,0)/vals.length).toFixed(1):null,ppg:avg(3),overview:'Historical profile shell ready for the preseason research pass.',outlook:'Preseason Fantasy HQ outlook will be added before the league draft.',gameLog:[]}});
+].map((r,i)=>{const years={2026:r[3],2025:null,2024:null,2023:null,2022:null,2021:null};return {rank:i+1,pos:r[0],name:r[1],team:r[2],proj:r[3],bye:r[4],adp:r[5],years,avg2:null,avg3:null,avg5:null,careerAvg:null,ppg:null,historyTotals:null,historyAverages:null,overview:'Historical profile shell ready for the verified data import.',outlook:'Preseason Fantasy HQ outlook will be added before the league draft.',gameLog:[]}});
 let DRAFT_PLAYERS=[...FALLBACK_DRAFT_PLAYERS], draftDataSource='fallback';
 function projectionFromESPN(player){
   const stats=Array.isArray(player.stats)?player.stats:[];
@@ -4116,7 +4117,87 @@ async function loadDraftPlayerPool(){
   refreshCompareOptions();
   renderDraftPoolAudit();
   v2RenderDraftBoard();
+  loadHistoricalPlayerData(false);
 }
+
+// ── V1.1.2 HISTORICAL PLAYER FANTASY DATA (2021-2025) ──
+// Source: official nflverse automated player-stat releases. We calculate fantasy
+// scoring locally so the displayed totals are transparent and independent of projections.
+const FHQ_HISTORY_SEASONS=[2021,2022,2023,2024,2025];
+const FHQ_HISTORY_CACHE_KEY='fhq_v112_player_history_2021_2025_v2';
+let fhqHistoryState={status:'idle',matched:0,rows:0,seasons:0,lastError:''};
+function historyStatus(text,isError=false){const el=document.getElementById('historyLoadStatus');if(el){el.textContent=text;el.style.color=isError?'var(--red)':''}}
+function normalizeHistoryName(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\b(jr|sr|ii|iii|iv)\b\.?/g,'').replace(/[^a-z0-9]/g,'')}
+function csvNumber(row,...keys){for(const k of keys){if(row[k]!==undefined&&row[k]!==null&&row[k]!==''){const n=Number(row[k]);if(Number.isFinite(n))return n}}return 0}
+function parseCSV(text){
+  const rows=[];let row=[],field='',quoted=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(quoted){if(c==='"'&&text[i+1]==='"'){field+='"';i++}else if(c==='"'){quoted=false}else field+=c}
+    else if(c==='"')quoted=true;
+    else if(c===','){row.push(field);field=''}
+    else if(c==='\n'){row.push(field);rows.push(row);row=[];field=''}
+    else if(c!=='\r')field+=c;
+  }
+  if(field.length||row.length){row.push(field);rows.push(row)}
+  if(!rows.length)return[];
+  const headers=rows.shift().map(x=>x.trim());
+  return rows.filter(r=>r.length>1).map(r=>{const o={};headers.forEach((h,i)=>o[h]=r[i]??'');return o});
+}
+function scoreHistoricalRow(r,fmt){
+  const receptionBonus=fmt==='ppr'?1:fmt==='half'?0.5:0;
+  const passYd=csvNumber(r,'passing_yards','pass_yards'), passTd=csvNumber(r,'passing_tds','passing_touchdowns','pass_tds'), ints=csvNumber(r,'interceptions','passing_interceptions');
+  const rushYd=csvNumber(r,'rushing_yards','rush_yards'), rushTd=csvNumber(r,'rushing_tds','rushing_touchdowns','rush_tds');
+  const rec=csvNumber(r,'receptions'), recYd=csvNumber(r,'receiving_yards','rec_yards'), recTd=csvNumber(r,'receiving_tds','receiving_touchdowns','rec_tds');
+  const lost=csvNumber(r,'sack_fumbles_lost')+csvNumber(r,'rushing_fumbles_lost')+csvNumber(r,'receiving_fumbles_lost');
+  const twoPt=csvNumber(r,'passing_2pt_conversions')+csvNumber(r,'rushing_2pt_conversions')+csvNumber(r,'receiving_2pt_conversions');
+  const returnTd=csvNumber(r,'special_teams_tds','return_tds');
+  return passYd*.04+passTd*4-ints*2+rushYd*.1+rushTd*6+rec*receptionBonus+recYd*.1+recTd*6-lost*2+twoPt*2+returnTd*6;
+}
+function playerSeasonSummaryFromRows(rows){
+  const out={years:{},totals:{ppr:{},half:{},standard:{}},weekly:{},gameLog:[],averages:{}};let allPpr=[],allHalf=[],allStandard=[];
+  for(const season of FHQ_HISTORY_SEASONS){
+    const sr=rows.filter(r=>Number(r.season)===season&&String(r.season_type||r.game_type||'REG').toUpperCase()==='REG').sort((a,b)=>Number(a.week)-Number(b.week));
+    if(!sr.length)continue;
+    const wk={ppr:[],half:[],standard:[],targets:[],yards:[],weeks:[]};let totalPpr=0,totalHalf=0,totalStandard=0;
+    for(const r of sr){
+      const fpStandard=scoreHistoricalRow(r,'standard'),fpHalf=scoreHistoricalRow(r,'half'),fpPpr=scoreHistoricalRow(r,'ppr');
+      const week=Number(r.week||0),targets=csvNumber(r,'targets'),yards=csvNumber(r,'rushing_yards')+csvNumber(r,'receiving_yards');
+      totalPpr+=fpPpr;totalHalf+=fpHalf;totalStandard+=fpStandard;allPpr.push(fpPpr);allHalf.push(fpHalf);allStandard.push(fpStandard);wk.weeks.push(week);wk.standard.push(+fpStandard.toFixed(2));wk.half.push(+fpHalf.toFixed(2));wk.ppr.push(+fpPpr.toFixed(2));wk.targets.push(targets);wk.yards.push(yards);
+      out.gameLog.push({season,week,fpStandard:+fpStandard.toFixed(2),fpHalf:+fpHalf.toFixed(2),fpPpr:+fpPpr.toFixed(2),targets,yards,team:r.recent_team||r.team||''});
+    }
+    out.years[season]=+totalPpr.toFixed(2);out.totals.ppr[season]=+totalPpr.toFixed(2);out.totals.half[season]=+totalHalf.toFixed(2);out.totals.standard[season]=+totalStandard.toFixed(2);out.weekly[season]=wk;
+  }
+  for(const fmt of ['ppr','half','standard']){const seasonVals=[2025,2024,2023,2022,2021].map(y=>out.totals[fmt][y]).filter(Number.isFinite),avg=n=>{const a=seasonVals.slice(0,n);return a.length?+(a.reduce((x,y)=>x+y,0)/a.length).toFixed(2):null},games=fmt==='ppr'?allPpr:fmt==='half'?allHalf:allStandard;out.averages[fmt]={avg2:avg(2),avg3:avg(3),avg5:avg(5),ppg:games.length?+(games.reduce((x,y)=>x+y,0)/games.length).toFixed(2):null}}
+  out.avg2=out.averages.ppr.avg2;out.avg3=out.averages.ppr.avg3;out.avg5=out.averages.ppr.avg5;out.careerAvg=out.averages.ppr.avg5;out.ppg=out.averages.ppr.ppg;
+  return out;
+}
+function applyHistoryPayload(payload){
+  if(!payload?.players)return 0;let matched=0;
+  for(const p of DRAFT_PLAYERS){const h=payload.players[normalizeHistoryName(p.name)];if(!h)continue;matched++;p.years={...(p.years||{}),...h.years,2026:p.proj||p.years?.[2026]||0};p.historyTotals=h.totals||{ppr:h.years||{}};p.historyAverages=h.averages||{ppr:{avg2:h.avg2,avg3:h.avg3,avg5:h.avg5,ppg:h.ppg}};p.avg2=h.avg2;p.avg3=h.avg3;p.avg5=h.avg5;p.careerAvg=h.careerAvg;p.ppg=h.ppg;p.weekly=h.weekly||{};p.gameLog=h.gameLog||[];p.historySource='nflverse';}
+  fhqHistoryState.matched=matched;refreshCompareOptions();renderDraftPoolAudit();v2RenderDraftBoard();if(document.getElementById('cmpChart'))renderCompareLab();return matched;
+}
+function cachedHistoricalPayload(){try{const raw=localStorage.getItem(FHQ_HISTORY_CACHE_KEY);return raw?JSON.parse(raw):null}catch(e){return null}}
+async function loadHistoricalPlayerData(force=false){
+  if(fhqHistoryState.status==='loading')return;
+  if(!force){const cached=cachedHistoricalPayload();if(cached?.players){const n=applyHistoryPayload(cached);fhqHistoryState.status='ready';historyStatus(`Cached verified history ready · ${n} current players matched · 2021-2025 · PPR totals/averages shown to 0.01`);return}}
+  fhqHistoryState.status='loading';historyStatus('Downloading verified nflverse weekly player stats for 2021-2025…');
+  try{
+    const all=[];
+    for(let i=0;i<FHQ_HISTORY_SEASONS.length;i++){
+      const season=FHQ_HISTORY_SEASONS[i];historyStatus(`Downloading verified history ${i+1}/5 · ${season}…`);
+      const url=`https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_${season}.csv`;
+      const res=await fetch(url,{cache:'force-cache'});if(!res.ok)throw new Error(`${season} nflverse request returned ${res.status}`);
+      const rows=parseCSV(await res.text());rows.forEach(r=>{if(!r.season)r.season=season});all.push(...rows);
+    }
+    const byName={};for(const r of all){const nm=normalizeHistoryName(r.player_display_name||r.player_name||r.name);if(!nm)continue;(byName[nm]||(byName[nm]=[])).push(r)}
+    const payload={version:2,generatedAt:new Date().toISOString(),players:{}};let matched=0;
+    for(const p of DRAFT_PLAYERS){if(p.pos==='DST')continue;const rows=byName[normalizeHistoryName(p.name)];if(!rows?.length)continue;payload.players[normalizeHistoryName(p.name)]=playerSeasonSummaryFromRows(rows);matched++}
+    try{localStorage.setItem(FHQ_HISTORY_CACHE_KEY,JSON.stringify(payload))}catch(e){console.warn('Historical cache quota:',e)}
+    fhqHistoryState={status:'ready',matched,rows:all.length,seasons:5,lastError:''};applyHistoryPayload(payload);historyStatus(`Verified history loaded · ${matched} current players matched · ${all.length.toLocaleString()} weekly source rows · 2021-2025`);
+  }catch(err){fhqHistoryState.status='error';fhqHistoryState.lastError=String(err?.message||err);historyStatus('Historical download blocked in this browser. The app will not substitute fake numbers; use Refresh verified data after deployment or check network/CORS.',true);console.warn('Historical player data:',err)}
+}
+
 let v2DraftQueue=[], draftFavorites=new Set(), draftWatchlist=new Set(), leagueDraftStarted=false, draftBoardMode='round', draftPrepListMode='queue';
 const DRAFT_STRATEGIES=['Best Available','Zero RB','Hero RB','WR Heavy','Balanced','QB Early','TE Edge','Value Hunter','RB Heavy','Upside'];
 let draftSetupMode='mock', draftTimerHandle=null, botPickHandle=null, stagedDraftPickKey=null;
@@ -4186,10 +4267,13 @@ function makeBotPick(team){if(!draftEngine.active||draftEngine.paused||team!==dr
 function undoDraftPick(){if(!draftEngine.picks.length)return;clearDraftTimers();const last=draftEngine.picks.pop();draftEngine.currentPick--;draftEngine.rosters[last.team]=draftEngine.rosters[last.team].filter((_,i)=>i!==draftEngine.rosters[last.team].length-1);draftEngine.available.add(playerKey(last.player));renderDraftEverything();advanceDraftTurn()}
 function showDraftView(view,btn){document.querySelectorAll('#draftLiveShell .draft-view').forEach(x=>x.style.display='none');const el=document.getElementById('draft'+view[0].toUpperCase()+view.slice(1)+'View');if(el)el.style.display='block';document.querySelectorAll('.draft-live-nav button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');if(view==='picks')renderDraftBoard();if(view==='rosters')renderDraftRosters();if(view==='queue')renderDraftQueue()}
 function ordinal(n){const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])}
-function draftStatValue(p,key){if(key==='proj')return p.proj||0;if(key==='adp')return p.adp>=999?null:p.adp;if(key==='2025')return p.years?.[2025]||null;if(key==='avg2')return p.avg2??historicalAvg(p,2);if(key==='avg3')return p.avg3??historicalAvg(p,3);if(key==='avg5')return p.avg5??historicalAvg(p,5);if(key==='career')return p.careerAvg??historicalAvg(p,5);if(key==='ppg')return p.ppg??historicalAvg(p,3);return null}
-function historicalAvg(p,n){const vals=[2025,2024,2023,2022,2021].map(y=>Number(p.years?.[y]||0)).filter(v=>v>0).slice(0,n);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null}
+function draftHistoryScoring(){return draftEngine?.active?(draftEngine.scoring||'ppr'):(document.getElementById('draftScoringSetting')?.value||'ppr')}
+function playerSeasonFantasy(p,season,fmt=draftHistoryScoring()){return p.historyTotals?.[fmt]?.[season]??(fmt==='ppr'?p.years?.[season]:null)??null}
+function playerHistoryAverage(p,key,fmt=draftHistoryScoring()){return p.historyAverages?.[fmt]?.[key]??null}
+function draftStatValue(p,key){if(key==='proj')return p.proj||0;if(key==='adp')return p.adp>=999?null:p.adp;if(key==='2025')return playerSeasonFantasy(p,2025);if(key==='avg2')return playerHistoryAverage(p,'avg2')??(draftHistoryScoring()==='ppr'?p.avg2:null)??historicalAvg(p,2);if(key==='avg3')return playerHistoryAverage(p,'avg3')??(draftHistoryScoring()==='ppr'?p.avg3:null)??historicalAvg(p,3);if(key==='avg5'||key==='career')return playerHistoryAverage(p,'avg5')??(draftHistoryScoring()==='ppr'?p.avg5:null)??historicalAvg(p,5);if(key==='ppg')return playerHistoryAverage(p,'ppg')??(draftHistoryScoring()==='ppr'?p.ppg:null);return null}
+function historicalAvg(p,n){const vals=[2025,2024,2023,2022,2021].map(y=>Number(p.years?.[y]||0)).filter(v=>v>0).slice(0,n);return vals.length?+(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2):null}
 function draftStatLabel(k){return ({proj:'PROJ','2025':'2025','avg2':'2-YR','avg3':'3-YR','avg5':'5-YR',career:'CAREER',ppg:'PPG',adp:'ADP'})[k]||'STAT'}
-function formatDraftStat(v){return v==null||!Number.isFinite(Number(v))?'—':Number(v).toFixed(1)}
+function formatDraftStat(v){return v==null||!Number.isFinite(Number(v))?'—':Number(v).toFixed(2)}
 function renderDraftClock(){const n=Math.max(0,draftEngine.timeLeft),m=Math.floor(n/60),sec=String(n%60).padStart(2,'0');const txt=`${m}:${sec}`;const e=document.getElementById('draftClock');if(e)e.textContent=txt;const live=document.getElementById('draftLiveClock');if(live)live.textContent=txt;const who=document.getElementById('draftLiveWho');if(who)who.textContent=draftEngine.paused?'Draft paused':(draftCurrentTeam()===draftEngine.userSlot-1?'You are on the clock!':managerName(draftCurrentTeam()));const sub=document.getElementById('draftLiveSub');if(sub)sub.textContent=`You pick ${ordinal(draftEngine.userSlot)}`}
 function renderDraftStatus(){renderDraftClock();const r=draftRound(),p=draftPickInRound(),team=draftCurrentTeam();const label=document.getElementById('draftStateLabel'),sub=document.getElementById('draftStateSub');if(label)label.textContent=draftEngine.paused?'Draft paused':`${managerName(team)} on the clock`;if(sub)sub.textContent=`Round ${r}, Pick ${p} · Overall ${draftEngine.currentPick+1}`;renderPickRibbon();renderLastPick()}
 function renderLastPick(){const el=document.getElementById('draftLastPick');if(!el)return;const x=draftEngine.picks.at(-1);el.innerHTML=x?`Last Pick: ${safeDraftText(managerName(x.team))} selected <b>${safeDraftText(x.player.name)}, ${x.player.pos}, ${safeDraftText(x.player.team)}</b>`:'Draft is open. Build your queue while you wait.'}
@@ -4216,7 +4300,7 @@ function renderDraftEverything(){renderDraftStatus();v2RenderDraftBoard();render
 function exitDraftMode(){if(draftEngine.active){document.body.classList.remove('draft-mode');switchTab('draft');}else switchTab('home')}
 function openPlayerProfile(k){const p=playerByKey(k);if(!p)return;window.__profilePlayerKey=String(k);document.getElementById('ppName').textContent=p.name;document.getElementById('ppMeta').textContent=`${p.team} · ${p.pos} · Bye ${p.bye||'—'} · ADP ${p.adp>=999?'—':Number(p.adp).toFixed(1)}`;document.getElementById('ppHeroStats').innerHTML=`<div class="pps"><b>${formatDraftStat(p.proj)}</b><span>2026 PROJ</span></div><div class="pps"><b>${formatDraftStat(draftStatValue(p,'2025'))}</b><span>2025 PTS</span></div><div class="pps"><b>${formatDraftStat(draftStatValue(p,'avg3'))}</b><span>3-YR AVG</span></div><div class="pps"><b>${formatDraftStat(draftStatValue(p,'avg5'))}</b><span>5-YR AVG</span></div>`;document.querySelectorAll('.player-profile-tabs button').forEach((b,i)=>b.classList.toggle('active',i===0));showPlayerProfileTab('overview',document.querySelector('.player-profile-tabs button'));document.getElementById('playerProfileOverlay').classList.add('on')}
 function closePlayerProfile(){document.getElementById('playerProfileOverlay')?.classList.remove('on')}
-function showPlayerProfileTab(tab,btn){document.querySelectorAll('.player-profile-tabs button').forEach(x=>x.classList.remove('active'));btn?.classList.add('active');const p=playerByKey(window.__profilePlayerKey);const el=document.getElementById('playerProfileContent');if(!p||!el)return;if(tab==='overview'){el.innerHTML=`<div class="profile-section"><h3>Fantasy HQ Overview</h3><div class="profile-copy">${safeDraftText(p.overview||'Player profile is ready for the preseason research pass.')}</div><div style="display:flex;gap:7px;margin-top:12px"><button class="v2-btn" onclick='toggleQueue(${JSON.stringify(playerKey(p))})'>${v2DraftQueue.includes(playerKey(p))?'Remove Queue':'Add to Queue'}</button><button class="v2-btn" onclick='toggleWatch(${JSON.stringify(playerKey(p))})'>${draftWatchlist.has(playerKey(p))?'Watching':'Watchlist'}</button><button class="v2-btn" onclick='toggleFavorite(${JSON.stringify(p.name)})'>${draftFavorites.has(p.name)?'★ Favorite':'☆ Favorite'}</button></div></div><div class="profile-section"><h3>Quick History</h3><table class="profile-history-table"><tr><th>Window</th><th>Fantasy Pts</th></tr><tr><td>2-Year Avg</td><td>${formatDraftStat(draftStatValue(p,'avg2'))}</td></tr><tr><td>3-Year Avg</td><td>${formatDraftStat(draftStatValue(p,'avg3'))}</td></tr><tr><td>5-Year Avg</td><td>${formatDraftStat(draftStatValue(p,'avg5'))}</td></tr><tr><td>Career Avg</td><td>${formatDraftStat(draftStatValue(p,'career'))}</td></tr></table></div>`}else if(tab==='stats'){el.innerHTML=`<div class="profile-section"><h3>Season Stats</h3><table class="profile-history-table"><tr><th>Season</th><th>Fantasy Pts</th></tr>${[2026,2025,2024,2023,2022,2021].map(y=>`<tr><td>${y===2026?'Proj 2026':y}</td><td>${formatDraftStat(p.years?.[y]||null)}</td></tr>`).join('')}</table></div>`}else if(tab==='gamelog'){el.innerHTML='<div class="profile-section"><h3>Game Log</h3><div class="profile-copy">Weekly game-log storage is wired into the player profile. Your compiled historical weekly data can populate this section without changing the draft interface.</div></div>'}else{el.innerHTML=`<div class="profile-section"><h3>2026 Fantasy Outlook</h3><div class="profile-copy">${safeDraftText(p.outlook||'Preseason Fantasy HQ scouting report will be added before draft day.')}</div></div><div class="profile-section"><h3>Research Pass</h3><div class="profile-copy">Training camp role, injuries, coaching changes, depth-chart movement, beat reporting, preseason usage, upside and downside will be written into this profile before your real draft. No live AI is required during the draft.</div></div>`}}
+function showPlayerProfileTab(tab,btn){document.querySelectorAll('.player-profile-tabs button').forEach(x=>x.classList.remove('active'));btn?.classList.add('active');const p=playerByKey(window.__profilePlayerKey);const el=document.getElementById('playerProfileContent');if(!p||!el)return;if(tab==='overview'){el.innerHTML=`<div class="profile-section"><h3>Fantasy HQ Overview</h3><div class="profile-copy">${safeDraftText(p.overview||'Player profile is ready for the preseason research pass.')}</div><div style="display:flex;gap:7px;margin-top:12px"><button class="v2-btn" onclick='toggleQueue(${JSON.stringify(playerKey(p))})'>${v2DraftQueue.includes(playerKey(p))?'Remove Queue':'Add to Queue'}</button><button class="v2-btn" onclick='toggleWatch(${JSON.stringify(playerKey(p))})'>${draftWatchlist.has(playerKey(p))?'Watching':'Watchlist'}</button><button class="v2-btn" onclick='toggleFavorite(${JSON.stringify(p.name)})'>${draftFavorites.has(p.name)?'★ Favorite':'☆ Favorite'}</button></div></div><div class="profile-section"><h3>Quick History · ${draftHistoryScoring().toUpperCase()}</h3><table class="profile-history-table"><tr><th>Window</th><th>Fantasy Pts</th></tr><tr><td>2-Year Avg</td><td>${formatDraftStat(draftStatValue(p,'avg2'))}</td></tr><tr><td>3-Year Avg</td><td>${formatDraftStat(draftStatValue(p,'avg3'))}</td></tr><tr><td>5-Year Avg</td><td>${formatDraftStat(draftStatValue(p,'avg5'))}</td></tr><tr><td>5-Year Window Avg</td><td>${formatDraftStat(draftStatValue(p,'career'))}</td></tr></table></div>`}else if(tab==='stats'){el.innerHTML=`<div class="profile-section"><h3>Season Stats</h3><table class="profile-history-table"><tr><th>Season</th><th>Fantasy Pts</th></tr>${[2026,2025,2024,2023,2022,2021].map(y=>`<tr><td>${y===2026?'Proj 2026':y}</td><td>${formatDraftStat(y===2026?p.proj:playerSeasonFantasy(p,y))}</td></tr>`).join('')}</table></div>`}else if(tab==='gamelog'){const rows=(p.gameLog||[]).slice().sort((a,b)=>(b.season-a.season)||(b.week-a.week));el.innerHTML=rows.length?`<div class="profile-section"><h3>Verified Game Log</h3><div class="profile-copy" style="margin-bottom:8px">Regular-season weekly data from nflverse. Fantasy points use Fantasy HQ's ESPN-style scoring calculation and display to 0.01.</div><table class="profile-history-table"><tr><th>Season/Wk</th><th>PPR</th><th>Half</th><th>Std</th></tr>${rows.slice(0,40).map(r=>`<tr><td>${r.season} W${r.week}</td><td>${formatDraftStat(r.fpPpr)}</td><td>${formatDraftStat(r.fpHalf)}</td><td>${formatDraftStat(r.fpStandard)}</td></tr>`).join('')}</table></div>`:'<div class="profile-section"><h3>Game Log</h3><div class="profile-copy">Verified weekly history has not loaded for this player yet.</div></div>'}else{el.innerHTML=`<div class="profile-section"><h3>2026 Fantasy Outlook</h3><div class="profile-copy">${safeDraftText(p.outlook||'Preseason Fantasy HQ scouting report will be added before draft day.')}</div></div><div class="profile-section"><h3>Research Pass</h3><div class="profile-copy">Training camp role, injuries, coaching changes, depth-chart movement, beat reporting, preseason usage, upside and downside will be written into this profile before your real draft. No live AI is required during the draft.</div></div>`}}
 function renderDraftPoolAudit(){const el=document.getElementById('draftPoolAudit');if(!el)return;const counts=DRAFT_PLAYERS.reduce((m,p)=>(m[p.pos]=(m[p.pos]||0)+1,m),{}),dupes=DRAFT_PLAYERS.length-new Set(DRAFT_PLAYERS.map(playerKey)).size,missingProj=DRAFT_PLAYERS.filter(p=>!(p.proj>0)).length,dst=counts.DST||0;const verified=DRAFT_PLAYERS.length>=400&&dst===32&&!dupes;el.innerHTML=[['TOTAL',DRAFT_PLAYERS.length],['QB',counts.QB||0],['RB',counts.RB||0],['WR',counts.WR||0],['TE',counts.TE||0],['K',counts.K||0],['D/ST',dst],['NO PROJ',missingProj]].map(x=>`<div class="audit-stat"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('');const status=document.getElementById('draftDataStatus');if(status)status.innerHTML=`${draftDataSource==='espn'?'ESPN player pool received':'Emergency local pool'} · <b>${verified?'completeness checks passed':'completeness not verified'}</b> · ${dupes} duplicate IDs`}
 
 const TEAM_STARTERS=[['QB','Josh Allen','BUF',24.8,'Elite rushing floor and high team total.'],['RB','Bijan Robinson','ATL',20.7,'Three-down workload and receiving usage.'],['RB','Saquon Barkley','PHI',19.8,'Goal-line role behind a strong offensive line.'],['WR','Justin Jefferson','MIN',19.9,'Target dominance provides the safest WR floor.'],['WR','DeVonta Smith','PHI',15.4,'Strong route participation and favorable coverage matchup.'],['TE','Trey McBride','ARI',14.8,'High target share relative to the TE position.'],['FLEX','Puka Nacua','LAR',17.6,'Volume makes him stronger than the remaining RB/WR options.'],['K','Brandon Aubrey','DAL',9.4,'Reliable long-range opportunity in a productive offense.'],['DST','Steelers D/ST','PIT',8.5,'Pressure rate and turnover upside improve the matchup.']];
@@ -4255,7 +4339,7 @@ let cmpOverlayVisible=true;
 function comparePlayerNames(){return DRAFT_PLAYERS.filter(p=>['QB','RB','WR','TE','K','DST'].includes(p.pos)).map(p=>p.name).sort((a,b)=>a.localeCompare(b))}
 function refreshCompareOptions(){const dl=document.getElementById('cmpPlayerOptions');if(dl){const names=comparePlayerNames();dl.innerHTML=names.map(x=>`<option value="${safeDraftText(x)}"></option>`).join('');cmpSelected=cmpSelected.filter(n=>names.includes(n));if(!cmpSelected.length)cmpSelected=names.slice(0,2)}const inp=document.getElementById('cmpAddPlayer');if(inp&&inp.tagName==='INPUT')inp.value=''}
 function normalizeCompareName(v){const q=String(v||'').trim().toLowerCase();return comparePlayerNames().find(n=>n.toLowerCase()===q)||comparePlayerNames().find(n=>n.toLowerCase().includes(q))||null}
-function getCompareWeeklySeries(name,season,metric,scoring){const p=DRAFT_PLAYERS.find(x=>x.name===name);if(!p)return[];const wk=p.weekly?.[season];if(wk){if(metric==='fantasy'){const arr=wk[scoring]||wk.fantasy||wk.ppr;return Array.isArray(arr)?arr.map(Number).filter(Number.isFinite):[]}const arr=wk[metric];return Array.isArray(arr)?arr.map(Number).filter(Number.isFinite):[]}if(Array.isArray(p.gameLog)){const rows=p.gameLog.filter(r=>String(r.season||'')===String(season)).sort((a,b)=>(a.week||0)-(b.week||0));const key=metric==='fantasy'?(scoring==='half'?'fpHalf':scoring==='standard'?'fpStandard':'fpPpr'):metric;return rows.map(r=>Number(r[key])).filter(Number.isFinite)}return[]}
+function getCompareWeeklySeries(name,season,metric,scoring){const p=DRAFT_PLAYERS.find(x=>x.name===name);if(!p)return[];const wk=p.weekly?.[season];if(wk){const key=metric==='fantasy'?(scoring==='half'?'half':scoring==='standard'?'standard':'ppr'):metric,arr=wk[key]||[];return arr.map((v,i)=>({week:Number(wk.weeks?.[i]||i+1),value:Number(v)})).filter(x=>Number.isFinite(x.value))}if(Array.isArray(p.gameLog)){const rows=p.gameLog.filter(r=>String(r.season||'')===String(season)).sort((a,b)=>(a.week||0)-(b.week||0));const key=metric==='fantasy'?(scoring==='half'?'fpHalf':scoring==='standard'?'fpStandard':'fpPpr'):metric;return rows.map(r=>({week:Number(r.week||0),value:Number(r[key])})).filter(x=>Number.isFinite(x.value))}return[]}
 function initCompare(){refreshCompareOptions();renderCompareLab()}
 function addComparePlayer(){const inp=document.getElementById('cmpAddPlayer');const n=normalizeCompareName(inp?.value);if(!n){if(inp)inp.focus();return}if(!cmpSelected.includes(n)&&cmpSelected.length<4)cmpSelected.push(n);if(inp)inp.value='';renderCompareLab()}
 function removeCompare(n){cmpSelected=cmpSelected.filter(x=>x!==n);renderCompareLab()}
@@ -4270,19 +4354,19 @@ function renderCompareLab(){
     chart.innerHTML=`<div class="cmp-empty"><div><b>${seasonStarted?'2026 WEEKLY RESULTS NOT YET SYNCED':'NO 2026 REGULAR-SEASON GAMES PLAYED'}</b><div style="margin-top:8px">The chart grows only from completed games. It will never invent an unplayed weekly result.</div></div></div>`;
     summary.innerHTML='';if(note)note.textContent='2026 live tracking: 0 verified completed weeks available.';return;
   }
-  const raw=cmpSelected.map(n=>({name:n,vals:getCompareWeeklySeries(n,season,metric,scoring)}));
-  const series=raw.filter(s=>s.vals.length).map(s=>({name:s.name,vals:s.vals.slice(-weeks)}));
+  const raw=cmpSelected.map(n=>({name:n,pts:getCompareWeeklySeries(n,season,metric,scoring)}));
+  const series=raw.filter(s=>s.pts.length).map(s=>({name:s.name,pts:s.pts.slice(-weeks)}));
   if(!series.length){chart.innerHTML=`<div class="cmp-empty"><div><b>VERIFIED WEEKLY ${season} DATA NOT LOADED YET</b><div style="margin-top:9px">Synthetic comparison lines have been removed. Import the historical weekly player-stat dataset to populate real ESPN-style ${scoring.toUpperCase()} fantasy points and game-by-game metrics.</div></div></div>`;summary.innerHTML='';if(note)note.textContent='Historical weekly player statistics are still pending import. Season-average placeholders are not used to manufacture weekly charts.';return}
   if(note)note.textContent=`Verified weekly data · ${season} · ${scoring.toUpperCase()} · all fantasy-point values rounded to 0.01.`;
-  const max=Math.max(1,...series.flatMap(s=>s.vals)),w=1000,h=560,pL=55,pR=22,pT=45,pB=58,colors=['#0aa860','#1a5fd0','#e8720c','#b8860b'];
+  const max=Math.max(1,...series.flatMap(s=>s.pts.map(p=>p.value))),w=1000,h=560,pL=55,pR=22,pT=45,pB=58,colors=['#0aa860','#1a5fd0','#e8720c','#b8860b'];
   let svg=`<svg viewBox="0 0 ${w} ${h}" aria-label="${season} weekly comparison chart">`;
   for(let g=0;g<=5;g++){const y=pT+(h-pT-pB)*g/5;const val=max*(1-g/5);svg+=`<line x1="${pL}" y1="${y}" x2="${w-pR}" y2="${y}" stroke="#dfe4e9" stroke-dasharray="4 4"/><text class="cmp-axis-label" x="${pL-8}" y="${y+4}" text-anchor="end">${val.toFixed(metric==='fantasy'?2:0)}</text>`}
-  const n=Math.max(...series.map(s=>s.vals.length));
-  for(let i=0;i<n;i++){const x=pL+i*(w-pL-pR)/Math.max(1,n-1);svg+=`<text class="cmp-axis-label" x="${x}" y="${h-28}" text-anchor="middle">W${i+1}</text>`}
+  const allWeeks=[...new Set(series.flatMap(s=>s.pts.map(p=>p.week)))].sort((a,b)=>a-b),minWeek=Math.min(...allWeeks),maxWeek=Math.max(...allWeeks);
+  for(const week of allWeeks){const x=pL+(week-minWeek)*(w-pL-pR)/Math.max(1,maxWeek-minWeek);svg+=`<text class="cmp-axis-label" x="${x}" y="${h-28}" text-anchor="middle">W${week}</text>`}
   svg+=`<text class="cmp-axis-label" x="${(pL+w-pR)/2}" y="${h-7}" text-anchor="middle">${season} REGULAR SEASON · WEEK</text>`;
-  series.forEach((sr,si)=>{const pts=sr.vals.map((v,i)=>{const x=pL+i*(w-pL-pR)/Math.max(1,sr.vals.length-1),y=pT+(max-v)*(h-pT-pB)/max;return{x,y,v}});svg+=`<polyline points="${pts.map(p=>`${p.x},${p.y}`).join(' ')}" fill="none" stroke="${colors[si]}" stroke-width="3"/>`;pts.forEach(p=>{svg+=`<circle cx="${p.x}" cy="${p.y}" r="5" fill="${colors[si]}" stroke="#fff" stroke-width="2"><title>${safeDraftText(sr.name)} · ${p.v.toFixed(2)}</title></circle>`})});
+  series.forEach((sr,si)=>{const pts=sr.pts.map(pt=>{const v=pt.value,x=pL+(pt.week-minWeek)*(w-pL-pR)/Math.max(1,maxWeek-minWeek),y=pT+(max-v)*(h-pT-pB)/max;return{x,y,v,week:pt.week}});svg+=`<polyline points="${pts.map(p=>`${p.x},${p.y}`).join(' ')}" fill="none" stroke="${colors[si]}" stroke-width="3"/>`;pts.forEach(p=>{svg+=`<circle cx="${p.x}" cy="${p.y}" r="5" fill="${colors[si]}" stroke="#fff" stroke-width="2"><title>${safeDraftText(sr.name)} · W${p.week} · ${p.v.toFixed(2)}</title></circle>`})});
   svg+='</svg>';chart.innerHTML=svg;
-  summary.innerHTML=series.map((sr,i)=>{const avg=sr.vals.reduce((a,b)=>a+b,0)/sr.vals.length,high=Math.max(...sr.vals),low=Math.min(...sr.vals);return `<div class="v2-card"><div style="display:flex;justify-content:space-between"><b style="color:${colors[i]}">${safeDraftText(sr.name)}</b><b>${avg.toFixed(2)} avg</b></div><div class="v2-player-meta" style="margin-top:4px">${season} · ${sr.vals.length} verified weeks · High ${high.toFixed(2)} · Low ${low.toFixed(2)} · ${metric}</div></div>`}).join('');
+  summary.innerHTML=series.map((sr,i)=>{const vals=sr.pts.map(p=>p.value),avg=vals.reduce((a,b)=>a+b,0)/vals.length,high=Math.max(...vals),low=Math.min(...vals);return `<div class="v2-card"><div style="display:flex;justify-content:space-between"><b style="color:${colors[i]}">${safeDraftText(sr.name)}</b><b>${avg.toFixed(2)} avg</b></div><div class="v2-player-meta" style="margin-top:4px">${season} · ${vals.length} verified games · High ${high.toFixed(2)} · Low ${low.toFixed(2)} · ${metric}</div></div>`}).join('');
 }
 
 function v2AddHomeLinks(){
