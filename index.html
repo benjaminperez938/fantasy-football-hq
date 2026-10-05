@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Fantasy HQ V1.1.6</title>
+<title>Fantasy HQ V1.1.10</title>
+<meta name="theme-color" content="#0aa860">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Fantasy HQ">
+<link rel="manifest" href="./manifest.webmanifest">
 <style>
   :root {
     --green:#0aa860; --green-dim:#067a46;
@@ -1093,6 +1098,71 @@
     .model-match-resultbox{padding-left:0}
   }
 
+
+
+  /* ===== V1.1.10 DEVICE + MODEL UX PASS ===== */
+  /* League Board: color now communicates movement; selection uses a neutral blue outline. */
+  .model-board-row.move-up{background:rgba(10,168,96,.055)}
+  .model-board-row.move-down{background:rgba(224,49,49,.045)}
+  .model-board-row.move-flat{background:transparent}
+  .model-board-row.selected{background:rgba(26,95,208,.035)!important;outline:2px solid rgba(26,95,208,.32)!important;outline-offset:-2px}
+  .model-board-row:hover{filter:brightness(.985)}
+
+  /* First-use Model disclosure is intentionally large, centered, and readable. */
+  #predGateOverlay{align-items:center;justify-content:center;padding:22px!important;background:rgba(255,255,255,.985)!important}
+  .pred-gate-card{width:min(720px,100%);margin:auto;border:1px solid var(--border);background:var(--card);padding:clamp(22px,4vw,40px);box-shadow:0 16px 54px rgba(16,20,24,.12)}
+  .pred-gate-title{font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:clamp(30px,6vw,48px);line-height:1.05;letter-spacing:2px}
+  .pred-gate-copy{font-family:Arial,Helvetica,sans-serif;font-size:clamp(15px,3vw,19px);line-height:1.65;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:16px 0;margin:16px 0}
+  .pred-gate-card label,.pred-gate-card input,.pred-gate-card button,.pred-gate-card div{font-family:Arial,Helvetica,sans-serif}
+  .pred-gate-card .sec-lbl{font-family:Impact,'Arial Narrow',Arial,sans-serif}
+  .pred-gate-compact #predGateDisclosureBlock,.pred-gate-compact #predGateAgreeWrap{display:none!important}
+  .pred-gate-compact .pred-gate-title{font-size:30px}
+  .pred-gate-compact .pred-gate-sub{display:block!important}
+
+  /* News uses the same typography system as Model: display = Impact, body = Arial. */
+  #panel-news{font-family:Arial,Helvetica,sans-serif!important}
+  #panel-news .news-pill,#panel-news .news-tag,#panel-news .news-meta,#panel-news .news-tab,#panel-news .mbtn,
+  #panel-news input,#panel-news select,#panel-news button,#panel-news [style*="Courier New"]{font-family:Arial,Helvetica,sans-serif!important;letter-spacing:normal!important}
+  #panel-news .sec-lbl{font-family:Impact,'Arial Narrow',Arial,sans-serif!important;letter-spacing:.04em!important}
+
+  /* Evidence-first upcoming-week scouting report. */
+  .model-outlook-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .model-outlook-card{border:1px solid var(--border);background:var(--dark2);padding:10px 11px;font-size:12px;line-height:1.55}
+  .model-outlook-card b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+  .model-outlook-card strong{font-size:13px}
+  .model-outlook-evidence{border-left:3px solid var(--blue)}
+  .model-outlook-caution{border-left:3px solid var(--gold)}
+  .model-outlook-opportunity{border-left:3px solid var(--green)}
+  @media(max-width:720px){.model-outlook-grid{grid-template-columns:1fr}}
+
+  /* Expanded team comparison legend is interactive; embedded comparison remains static. */
+  .model-compare-legend button{border:1px solid currentColor;background:var(--card);color:inherit;padding:6px 9px;display:flex;align-items:center;gap:6px;cursor:pointer;font:700 11px Arial,Helvetica,sans-serif;border-radius:4px}
+  .model-compare-legend button.off{opacity:.28;text-decoration:line-through}
+  .model-compare-legend button.show-all{color:var(--text);border-color:var(--border);text-decoration:none!important;opacity:1!important}
+  .model-compare-legend button i{display:inline-block;width:22px;height:3px;background:currentColor}
+  .model-compare-legend button i.def{height:0;border-top:2px dashed currentColor;background:none}
+
+  /* Player Compare local-data controls. */
+  .model-player-data-tools{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
+  .model-player-data-tools span{font-size:11px;color:var(--muted);line-height:1.45;flex:1;min-width:190px}
+
+  /* Device Lab: web preview of future native notifications / Live Activities. */
+  .device-lab-modal{display:none;position:fixed;inset:0;z-index:980;background:rgba(9,13,18,.94);align-items:center;justify-content:center;padding:18px;overflow:auto}
+  .device-lab-modal.on{display:flex}
+  .device-lab-shell{width:min(760px,100%);background:#f7f8fa;color:#101418;border-radius:22px;padding:18px;border:1px solid #dfe4e9;box-shadow:0 24px 80px rgba(0,0,0,.35)}
+  .device-lab-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.device-lab-head h2{font-family:Impact,'Arial Narrow',Arial,sans-serif;letter-spacing:.05em;font-size:28px}
+  .qcfl-mark{width:54px;height:54px;border:3px solid #101418;border-radius:15px;display:grid;place-items:center;font-family:Impact,'Arial Narrow',Arial,sans-serif;font-size:20px;line-height:.8;position:relative;background:#fff}
+  .qcfl-mark:after{content:'25';position:absolute;right:-7px;bottom:-7px;width:25px;height:25px;border-radius:50%;display:grid;place-items:center;background:#0aa860;color:#fff;font:700 10px Arial}
+  .device-island{margin:12px auto;width:min(520px,94%);min-height:54px;border-radius:32px;background:#050607;color:white;padding:10px 16px;display:flex;align-items:center;gap:10px;transition:.25s ease;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+  .device-island.expanded{min-height:148px;border-radius:30px;align-items:flex-start;flex-wrap:wrap}.device-island-logo{width:32px;height:32px;border-radius:9px;background:#fff;color:#050607;display:grid;place-items:center;font:900 12px Arial}.device-island-main{flex:1;font-size:12px;line-height:1.35}.device-island-main b{font-size:14px}.device-island-extra{display:none;width:100%;border-top:1px solid #34363a;padding-top:8px;font-size:11px;line-height:1.5}.device-island.expanded .device-island-extra{display:block}
+  .device-stage{position:relative;height:180px;border:1px solid #dfe4e9;background:linear-gradient(#f5f7f9 0 68%,#dfeee4 68%);overflow:hidden;margin:12px 0}
+  .device-endzone{position:absolute;right:0;bottom:0;width:27%;height:32%;border-left:4px solid #fff;background:repeating-linear-gradient(90deg,rgba(10,168,96,.18) 0 12px,rgba(10,168,96,.28) 12px 24px)}
+  .td-runner{position:absolute;bottom:28px;left:-58px;width:52px;height:52px;object-fit:contain}.device-stage.td .td-runner{animation:tdRun 1.25s cubic-bezier(.2,.8,.2,1) forwards}@keyframes tdRun{0%{left:-58px;transform:rotate(-8deg)}75%{left:74%;transform:rotate(7deg)}100%{left:83%;transform:scale(1.15)}}
+  .fg-post{position:absolute;right:16%;top:27px;width:70px;height:100px;border-left:6px solid #d2a214;border-right:6px solid #d2a214;border-top:0}.fg-post:after{content:'';position:absolute;left:29px;top:42px;width:6px;height:72px;background:#d2a214}.fg-ball{display:none;position:absolute;left:20%;bottom:25px;font-size:28px}.device-stage.fg .fg-ball{display:block;animation:fgKick 1.15s ease-out forwards}@keyframes fgKick{0%{left:20%;bottom:25px;transform:rotate(0)}70%{left:75%;bottom:120px;transform:rotate(520deg)}100%{left:82%;bottom:105px;transform:rotate(620deg)}}
+  .device-notification{display:flex;align-items:center;gap:10px;border:1px solid #dfe4e9;background:#fff;border-radius:15px;padding:10px 12px;box-shadow:0 8px 20px rgba(16,20,24,.08)}.device-notification .qcfl-mark{width:38px;height:38px;border-width:2px;border-radius:10px;font-size:14px}.device-notification .qcfl-mark:after{width:18px;height:18px;font-size:8px;right:-5px;bottom:-5px}.device-notification b{display:block;font-size:13px}.device-notification span{font-size:12px;color:#5c6570}
+  .device-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.device-actions button{border:1px solid #ccd3da;background:white;padding:8px 10px;border-radius:8px;font-weight:700;cursor:pointer}.device-actions button.primary{background:#0aa860;color:white;border-color:#0aa860}
+  .device-native-note{font-size:11px;line-height:1.55;color:#5c6570;margin-top:10px}
+
 </style>
 </head>
 <body>
@@ -1579,6 +1649,7 @@
                 </div>
                 <div class="cmp-search-row"><input class="v2-inp" id="modelPlayerCompareAdd" list="modelPlayerCompareOptions" placeholder="Search player or D/ST…" onkeydown="if(event.key==='Enter')modelAddComparePlayer()"><datalist id="modelPlayerCompareOptions"></datalist><button class="v2-btn v2-btn-p" onclick="modelAddComparePlayer()">Add</button></div>
                 <div id="modelPlayerCompareChips" class="model-team-chip-row" style="margin-top:9px"></div>
+                <div class="model-player-data-tools"><button class="v2-btn" onclick="document.getElementById('modelPlayerHistoryImport').click()">IMPORT WEEKLY DATA</button><input id="modelPlayerHistoryImport" type="file" accept=".json,.csv,application/json,text/csv" style="display:none" onchange="modelImportPlayerHistoryFile(event)"><span>Use the local nflverse JSON/CSV export when browser security blocks the archive. A small verified 2026 sample is built in so the graph can be tested immediately.</span></div>
               </div></details>
               <details class="model-collapse" open><summary>PLAYER COMPARISON</summary><div class="model-collapse-body">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px">
@@ -1596,25 +1667,28 @@
           </div>
         </div>
       </div>
-      <div id="predGateOverlay" style="display:none;position:absolute;inset:0;background:var(--dark);z-index:70;overflow-y:auto;padding:18px">
-        <div style="font-family:Impact,'Arial Narrow',sans-serif;font-size:24px;letter-spacing:3px">MODEL <span style="color:var(--gold)">V1.3.1</span> &mdash; RESTRICTED</div>
-        <div style="font-size:13px;line-height:1.7;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 0;margin-bottom:12px">
-          <b>Legal &amp; general disclosure:</b> This section is for information and entertainment only. It is not financial,
-          investment, or gambling advice. Model output can be wrong. Past performance does not guarantee
-          future results. Sports wagering involves risk of loss and may not be legal in your jurisdiction &mdash; you are
-          responsible for complying with local law and the terms of any platform you use. Never wager money you cannot afford
-          to lose. If gambling stops being fun, help is available: call or text 1-800-GAMBLER (US).
+      <div id="predGateOverlay" style="display:none;position:absolute;inset:0;z-index:70;overflow-y:auto">
+        <div class="pred-gate-card" id="predGateCard">
+          <div class="pred-gate-title">MODEL <span style="color:var(--gold)">V1.3.1</span></div>
+          <div class="pred-gate-sub" style="display:none;font-size:13px;color:var(--muted);margin-top:6px">Restricted model access</div>
+          <div id="predGateDisclosureBlock" class="pred-gate-copy">
+            <b>Legal &amp; general disclosure:</b> This section is for information and entertainment only. It is not financial,
+            investment, or gambling advice. Model output can be wrong. Past performance does not guarantee future results.
+            Sports wagering involves risk of loss and may not be legal in your jurisdiction &mdash; you are responsible for
+            complying with local law and the terms of any platform you use. Never wager money you cannot afford to lose.
+            If gambling stops being fun, help is available: call or text 1-800-GAMBLER (US).
+          </div>
+          <label id="predGateAgreeWrap" style="display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-bottom:18px;cursor:pointer;line-height:1.45">
+            <input type="checkbox" id="predGateAgree" style="margin-top:3px;width:20px;height:20px;flex:0 0 auto">
+            I have read the disclosure, I am of legal age in my jurisdiction, and I accept full responsibility.
+          </label>
+          <div class="sec-lbl" id="predGatePwLbl">PASSWORD</div>
+          <input class="pred-inp" type="password" id="predGatePw" autocomplete="current-password" onkeydown="if(event.key==='Enter')predGateUnlock()">
+          <div id="predGateErr" style="color:var(--red);font-size:12px;margin-bottom:7px"></div>
+          <div id="predGateResetLink" style="display:none;font-size:12px;color:var(--blue);cursor:pointer;margin-bottom:10px" onclick="predResetPassword()">Forgot password? Reset it</div>
+          <button class="mbtn mbtn-p" onclick="predGateUnlock()">Unlock</button>
+          <button class="mbtn" onclick="switchTab('home')" style="margin-left:6px">Back to Home</button>
         </div>
-        <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;margin-bottom:10px;cursor:pointer">
-          <input type="checkbox" id="predGateAgree" style="margin-top:2px">
-          I have read the disclosure, I am of legal age in my jurisdiction, and I accept full responsibility.
-        </label>
-        <div class="sec-lbl" id="predGatePwLbl">PASSWORD</div>
-        <input class="pred-inp" type="password" id="predGatePw" onkeydown="if(event.key==='Enter')predGateUnlock()">
-        <div id="predGateErr" style="color:var(--red);font-size:12px;font-family:'Courier New',monospace;margin-bottom:4px"></div>
-        <div id="predGateResetLink" style="display:none;font-family:'Courier New',monospace;font-size:11px;color:var(--blue);cursor:pointer;margin-bottom:8px" onclick="localStorage.removeItem('predPw');document.getElementById('predGatePwLbl').textContent='SET A NEW PASSWORD';this.style.display='none'">Forgot password? Click to reset</div>
-        <button class="mbtn mbtn-p" onclick="predGateUnlock()">Unlock</button>
-        <button class="mbtn" onclick="switchTab('home')" style="margin-left:6px">Back to Home</button>
       </div>
       <div id="teamProfileModal" style="display:none;position:absolute;inset:0;background:var(--dark);z-index:60;overflow-y:auto;padding:16px">
         <div style="display:flex;justify-content:space-between;align-items:center">
@@ -1643,6 +1717,10 @@
             </div>
             <div class="settings-item" onclick="openSubPanel('sub-notifications')">
               <div class="si-left"><div class="si-icon"></div><div><div class="si-label">Notifications</div><div class="si-sub" id="notifSummary">All notifications on</div></div></div>
+              <span class="si-arrow">›</span>
+            </div>
+            <div class="settings-item" onclick="openDeviceLab()">
+              <div class="si-left"><div class="qcfl-mark" style="width:34px;height:34px;border-width:2px;border-radius:9px;font-size:13px">QC</div><div><div class="si-label">Device Experiences</div><div class="si-sub">Preview score alerts, touchdown/kick animations &amp; Dynamic Island concepts</div></div></div>
               <span class="si-arrow">›</span>
             </div>
           </div>
@@ -2455,7 +2533,7 @@ function openTeamProfileAb(ab){
     <div class="sec-lbl" style="margin-top:12px">DEFENSE</div>
     <div style="font-size:13px;line-height:1.7">${p.def}</div><div id="tpDefT">${t.def}</div>
     <div class="sec-lbl" style="margin-top:12px">SPECIAL TEAMS</div><div id="tpStT">${t.st}</div>
-    <div class="sec-lbl" style="margin-top:12px">KEY PLAYERS <span style="font-family:'Courier New',monospace;font-size:9px;color:var(--muted)">2025 STAT LINES</span></div>
+    <div class="sec-lbl" style="margin-top:12px">2025 REFERENCE PLAYERS <span style="font-family:'Courier New',monospace;font-size:9px;color:var(--muted)">HISTORICAL BASELINE · NOT CURRENT AVAILABILITY</span></div>
     <div style="font-size:13px;line-height:1.7;margin-bottom:4px">${p.key}</div>${playT}
     <div style="font-family:'Courier New',monospace;font-size:10px;color:var(--muted);margin-top:14px">MODEL PROFILE &middot; V1.3.1 &middot; COMPILED NFLVERSE DB 2021-2025 &middot; PLAYER LINES REFRESH WEEKLY FROM SEP 16</div>`;
   const id=ESPN_ID[ab];
@@ -2493,8 +2571,8 @@ function modelPopulateTeamSelect(){
 function renderModelLeagueBoard(){
   const el=document.getElementById('predRankList'); if(!el)return;
   const teams=Object.keys(MODEL_TEAM_DATA).sort((a,b)=>MODEL_TEAM_DATA[a].w3c-MODEL_TEAM_DATA[b].w3c);
-  el.innerHTML=teams.map(ab=>{const t=MODEL_TEAM_DATA[ab],m=modelRankMove(t),sel=ab===MODEL_SELECTED_TEAM?' selected':'';
-    return `<div class="model-board-row${sel}" data-model-team="${ab}" onclick="modelSelectTeam('${ab}','health')">
+  el.innerHTML=teams.map(ab=>{const t=MODEL_TEAM_DATA[ab],m=modelRankMove(t),sel=ab===MODEL_SELECTED_TEAM?' selected':'',moveClass=m.n>0?' move-up':m.n<0?' move-down':' move-flat';
+    return `<div class="model-board-row${moveClass}${sel}" data-model-team="${ab}" title="${m.n>0?'Up '+m.n+' spots from preseason':m.n<0?'Down '+Math.abs(m.n)+' spots from preseason':'No movement from preseason'}${sel?' · selected team':''}" onclick="modelSelectTeam('${ab}','health')">
       <div class="model-rank-num">${t.w3c}</div>
       <div class="model-team-cell"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/${ab.toLowerCase()}.png" onerror="this.style.display='none'"><div><div class="model-team-name">${TEAM_NAMES[ab]||ab}</div><div class="model-team-sub">${t.rec} · PF ${t.pf.toFixed(1)} / PA ${t.pa.toFixed(1)}</div></div></div>
       <div class="model-rank-num">${t.w3p}</div><div class="model-rank-num">${t.media}</div><div>${m.html}</div><div class="model-rank-num">${t.w3ps.toFixed(1)}</div><div class="model-rank-num">${t.u3[0]}</div><div class="model-rank-num">${t.u3[4]}</div>
@@ -2553,28 +2631,43 @@ function predTab(name, btn){
   if(name==='external') renderModelExternal();
   if(name==='guide') renderModelGuide();
 }
-function predEnter(){
-  // disclosure + password on EVERY entry (in-app overlay; popups are blocked in some browsers)
-  const ov=document.getElementById('predGateOverlay');
-  ov.style.display='block';
-  document.getElementById('predGateAgree').checked=false;
-  document.getElementById('predGatePw').value='';
-  document.getElementById('predGateErr').textContent='';
-  const _hasPw=localStorage.getItem('predPw');
-  document.getElementById('predGatePwLbl').textContent=_hasPw?'PASSWORD':'SET A PASSWORD (FIRST TIME)';
-  const _rl=document.getElementById('predGateResetLink'); if(_rl) _rl.style.display=_hasPw?'block':'none';
-}
-function predGateUnlock(){
-  const err=document.getElementById('predGateErr');
-  if(!document.getElementById('predGateAgree').checked){ err.textContent='You must accept the disclosure first.'; return; }
-  const pw=document.getElementById('predGatePw').value;
-  if(!pw){ err.textContent='Enter a password.'; return; }
-  const stored=localStorage.getItem('predPw');
-  if(!stored) localStorage.setItem('predPw', pw);
-  else if(pw!==stored){ err.textContent='Wrong password.'; return; }
-  document.getElementById('predGateOverlay').style.display='none';
+function predInitializeModel(){
   const stamp=document.getElementById('predStamp'); if(stamp) stamp.textContent='';
   predFetchTeams(); predBuildWeeks(); predTab('rank', document.querySelector('#predTabs .news-pill'));
+}
+function predEnter(){
+  const ov=document.getElementById('predGateOverlay'),card=document.getElementById('predGateCard'); if(!ov)return;
+  const accepted=localStorage.getItem('predDisclosureAccepted:v1')==='1';
+  const unlocked=sessionStorage.getItem('predModelUnlocked')==='1';
+  if(accepted&&unlocked){ov.style.display='none';predInitializeModel();return;}
+  ov.style.display='flex';card?.classList.toggle('pred-gate-compact',accepted);
+  const agree=document.getElementById('predGateAgree'); if(agree)agree.checked=accepted;
+  const pw=document.getElementById('predGatePw'); if(pw)pw.value='';
+  const err=document.getElementById('predGateErr'); if(err)err.textContent='';
+  const hasPw=!!localStorage.getItem('predPw');
+  const lbl=document.getElementById('predGatePwLbl');if(lbl)lbl.textContent=hasPw?'PASSWORD':'SET A PASSWORD';
+  const rl=document.getElementById('predGateResetLink');if(rl)rl.style.display=hasPw?'block':'none';
+  setTimeout(()=>pw?.focus(),80);
+}
+function predResetPassword(){
+  localStorage.removeItem('predPw');sessionStorage.removeItem('predModelUnlocked');
+  const lbl=document.getElementById('predGatePwLbl');if(lbl)lbl.textContent='SET A NEW PASSWORD';
+  const rl=document.getElementById('predGateResetLink');if(rl)rl.style.display='none';
+  const err=document.getElementById('predGateErr');if(err)err.textContent='Password reset on this device. Set a new password below.';
+}
+function predGateUnlock(){
+  const err=document.getElementById('predGateErr'),accepted=localStorage.getItem('predDisclosureAccepted:v1')==='1';
+  const agree=document.getElementById('predGateAgree');
+  if(!accepted&&!agree?.checked){ if(err)err.textContent='You must accept the disclosure first.'; return; }
+  const pw=document.getElementById('predGatePw')?.value||'';
+  if(!pw){ if(err)err.textContent='Enter a password.'; return; }
+  const stored=localStorage.getItem('predPw');
+  if(!stored) localStorage.setItem('predPw',pw);
+  else if(pw!==stored){ if(err)err.textContent='Wrong password.'; return; }
+  if(!accepted)localStorage.setItem('predDisclosureAccepted:v1','1');
+  sessionStorage.setItem('predModelUnlocked','1');
+  const ov=document.getElementById('predGateOverlay');if(ov)ov.style.display='none';
+  predInitializeModel();
 }
 function predUser(){ const n=(localStorage.getItem('myName')||localStorage.getItem('signedInUser')||'').trim().toLowerCase(); return n.split(' ')[0]; }
 function predIsBen(){ return ['benjamin','benji','ben'].includes(predUser()); }
@@ -2632,12 +2725,11 @@ function modelBestWorstUnits(t){
   return {best:rows[0],worst:rows[rows.length-1]};
 }
 function modelOverviewText(ab){
-  const t=MODEL_TEAM_DATA[ab],p=TEAM_PROFILES[ab]||{},bw=modelBestWorstUnits(t),move=t.w0c-t.w3c;
+  const t=MODEL_TEAM_DATA[ab],bw=modelBestWorstUnits(t),move=t.w0c-t.w3c;
   const direction=move>0?`has climbed ${move} spots from the preseason baseline`:move<0?`has fallen ${Math.abs(move)} spots from the preseason baseline`:'is holding its preseason position';
   const off=t.u3[0],def=t.u3[4];
   const balance=off<def?`The offense (#${off}) is carrying more of the profile than the defense (#${def}).`:`The defense (#${def}) is currently stronger than the offense (#${off}).`;
-  const personnel=p.key?` Players most central to the current profile include ${p.key}.`:'';
-  return `${TEAM_NAMES[ab]||ab} is ${t.rec} and ${direction}. ${t.identity} ${balance} The strongest measured unit is ${bw.best.label.toLowerCase()} (#${bw.best.rank}), while ${bw.worst.label.toLowerCase()} (#${bw.worst.rank}) is the biggest drag. ${t.context}${personnel}`;
+  return `${TEAM_NAMES[ab]||ab} is ${t.rec} and ${direction}. ${t.identity} ${balance} The strongest measured unit is ${bw.best.label.toLowerCase()} (#${bw.best.rank}), while ${bw.worst.label.toLowerCase()} (#${bw.worst.rank}) is the biggest drag. ${t.context}`;
 }
 function modelOverviewFacts(ab){
   const t=MODEL_TEAM_DATA[ab];
@@ -2822,6 +2914,38 @@ function modelOpenNodeDetail(ab,w,kind='context',open=true){
   if(w>MODEL_CURRENT_WEEK&&!cached)modelFetchUpcomingGame(ab,w).then(g=>{if(!g)return;if(d.dataset.week===String(w)&&d.dataset.team===ab&&d.dataset.kind===kind)d.innerHTML=modelNodeDetailHtml(ab,w,kind,g)});
   if(w>=1&&w<=3){modelSetProfileWeek(w,document.querySelector(`[data-model-profile="${w}"]`),false)}
 }
+function modelOpportunityChain(ab,opp){
+  const a=MODEL_TEAM_DATA[ab],b=MODEL_TEAM_DATA[opp];if(!a||!b)return 'Opponent unit profile is not available yet.';
+  const pass=modelRankScore(a.u3[1])-modelRankScore(b.u3[5]),run=modelRankScore(a.u3[2])-modelRankScore(b.u3[6]),prot=modelRankScore(a.u3[3])-modelRankScore(b.u3[7]);
+  if(prot<=-15)return `Protection is the first stress point (${ab} OL #${a.u3[3]} vs ${opp} rush #${b.u3[7]}). If that pressure shows up early, quicker throws, RB/TE outlets and QB movement become more likely than slow-developing concepts. Do not upgrade those roles until actual protection/route usage confirms the response.`;
+  if(pass<=-12&&prot>=-5&&run>=8)return `The air matchup is tougher than the run matchup. If ${opp} can suppress the primary outside target without extra rushers, the cleaner counter is the run game plus secondary/slot/TE targets. This is a conditional opportunity shift, not a player-specific guarantee.`;
+  if(pass<=-12&&prot>=5)return `Coverage is the larger obstacle, not protection. If ${opp} concentrates coverage on WR1, WR2/slot/TE can inherit targets because the quarterback should still have enough time to progress through reads. A verified shadow assignment would strengthen this signal.`;
+  if(pass>=15&&prot>=-5)return `The passing structure has a favorable path: ${ab} pass O #${a.u3[1]} faces ${opp} pass D #${b.u3[5]}, and protection is not a major model disadvantage. Secondary pass catchers become especially interesting if the opponent tilts coverage toward WR1.`;
+  if(run>=15)return `The run game is the cleanest matchup release valve (${ab} run O #${a.u3[2]} vs ${opp} run D #${b.u3[6]}). A successful early run plan can reduce obvious passing downs and protect the rest of the offense.`;
+  return `No single unit mismatch is large enough to force a strong role-shift claim. Expect play calling and in-game protection/coverage behavior to determine where touches and targets move.`;
+}
+function modelDefensiveLeverageNote(ab,opp){
+  const a=MODEL_TEAM_DATA[ab],b=MODEL_TEAM_DATA[opp];if(!a||!b)return 'Player-level leverage unavailable.';
+  const rush=modelRankScore(a.u3[7])-modelRankScore(b.u3[3]),cover=modelRankScore(a.u3[5])-modelRankScore(b.u3[1]);
+  if(rush>=18)return `${ab}'s pass rush (#${a.u3[7]}) has a major structural edge over ${opp}'s protection (#${b.u3[3]}). If the front wins with four, the secondary can play with more help and the entire pass defense can outperform its standalone coverage rank.`;
+  if(cover<=-18)return `${ab}'s pass defense (#${a.u3[5]}) is vulnerable against ${opp}'s pass offense (#${b.u3[1]}). One elite corner or rusher can change a portion of that matchup, but the model will not assume a single defender fixes the whole coverage structure.`;
+  return `The defensive read remains holistic. Elite leverage players can change route access, pressure timing or run fits, but a player-specific adjustment is withheld until current availability and assignment evidence are verified.`;
+}
+function modelUpcomingOutlookHtml(ab,g){
+  const w=MODEL_CURRENT_WEEK+1;if(!g||!MODEL_TEAM_DATA[g.opp])return `<div class="model-outlook-card model-outlook-caution"><b>Schedule / opponent</b><strong>Loading Week ${w} matchup</strong><br>The frozen snapshot does not have a verified opponent loaded yet.</div>`;
+  const opp=g.opp,a=MODEL_TEAM_DATA[ab],b=MODEL_TEAM_DATA[opp],rows=modelMatchupUnitForecast(ab,opp),score=modelProjectedScore(ab,opp,g.site,w),lens=modelMatchupLens(ab,opp);
+  const pass=rows.find(r=>r.label==='Pass game'),run=rows.find(r=>r.label==='Run game'),prot=rows.find(r=>r.label==='Protection');
+  const date=g.date?new Date(g.date).toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):`Week ${w}`;
+  return `<div class="model-outlook-grid">
+    <div class="model-outlook-card"><b>Next matchup</b><strong>${ab} ${g.site} ${opp} · ${date}</strong><br>${lens?.edge||'Even model read'} · ${lens?.confidence||'Low'} matchup confidence${score?` · score lens ${score.label}`:''}</div>
+    <div class="model-outlook-card model-outlook-evidence"><b>Unit evidence</b><strong>${pass?.read||'—'} passing · ${run?.read||'—'} rushing</strong><br>${pass?.detail||''}<br>${run?.detail||''}<br>${prot?.detail||''}</div>
+    <div class="model-outlook-card model-outlook-opportunity"><b>Likely opportunity chain</b>${modelOpportunityChain(ab,opp)}</div>
+    <div class="model-outlook-card"><b>Defensive leverage</b>${modelDefensiveLeverageNote(ab,opp)}</div>
+    <div class="model-outlook-card model-outlook-caution"><b>Availability / weather / travel</b><strong>Not yet verified in this frozen snapshot.</strong><br>No player-specific downgrade, weather adjustment, travel penalty or shadow-coverage claim is applied until a current source is loaded. Home/away is already represented by ${g.site==='vs'?'home':'road'} field context.</div>
+    <div class="model-outlook-card model-outlook-caution"><b>What can flip the read</b>${prot&&prot.diff<0?'If protection performs materially better than its rank matchup, the passing ceiling rises and the QB may need fewer scramble/checkdown solutions.':'If the offensive line loses the expected protection battle, deep concepts become less reliable and the offense may have to pivot toward quick game, movement or rushing.'} Player availability can override this before kickoff.</div>
+  </div>`;
+}
+function modelRefreshUpcomingOutlook(ab){const box=document.getElementById('modelUpcomingOutlook');if(!box||MODEL_SELECTED_TEAM!==ab)return;box.innerHTML=modelUpcomingOutlookHtml(ab,MODEL_MATCHUP_CACHE[`${ab}-${MODEL_CURRENT_WEEK+1}`]||null)}
 function renderModelHealth(){
   const el=document.getElementById('modelHealthBody'); if(!el||!MODEL_TEAM_DATA[MODEL_SELECTED_TEAM])return;
   const ab=MODEL_SELECTED_TEAM,t=MODEL_TEAM_DATA[ab],facts=modelOverviewFacts(ab),offRank=t.u3[0],defRank=t.u3[4],offScore=modelRankScore(offRank),defScore=modelRankScore(defRank);
@@ -2837,6 +2961,7 @@ function renderModelHealth(){
       </div>
     </div>
     <details class="model-health-section" open><summary>TEAM OVERVIEW</summary><div class="model-health-section-body"><div class="model-overview" id="modelOverviewSection"><p>${modelOverviewText(ab)}</p><div class="model-overview-facts"><div class="model-overview-fact" id="modelContextExplain"><b>Context</b>${facts.ctx}</div><div class="model-overview-fact" id="modelPerformanceExplain"><b>Performance</b>${facts.perf}</div><div class="model-overview-fact" id="modelMediaExplain"><b>External benchmark</b>${facts.media}</div></div></div></div></details>
+    <details class="model-health-section" open id="modelUpcomingSection"><summary>UPCOMING WEEK OUTLOOK</summary><div class="model-health-section-body" id="modelUpcomingOutlook">${modelUpcomingOutlookHtml(ab,MODEL_MATCHUP_CACHE[`${ab}-${MODEL_CURRENT_WEEK+1}`]||null)}</div></details>
     <details class="model-health-section" open id="modelTrajectorySection"><summary>RANK TREND</summary><div class="model-health-section-body"><div style="display:flex;justify-content:flex-end;margin-bottom:6px"><button class="model-expand-btn" onclick="modelOpenGraphModal('${ab}')">EXPAND GRAPH</button></div><div class="model-chart-box">${modelSvgTrajectory(ab,false)}</div></div></details>
     <details class="model-health-section" open id="modelProfileSection"><summary>OFFENSE + DEFENSE PROFILE</summary><div class="model-health-section-body">
       <div class="v2-pills" style="margin-bottom:8px"><button class="news-pill active" data-model-profile="overall" onclick="modelSetProfileWeek('overall',this)">Overall</button><button class="news-pill" data-model-profile="1" onclick="modelSetProfileWeek(1,this)">Week 1†</button><button class="news-pill" data-model-profile="2" onclick="modelSetProfileWeek(2,this)">Week 2</button><button class="news-pill" data-model-profile="3" onclick="modelSetProfileWeek(3,this)">Week 3</button></div>
@@ -2846,7 +2971,7 @@ function renderModelHealth(){
     </div></details>
     <details class="model-health-section" open id="modelPredictionHistorySection"><summary>PREDICTION HISTORY</summary><div class="model-health-section-body">${modelGameCards(ab)}</div></details>`;
   modelSetProfileWeek('overall',document.querySelector('[data-model-profile="overall"]'),false);
-  modelFetchTeamSchedule(ab).then(()=>{if(MODEL_SELECTED_TEAM===ab){const box=document.querySelector('#modelTrajectorySection .model-chart-box');if(box)box.innerHTML=modelSvgTrajectory(ab,false)}});
+  modelFetchTeamSchedule(ab).then(()=>{if(MODEL_SELECTED_TEAM===ab){const box=document.querySelector('#modelTrajectorySection .model-chart-box');if(box)box.innerHTML=modelSvgTrajectory(ab,false);modelRefreshUpcomingOutlook(ab)}});
 }
 function modelSetProfileWeek(week,btn,scroll=false){
   document.querySelectorAll('#pred-health [data-model-profile]').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');
@@ -2889,6 +3014,43 @@ function modelAddComparePlayer(){
   const inp=document.getElementById('modelPlayerCompareAdd'); if(!inp)return; const n=normalizeCompareName(inp.value); if(!n){inp.focus();return} if(!MODEL_COMPARE_PLAYERS.includes(n)&&MODEL_COMPARE_PLAYERS.length<4)MODEL_COMPARE_PLAYERS.push(n); inp.value=''; renderModelPlayerCompare();
 }
 function modelRemoveComparePlayer(n){MODEL_COMPARE_PLAYERS=MODEL_COMPARE_PLAYERS.filter(x=>x!==n);renderModelPlayerCompare()}
+function applyBuiltIn2026CompareSeed(){
+  if(typeof DRAFT_PLAYERS==='undefined')return 0;
+  const seed={
+    'Bijan Robinson':[
+      {season:2026,week:1,fpPpr:31.30,fpHalf:27.30,fpStandard:23.30,targets:10,yards:173,team:'ATL',opponent:'PIT'},
+      {season:2026,week:2,fpPpr:11.10,fpHalf:9.60,fpStandard:8.10,targets:4,yards:81,team:'ATL',opponent:'CAR'},
+      {season:2026,week:3,fpPpr:35.30,fpHalf:34.30,fpStandard:33.30,targets:2,yards:213,team:'ATL',opponent:'GB'}],
+    'Saquon Barkley':[
+      {season:2026,week:1,fpPpr:9.00,fpHalf:8.50,fpStandard:8.00,targets:2,yards:80,team:'PHI',opponent:'WAS'},
+      {season:2026,week:2,fpPpr:3.00,fpHalf:2.50,fpStandard:2.00,targets:2,yards:20,team:'PHI',opponent:'TEN'},
+      {season:2026,week:3,fpPpr:9.00,fpHalf:8.50,fpStandard:8.00,targets:2,yards:80,team:'PHI',opponent:'CHI'}]
+  };
+  let n=0;
+  for(const [name,rows] of Object.entries(seed)){
+    const p=DRAFT_PLAYERS.find(x=>x.name===name);if(!p)continue;
+    const existing=(p.gameLog||[]).filter(r=>Number(r.season)!==2026||!rows.some(q=>q.week===Number(r.week)));
+    p.gameLog=[...existing,...rows].sort((a,b)=>Number(a.season)-Number(b.season)||Number(a.week)-Number(b.week));
+    p.historySource=p.historySource||'verified-2026-sample';n++;
+  }
+  if(n&&fhqHistoryState.status!=='ready')fhqHistoryState.status='sample';
+  return n;
+}
+async function modelImportPlayerHistoryFile(ev){
+  const file=ev?.target?.files?.[0];if(!file)return;
+  const status=document.getElementById('modelPlayerCompareStatus');if(status)status.textContent=`Importing ${file.name}...`;
+  try{
+    const text=await file.text();let payload=null,rows=null;
+    if(file.name.toLowerCase().endsWith('.json')){const obj=JSON.parse(text);if(obj?.players)payload=obj;else if(Array.isArray(obj))rows=obj;else throw new Error('JSON must be a row array or a {players:{...}} payload.');}
+    else rows=parseCSV(text);
+    if(rows){const byName={};for(const r of rows){const nm=normalizeHistoryName(r.player_display_name||r.player_name||r.name);if(!nm)continue;(byName[nm]||(byName[nm]=[])).push(r)}payload={version:'local-import',generatedAt:new Date().toISOString(),players:{}};for(const p of DRAFT_PLAYERS){if(p.pos==='DST')continue;const rr=byName[normalizeHistoryName(p.name)];if(rr?.length)payload.players[normalizeHistoryName(p.name)]=playerSeasonSummaryFromRows(rr)}}
+    const matched=applyHistoryPayload(payload);applyBuiltIn2026CompareSeed();fhqHistoryState={status:'ready',matched,rows:rows?.length||0,seasons:FHQ_HISTORY_SEASONS.length,lastError:''};
+    try{localStorage.setItem(FHQ_HISTORY_CACHE_KEY,JSON.stringify(payload))}catch(e){console.warn('Player import cache quota:',e)}
+    if(status)status.textContent=`Local weekly data ready · ${matched} players matched · ${file.name}`;renderModelPlayerCompare();
+  }catch(err){if(status)status.textContent=`Import failed: ${String(err?.message||err)}`;console.warn('Player weekly import:',err)}
+  finally{if(ev?.target)ev.target.value=''}
+}
+function modelHistoryUsable(){return fhqHistoryState.status==='ready'||fhqHistoryState.status==='sample'}
 function modelPlayerCompareControlChanged(){modelUpdatePlayerCompareControls();renderModelPlayerCompare()}
 function modelUpdatePlayerCompareControls(){
   const metric=document.getElementById('modelPlayerCompareMetric')?.value||'fantasy';
@@ -2910,13 +3072,13 @@ function modelPlayerCompareSeries(name,season,metric,scoring){return modelPlayer
 async function renderModelPlayerCompare(){
   const chart=document.getElementById('modelPlayerCompareChart'),summary=document.getElementById('modelPlayerCompareSummary'),chips=document.getElementById('modelPlayerCompareChips'),status=document.getElementById('modelPlayerCompareStatus'); if(!chart||!summary||!chips||typeof DRAFT_PLAYERS==='undefined')return;
   modelUpdatePlayerCompareControls();modelRefreshPlayerCompareChips(); const season=document.getElementById('modelPlayerCompareSeason')?.value||'2026',metric=document.getElementById('modelPlayerCompareMetric')?.value||'fantasy',scoring=document.getElementById('modelPlayerCompareScoring')?.value||'ppr';
-  if(fhqHistoryState.status!=='ready'){
+  if(!modelHistoryUsable()){
     if(status)status.textContent='Loading weekly player archive...';chart.innerHTML='<div class="cmp-empty"><div><b>Loading weekly player history...</b></div></div>';summary.innerHTML='';
     if(fhqHistoryState.status!=='loading')await loadHistoricalPlayerData(false); else return;
-    if(fhqHistoryState.status!=='ready'){chart.innerHTML='<div class="cmp-empty"><div><b>Weekly archive could not load in this browser.</b><div style="margin-top:8px"><button class="v2-btn" onclick="loadHistoricalPlayerData(true).then(()=>renderModelPlayerCompare())">Retry archive</button></div></div></div>';if(status)status.textContent='Weekly archive unavailable';return}
+    if(!modelHistoryUsable()){chart.innerHTML='<div class="cmp-empty"><div><b>Weekly archive could not load in this browser.</b><div style="margin-top:8px"><button class="v2-btn" onclick="loadHistoricalPlayerData(true).then(()=>renderModelPlayerCompare())">Retry archive</button></div></div></div>';if(status)status.textContent='Weekly archive unavailable';return}
   }
   const series=MODEL_COMPARE_PLAYERS.map(n=>({name:n,pts:modelPlayerCompareSeries(n,season,metric,scoring)})).filter(s=>s.pts.length);
-  if(status)status.textContent=`${season} weekly actuals · ${metric==='fantasy'?scoring.toUpperCase()+' fantasy points':metric} · solid actual / dashed rolling pregame baseline`;
+  if(status)status.textContent=`${season} weekly actuals · ${metric==='fantasy'?scoring.toUpperCase()+' fantasy points':metric} · solid actual / dashed rolling pregame baseline${fhqHistoryState.status==='sample'?' · verified sample dataset':''}`;
   if(!series.length){chart.innerHTML=`<div class="cmp-empty"><div><b>No weekly ${season} data for the selected players yet.</b><div style="margin-top:6px">Try another player or season. 2026 data appears as nflverse publishes completed games.</div></div></div>`;summary.innerHTML='';return}
   chart.innerHTML=modelPlayerCompareSvgFixed(series,season,metric,scoring,false);
   const colors=['#0aa860','#1a5fd0','#e8720c','#b8860b'];summary.innerHTML=series.map((sr,i)=>{const vals=sr.pts.map(p=>p.value),avg=vals.reduce((a,b)=>a+b,0)/vals.length;return `<div class="model-compare-card"><h4 style="color:${colors[i]}">${safeDraftText(sr.name)}</h4><div class="v2-player-meta">${vals.length} games · Avg ${avg.toFixed(2)} · High ${Math.max(...vals).toFixed(2)} · Low ${Math.min(...vals).toFixed(2)}</div></div>`}).join('');
@@ -3014,9 +3176,14 @@ function modelMatchWhy(pred,away,home,finalWinner,finalAway,finalHome,w){const p
 function modelToggleMatchCard(el){el.closest('.model-match-card')?.classList.toggle('open')}
 function modelMatchDetailHtml(away,home,w,pred){const unitHome=modelUnitForecastHtml(home,away),unitAway=modelUnitForecastHtml(away,home),ac=modelTeamColor(away),hc=modelTeamColor(home);return `<div class="model-matchup-read-grid" style="--away-color:${ac};--home-color:${hc}"><div class="model-read-neutral"><b>MODEL PICK</b>${pred.pick} · ${(pred.confidence*100).toFixed(0)}% prototype confidence</div><div class="model-read-neutral"><b>PROJECTED SCORE</b>${pred.score?`${away} ${pred.score.away} - ${home} ${pred.score.home}`:'—'}</div><div class="model-read-away"><span class="model-read-teamtag" style="color:${ac}"><img src="${modelTeamLogoUrl(away)}" alt="${away}">${away} UNIT READ</span>${modelMatchupLens(away,home)?.edge||'—'}</div><div class="model-read-home"><span class="model-read-teamtag" style="color:${hc}"><img src="${modelTeamLogoUrl(home)}" alt="${home}">${home} UNIT READ</span>${modelMatchupLens(home,away)?.edge||'—'}</div></div>${modelSeasonProfilePair(away,home)}<div class="model-stat-tabs"><label>STATS VS STATS</label><select class="pred-inp" style="width:auto;margin:0" onchange="mxRangeChange(this,'${home}','${away}')"><option value="2026" selected>2026 season to date</option><option value="2025">2025 season</option><option value="AVG">2021-25 average</option></select></div><div class="mx-stats">${model2026StatsTable(away,home)}</div><div class="sec-lbl" style="margin-top:12px">UNIT MATCHUP FORECAST</div><div class="model-profile-grid"><div class="model-profile-panel team-panel" style="--team-color:${ac}"><button class="model-team-panel-head" onclick="modelSelectTeam('${away}','health')"><img src="${modelTeamLogoUrl(away)}" alt="${away}">${away} OFFENSE / DEFENSE</button>${unitAway}</div><div class="model-profile-panel team-panel" style="--team-color:${hc}"><button class="model-team-panel-head" onclick="modelSelectTeam('${home}','health')"><img src="${modelTeamLogoUrl(home)}" alt="${home}">${home} OFFENSE / DEFENSE</button>${unitHome}</div></div>`}
 function modelTeamCompareSeries(ab){const p=model2025Profiles()[ab],t=MODEL_TEAM_DATA[ab];return {off:[p?.offRank||null,modelWeekUnitRank(ab,1,0),modelWeekUnitRank(ab,2,0),t.u3[0]],def:[p?.defRank||null,modelWeekUnitRank(ab,1,4),modelWeekUnitRank(ab,2,4),t.u3[4]]}}
-function modelTeamCompareGraphSvg(){const teams=MODEL_COMPARE_TEAMS.filter(ab=>MODEL_TEAM_DATA[ab]),colors=['#0aa860','#1a5fd0','#e8720c','#b8860b'],W=1280,H=470,L=70,R=30,T=50,B=70,labels=['2025','2026 W1','W2','W3'],x=i=>L+i*(W-L-R)/(labels.length-1),y=r=>T+(Number(r)-1)*(H-T-B)/31;let h='';[1,8,16,24,32].forEach(r=>{h+=`<line x1="${L}" y1="${y(r)}" x2="${W-R}" y2="${y(r)}" stroke="var(--border)"/><text x="${L-12}" y="${y(r)+4}" text-anchor="end" font-size="11" fill="var(--muted)">#${r}</text>`});labels.forEach((q,i)=>h+=`<text x="${x(i)}" y="${H-25}" text-anchor="middle" font-size="11" font-weight="700">${q}</text>`);teams.forEach((ab,ti)=>{const s=modelTeamCompareSeries(ab),c=colors[ti];for(const kind of ['off','def']){const arr=s[kind],pts=arr.map((r,i)=>r?`${x(i)},${y(r)}`:null).filter(Boolean).join(' ');h+=`<polyline points="${pts}" fill="none" stroke="${c}" stroke-width="3" ${kind==='def'?'stroke-dasharray="8 5"':''}/>`;arr.forEach((r,i)=>{if(!r)return;h+=`<circle cx="${x(i)}" cy="${y(r)}" r="5" fill="${kind==='off'?c:'var(--card)'}" stroke="${c}" stroke-width="2"><title>${ab} ${kind==='off'?'offense':'defense'} #${r} · ${labels[i]}</title></circle>`})}});return `<svg viewBox="0 0 ${W} ${H}" aria-label="Team offense and defense comparison">${h}</svg>`}
-function modelEnsureTeamCompareModal(){let m=document.getElementById('modelTeamCompareModal');if(m)return m;m=document.createElement('div');m.id='modelTeamCompareModal';m.className='model-team-compare-modal';m.innerHTML=`<div class="model-team-compare-modal-head"><div class="model-graph-modal-title">TEAM OFFENSE / DEFENSE TREND</div><button class="model-graph-modal-close" onclick="modelCloseTeamCompareGraph()">Close</button></div><div class="model-team-compare-modal-body"><div class="model-compare-legend">${MODEL_COMPARE_TEAMS.map((ab,i)=>`<span style="color:${['#0aa860','#1a5fd0','#e8720c','#b8860b'][i]}"><i></i>${ab} offense</span><span style="color:${['#0aa860','#1a5fd0','#e8720c','#b8860b'][i]}"><i class="def"></i>${ab} defense</span>`).join('')}</div><div id="modelTeamCompareGraphFull" class="model-team-compare-graph"></div></div>`;document.body.appendChild(m);return m}
-function modelOpenTeamCompareGraph(){const m=modelEnsureTeamCompareModal();m.classList.add('on');document.body.style.overflow='hidden';const leg=m.querySelector('.model-compare-legend');if(leg)leg.innerHTML=MODEL_COMPARE_TEAMS.map((ab,i)=>`<span style="color:${['#0aa860','#1a5fd0','#e8720c','#b8860b'][i]}"><i></i>${ab} offense</span><span style="color:${['#0aa860','#1a5fd0','#e8720c','#b8860b'][i]}"><i class="def"></i>${ab} defense</span>`).join('');document.getElementById('modelTeamCompareGraphFull').innerHTML=modelTeamCompareGraphSvg()}
+const MODEL_COMPARE_HIDDEN=new Set();
+function modelTeamCompareGraphSvg(){const teams=MODEL_COMPARE_TEAMS.filter(ab=>MODEL_TEAM_DATA[ab]),colors=['#0aa860','#1a5fd0','#e8720c','#b8860b'],W=1280,H=470,L=70,R=30,T=50,B=70,labels=['2025','2026 W1','W2','W3'],x=i=>L+i*(W-L-R)/(labels.length-1),y=r=>T+(Number(r)-1)*(H-T-B)/31;let h='';[1,8,16,24,32].forEach(r=>{h+=`<line x1="${L}" y1="${y(r)}" x2="${W-R}" y2="${y(r)}" stroke="var(--border)"/><text x="${L-12}" y="${y(r)+4}" text-anchor="end" font-size="11" fill="var(--muted)">#${r}</text>`});labels.forEach((q,i)=>h+=`<text x="${x(i)}" y="${H-25}" text-anchor="middle" font-size="11" font-weight="700">${q}</text>`);teams.forEach((ab,ti)=>{const sr=modelTeamCompareSeries(ab),c=colors[ti];for(const kind of ['off','def']){if(MODEL_COMPARE_HIDDEN.has(`${ab}:${kind}`))continue;const arr=sr[kind],pts=arr.map((r,i)=>r?`${x(i)},${y(r)}`:null).filter(Boolean).join(' ');h+=`<polyline points="${pts}" fill="none" stroke="${c}" stroke-width="3" ${kind==='def'?'stroke-dasharray="8 5"':''}/>`;arr.forEach((r,i)=>{if(!r)return;h+=`<circle cx="${x(i)}" cy="${y(r)}" r="5" fill="${kind==='off'?c:'var(--card)'}" stroke="${c}" stroke-width="2"><title>${ab} ${kind==='off'?'offense':'defense'} #${r} · ${labels[i]}</title></circle>`})}});return `<svg viewBox="0 0 ${W} ${H}" aria-label="Team offense and defense comparison">${h}</svg>`}
+function modelCompareLegendHtml(){const colors=['#0aa860','#1a5fd0','#e8720c','#b8860b'];return MODEL_COMPARE_TEAMS.map((ab,i)=>['off','def'].map(kind=>{const key=`${ab}:${kind}`,hidden=MODEL_COMPARE_HIDDEN.has(key);return `<button class="${hidden?'off':''}" style="color:${colors[i]}" onclick="modelToggleCompareSeries('${ab}','${kind}')"><i class="${kind==='def'?'def':''}"></i>${ab} ${kind==='off'?'offense':'defense'}</button>`}).join('')).join('')+`<button class="show-all" onclick="modelShowAllCompareSeries()">SHOW ALL</button>`}
+function modelRedrawTeamCompareModal(){const m=document.getElementById('modelTeamCompareModal');if(!m)return;const leg=m.querySelector('.model-compare-legend');if(leg)leg.innerHTML=modelCompareLegendHtml();const graph=document.getElementById('modelTeamCompareGraphFull');if(graph)graph.innerHTML=modelTeamCompareGraphSvg()}
+function modelToggleCompareSeries(ab,kind){const key=`${ab}:${kind}`;MODEL_COMPARE_HIDDEN.has(key)?MODEL_COMPARE_HIDDEN.delete(key):MODEL_COMPARE_HIDDEN.add(key);modelRedrawTeamCompareModal()}
+function modelShowAllCompareSeries(){MODEL_COMPARE_HIDDEN.clear();modelRedrawTeamCompareModal()}
+function modelEnsureTeamCompareModal(){let m=document.getElementById('modelTeamCompareModal');if(m)return m;m=document.createElement('div');m.id='modelTeamCompareModal';m.className='model-team-compare-modal';m.innerHTML=`<div class="model-team-compare-modal-head"><div class="model-graph-modal-title">TEAM OFFENSE / DEFENSE TREND</div><button class="model-graph-modal-close" onclick="modelCloseTeamCompareGraph()">Close</button></div><div class="model-team-compare-modal-body"><div class="model-compare-legend"></div><div id="modelTeamCompareGraphFull" class="model-team-compare-graph"></div></div>`;document.body.appendChild(m);return m}
+function modelOpenTeamCompareGraph(){const m=modelEnsureTeamCompareModal();m.classList.add('on');document.body.style.overflow='hidden';modelRedrawTeamCompareModal()}
 function modelCloseTeamCompareGraph(){document.getElementById('modelTeamCompareModal')?.classList.remove('on');document.body.style.overflow=''}
 function modelStartMatchAutoRefresh(){if(MODEL_MATCH_REFRESH_TIMER)clearInterval(MODEL_MATCH_REFRESH_TIMER);MODEL_MATCH_REFRESH_TIMER=setInterval(()=>{const p=document.getElementById('pred-match');if(p&&p.style.display!=='none'&&Number(document.getElementById('predWeekSel')?.value||0)===4)predLoadWeek(true)},60000)}
 function predBuildWeeks(){
@@ -3311,7 +3478,7 @@ function classifyNewsForNoti(n){
   for(const [re,type,action,beginner] of rules){
     if(re.test(t)){
       return {type, action, confidence:"Low", beginner,
-        reason:"Auto-generated from news keywords + V1.3.1 team context. Ben upgrades confidence manually after film/model review.",
+        reason:"This is an early signal from the headline and current team context. Confidence stays low until role, availability, usage, and matchup evidence support the same conclusion.",
         tags:["ESPN news","auto"], link:n.link||null, headline:n.headline};
     }
   }
@@ -3338,7 +3505,7 @@ function notiCardHTML(o, idx, manual){
         ${(o.tags||[]).map(tg=>`<span style="color:var(--muted);padding:2px 0">${tg}</span>`).join(' ')}
       </div>
       <div style="font-size:13px;line-height:1.6;margin-top:8px">${o.beginner||''}</div>
-      <details style="margin-top:6px"><summary style="font-family:'Courier New',monospace;font-size:11px;cursor:pointer;color:var(--muted)">MODEL REASON</summary>
+      <details style="margin-top:6px"><summary style="font-family:'Courier New',monospace;font-size:11px;cursor:pointer;color:var(--muted)">WHY THIS MATTERS</summary>
         <div style="font-size:12px;line-height:1.6;margin-top:4px;color:var(--muted)">${o.reason||''}</div></details>
       ${o.link?`<div style="font-family:'Courier New',monospace;font-size:11px;margin-top:6px"><a href="${o.link}" target="_blank" style="color:var(--blue);text-decoration:none">RELATED ARTICLE &#8599;</a></div>`:''}
       ${resSel}
@@ -3349,7 +3516,7 @@ function renderNotis(){
   const el=document.getElementById('newsNotis'); if(!el) return;
   const manual = getBensNotis();
   const auto = (allNewsItems||[]).map(classifyNewsForNoti).filter(Boolean).slice(0,8);
-  let html = `<div style="font-family:'Courier New',monospace;font-size:11px;color:var(--muted);letter-spacing:1px;margin:4px 0 12px">COMMISSIONER-STYLE FANTASY NOTES &middot; BEGINNER FRIENDLY &middot; POWERED BY PLAYER VALUE MODEL + V1.3.1 CONTEXT</div>`;
+  let html = `<div style="font-family:'Courier New',monospace;font-size:11px;color:var(--muted);letter-spacing:1px;margin:4px 0 12px">FANTASY NOTES &middot; ROLE CHANGES &middot; AVAILABILITY &middot; MATCHUP IMPACT</div>`;
   if(predIsBen()){
     html += `<button class="mbtn mbtn-p" style="margin-bottom:12px" onclick="notiOpenForm()">+ New Ben&#39;s Noti</button>
     <div id="notiForm" style="display:none;border:1px solid var(--border);padding:12px;margin-bottom:12px;background:var(--dark2)">
@@ -4860,6 +5027,7 @@ async function loadDraftPlayerPool(){
     if(status) status.textContent='Live ESPN player pool could not be loaded in this browser. Showing the built-in emergency pool; refresh or check browser/CORS settings.';
     console.warn('Draft player pool:',err);
   }
+  applyBuiltIn2026CompareSeed();
   refreshCompareOptions();
   if(typeof modelRefreshPlayerCompareOptions==='function')modelRefreshPlayerCompareOptions();
   renderDraftPoolAudit();
@@ -4942,7 +5110,7 @@ async function loadHistoricalPlayerData(force=false){
     for(const p of DRAFT_PLAYERS){if(p.pos==='DST')continue;const rows=byName[normalizeHistoryName(p.name)];if(!rows?.length)continue;payload.players[normalizeHistoryName(p.name)]=playerSeasonSummaryFromRows(rows);matched++}
     try{localStorage.setItem(FHQ_HISTORY_CACHE_KEY,JSON.stringify(payload))}catch(e){console.warn('Historical cache quota:',e)}
     fhqHistoryState={status:'ready',matched,rows:all.length,seasons:FHQ_HISTORY_SEASONS.length,lastError:''};applyHistoryPayload(payload);historyStatus(`Weekly history loaded · ${matched} current players matched · ${all.length.toLocaleString()} source rows · 2021-2026`);
-  }catch(err){fhqHistoryState.status='error';fhqHistoryState.lastError=String(err?.message||err);historyStatus('Historical download blocked in this browser. The app will not substitute fake numbers; use Refresh data after deployment or check network/CORS.',true);console.warn('Historical player data:',err)}
+  }catch(err){fhqHistoryState.lastError=String(err?.message||err);const seeded=applyBuiltIn2026CompareSeed();fhqHistoryState.status=seeded?'sample':'error';historyStatus(seeded?'Full archive blocked by browser; verified 2026 sample is available in Player Compare. Import local JSON/CSV for the complete archive.':'Historical download blocked in this browser. Import local weekly JSON/CSV in Player Compare.',!seeded);console.warn('Historical player data:',err)}
 }
 
 let v2DraftQueue=[], draftFavorites=new Set(), draftWatchlist=new Set(), leagueDraftStarted=false, draftBoardMode='round', draftPrepListMode='queue';
@@ -5116,6 +5284,25 @@ function renderCompareLab(){
   summary.innerHTML=series.map((sr,i)=>{const vals=sr.pts.map(p=>p.value),avg=vals.reduce((a,b)=>a+b,0)/vals.length,high=Math.max(...vals),low=Math.min(...vals);return `<div class="v2-card"><div style="display:flex;justify-content:space-between"><b style="color:${colors[i]}">${safeDraftText(sr.name)}</b><b>${avg.toFixed(2)} avg</b></div><div class="v2-player-meta" style="margin-top:4px">${season} · ${vals.length} verified games · High ${high.toFixed(2)} · Low ${low.toFixed(2)} · ${metric}</div></div>`}).join('');
 }
 
+function ensureDeviceLab(){
+  let m=document.getElementById('deviceLabModal');if(m)return m;m=document.createElement('div');m.id='deviceLabModal';m.className='device-lab-modal';m.innerHTML=`<div class="device-lab-shell">
+    <div class="device-lab-head"><div style="display:flex;align-items:center;gap:12px"><div class="qcfl-mark">QC</div><div><h2>DEVICE EXPERIENCES</h2><div style="font-size:12px;color:#5c6570">Quarter Century Fantasy League · web prototype</div></div></div><button class="v2-btn" onclick="closeDeviceLab()">Close</button></div>
+    <div class="device-island" id="deviceIsland" title="Press and hold to expand"><div class="device-island-logo">QC</div><div class="device-island-main"><b id="deviceIslandTitle">Pigskin Prophets 92.78 · 146.12 Gridiron Guild</b><div id="deviceIslandSub">Live fantasy matchup · tap/hold preview</div></div><div class="device-island-extra" id="deviceIslandExtra"><b>Expanded matchup</b><br>QB +4.2 · RB −1.7 · TE +3.1 · Team Health: slight edge · model outcome: 52% prototype lean</div></div>
+    <div class="device-stage" id="deviceStage"><div class="device-endzone"></div><img class="td-runner" id="deviceRunner" src="https://a.espncdn.com/i/teamlogos/nfl/500/sf.png" alt="team logo"><div class="fg-post"></div><div class="fg-ball">🏈</div></div>
+    <div class="device-notification"><div class="qcfl-mark">QC</div><div><b id="deviceNotifTitle">Touchdown alert</b><span id="deviceNotifText">Christian McCaffrey scored TD · +6.0 fantasy points</span></div></div>
+    <div class="device-actions"><button class="primary" onclick="deviceDemo('td')">Touchdown</button><button onclick="deviceDemo('fg')">Field goal</button><button onclick="deviceDemo('fantasy')">Fantasy update</button><button onclick="deviceDemo('model')">Model / Team Health</button><button onclick="deviceToggleIsland()">Expand island</button></div>
+    <div class="device-native-note"><b>Web preview:</b> this GitHub build can preview the experience and support installable PWA behavior. Real iPhone Dynamic Island / Live Activities and home-screen widgets require a native iOS companion using ActivityKit + WidgetKit and push updates. The data/event contract for that native layer is included with this build.</div>
+  </div>`;document.body.appendChild(m);const island=m.querySelector('#deviceIsland');let timer=null;island.addEventListener('pointerdown',()=>{timer=setTimeout(()=>deviceToggleIsland(),500)});['pointerup','pointercancel','pointerleave'].forEach(ev=>island.addEventListener(ev,()=>{if(timer){clearTimeout(timer);timer=null}}));return m
+}
+function openDeviceLab(){ensureDeviceLab().classList.add('on')}
+function closeDeviceLab(){document.getElementById('deviceLabModal')?.classList.remove('on')}
+function deviceToggleIsland(){document.getElementById('deviceIsland')?.classList.toggle('expanded')}
+function deviceDemo(type){const stage=document.getElementById('deviceStage'),title=document.getElementById('deviceNotifTitle'),txt=document.getElementById('deviceNotifText'),it=document.getElementById('deviceIslandTitle'),sub=document.getElementById('deviceIslandSub');if(!stage)return;stage.classList.remove('td','fg');void stage.offsetWidth;
+  if(type==='td'){stage.classList.add('td');title.textContent='Touchdown · SF';txt.textContent='Christian McCaffrey scored TD · +6.0 fantasy points';it.textContent='SF TOUCHDOWN · +6.0';sub.textContent='Fantasy matchup updated';}
+  else if(type==='fg'){stage.classList.add('fg');title.textContent='Field goal · KC';txt.textContent='Field goal is good · kicker points updated';it.textContent='KC FIELD GOAL';sub.textContent='Score + fantasy points updated';}
+  else if(type==='model'){title.textContent='Team Health changed';txt.textContent='Protection matchup moved from even to concern';it.textContent='TEAM HEALTH · MATCHUP SHIFT';sub.textContent='Hold to see the evidence summary';document.getElementById('deviceIsland')?.classList.add('expanded');}
+  else{title.textContent='Fantasy score update';txt.textContent='Pigskin Prophets +8.4 · live projection updated';it.textContent='92.78 · 146.12';sub.textContent='Live fantasy matchup';}
+}
 function v2AddHomeLinks(){
   const scroll=document.querySelector('.home-scroll');
   if(!scroll||document.getElementById('v2HomeLinks'))return;
@@ -5167,7 +5354,8 @@ renderModelGuide();
 initModelNav();
 
 
-window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraftPoolAudit();renderDraftEverything()});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraftPoolAudit();renderDraftEverything();applyBuiltIn2026CompareSeed();});
 </script>
 </body>
 </html>
