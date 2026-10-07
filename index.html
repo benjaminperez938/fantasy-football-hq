@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Fantasy HQ V2.0-RC4</title>
+<title>Fantasy HQ V2.0-RC5</title>
 <meta name="theme-color" content="#0aa860">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -3479,7 +3479,15 @@ function modelLiveProbability(preHome,homeScore,awayScore,status){
 }
 function modelHistoricalGameRows(w){return MODEL_GAMES_2026.filter(g=>g[0]===Number(w)).map(g=>({away:g[1],home:g[2],awayScore:g[3],homeScore:g[4],status:'FINAL'}))}
 function modelWeekBacktest(w){let games=modelHistoricalGameRows(w),correct=0,total=0;games.forEach(g=>{const pred=modelForecastForGame(g.away,g.home,w);if(!pred)return;const winner=g.awayScore>g.homeScore?g.away:g.home;if(pred.pick===winner)correct++;total++});return {correct,total,pct:total?correct/total:0}}
-function modelRenderBacktestSummary(activeWeek){const el=document.getElementById('predBacktestSummary');if(!el)return;const b1=modelWeekBacktest(1),b2=modelWeekBacktest(2),b3={correct:8,total:16,pct:.5},cum={correct:b1.correct+b2.correct+b3.correct,total:48};el.innerHTML=`<div><b>${b1.correct}/${b1.total}</b><span>W1 reconstructed</span></div><div><b>${b2.correct}/${b2.total}</b><span>W2 reconstructed</span></div><div><b>${b3.correct}/${b3.total}</b><span>W3 frozen W2 forecast</span></div><div><b>${(cum.correct/cum.total*100).toFixed(1)}%</b><span>W1-W3 diagnostic · ${cum.correct}/${cum.total}</span></div>`;}
+function modelRenderBacktestSummary(activeWeek){
+  const el=document.getElementById('predBacktestSummary');if(!el)return;
+  const b1=modelWeekBacktest(1),b2=modelWeekBacktest(2),b3={correct:8,total:16,pct:.5};
+  const diag={correct:b1.correct+b2.correct+b3.correct,total:48};
+  const pct=(c,t)=>t?(100*c/t).toFixed(1)+'%':'—';
+  /* Week 4 is the first clean forward benchmark. PIT-CLE is excluded because that card was reconstructed after Thursday. */
+  const w4={correct:11,total:15};
+  el.innerHTML=`<div><b>${b1.correct}-${b1.total-b1.correct} · ${pct(b1.correct,b1.total)}</b><span>W1 · reconstructed</span></div><div><b>${b2.correct}-${b2.total-b2.correct} · ${pct(b2.correct,b2.total)}</b><span>W2 · reconstructed</span></div><div><b>${b3.correct}-${b3.total-b3.correct} · ${pct(b3.correct,b3.total)}</b><span>W3 · frozen W2 forecast</span></div><div class="forward"><b>${w4.correct}-${w4.total-w4.correct} · ${pct(w4.correct,w4.total)}</b><span>W4 · FORWARD BENCHMARK</span><small>excludes reconstructed PIT-CLE</small></div><div><b>${diag.correct}-${diag.total-diag.correct} · ${pct(diag.correct,diag.total)}</b><span>W1-W3 diagnostic</span></div>`;
+}
 const MODEL_TEAM_COLORS={ARI:'#97233F',ATL:'#A71930',BAL:'#241773',BUF:'#00338D',CAR:'#0085CA',CHI:'#0B162A',CIN:'#FB4F14',CLE:'#311D00',DAL:'#003594',DEN:'#FB4F14',DET:'#0076B6',GB:'#203731',HOU:'#03202F',IND:'#002C5F',JAX:'#006778',KC:'#E31837',LV:'#000000',LAC:'#0080C6',LAR:'#003594',MIA:'#008E97',MIN:'#4F2683',NE:'#002244',NO:'#D3BC8D',NYG:'#0B2265',NYJ:'#125740',PHI:'#004C54',PIT:'#FFB612',SEA:'#002244',SF:'#AA0000',TB:'#D50A0A',TEN:'#0C2340',WAS:'#5A1414'};
 function modelTeamColor(ab){return MODEL_TEAM_COLORS[ab]||'#687078'}
 function modelTeamLogoUrl(ab){return `https://a.espncdn.com/i/teamlogos/nfl/500/${String(ab).toLowerCase()}.png`}
@@ -5943,8 +5951,8 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 })();
 </script>
 
-<style id="modelV2RC4Styles">
-/* ===== FANTASY HQ V2.0-RC4 · MATCHUP PULSE ===== */
+<style id="modelV2RC5Styles">
+/* ===== FANTASY HQ V2.0-RC5 · MATCHUP PULSE ===== */
 #predMatchList .model-match-main{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
@@ -6011,17 +6019,46 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   #predMatchList .model-match-teams{grid-column:1!important;grid-row:auto!important;border-right:0!important;border-bottom:1px solid var(--border)!important}
   #predMatchList .model-pick-box,#predMatchList .model-match-resultbox{grid-column:1!important;grid-row:auto!important;border-left:0!important}
 }
+
+/* ===== V2.0-RC5 FINAL MATCHUP ORGANIZATION ===== */
+#predBacktestSummary{grid-template-columns:repeat(5,minmax(120px,1fr))!important}
+#predBacktestSummary>div.forward{background:color-mix(in srgb,var(--green) 7%,var(--card))!important;border-color:color-mix(in srgb,var(--green) 35%,var(--border))!important}
+#predBacktestSummary small{display:block;margin-top:3px;font-size:8px;font-weight:700;color:var(--text);opacity:.78}
+#predMatchList .model-match-main{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important}
+#predMatchList .model-match-teams{
+  padding:0!important;background:var(--card)!important;
+  grid-template-columns:76px minmax(120px,1fr) 76px!important;gap:0!important;overflow:hidden;
+}
+#predMatchList .model-match-teams>.model-team-logo-btn{align-self:stretch;justify-content:center;padding:10px 7px!important}
+#predMatchList .model-match-teams>.model-team-logo-btn:first-child{background:color-mix(in srgb,var(--away-color) 14%,var(--card))!important}
+#predMatchList .model-match-teams>.model-team-logo-btn:last-child{background:color-mix(in srgb,var(--home-color) 14%,var(--card))!important}
+#predMatchList .model-match-center{align-self:stretch;display:flex;flex-direction:column;justify-content:center;background:var(--card)!important;padding:10px 12px;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+.rc5-team-record{display:block;font:800 9px Arial,Helvetica,sans-serif;letter-spacing:.03em;color:var(--text);margin-top:1px}
+.model-match-detail-shell{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)!important;gap:12px!important}
+.rc5-left-pulse{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px 0;margin:2px 0 8px}
+.rc5-left-pulse-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.rc5-left-pulse-head b{font:900 10px 'Courier New',monospace;letter-spacing:.06em;color:var(--text)}
+.rc5-left-pulse .rc4-pulse-meta{font-size:9px}
+.rc5-player-lines,.rc5-key-plays{margin-top:9px;border-top:1px solid var(--border);padding-top:8px;font-size:11px;line-height:1.45;color:var(--text)}
+.rc5-player-lines>b,.rc5-key-plays>b{display:block;margin-bottom:4px;font:900 10px 'Courier New',monospace;letter-spacing:.04em}
+.rc5-player-line,.rc5-play-line{padding:3px 0;border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent)}
+.rc5-player-line:last-child,.rc5-play-line:last-child{border-bottom:0}
+.rc5-player-line .teamtag{font-weight:900;margin-right:5px}
+.rc5-postgame-status{font:900 10px 'Courier New',monospace;letter-spacing:.05em;margin:12px 0 6px;padding-top:10px;border-top:1px solid var(--border)}
+@media(max-width:1100px){#predBacktestSummary{grid-template-columns:repeat(3,minmax(120px,1fr))!important}}
+@media(max-width:800px){#predBacktestSummary{grid-template-columns:1fr 1fr!important}.model-match-detail-shell{grid-template-columns:1fr!important}#predMatchList .model-match-teams{grid-template-columns:68px minmax(110px,1fr) 68px!important}}
+
 </style>
-<script id="modelV2RC4PulsePatch">
-/* ===== V2.0-RC4 MATCHUP PULSE PATCH =====
-   App: Fantasy HQ V2.0-RC4
+<script id="modelV2RC5PulsePatch">
+/* ===== V2.0-RC5 MATCHUP PULSE PATCH =====
+   App: Fantasy HQ V2.0-RC5
    Predictor model: V1.3.2
    Model math remains V1.3.2. This patch adds event-driven pregame/live/postgame snapshots,
    preserves open cards across refreshes, and moves postgame interpretation to the report pane. */
 (function(){
-  const APP_VERSION='V2.0-RC4';
+  const APP_VERSION='V2.0-RC5';
   const PREDICTOR_VERSION='V1.3.2';
-  const STORE_KEY='fhq_matchup_pulse_v2rc4';
+  const STORE_KEY='fhq_matchup_pulse_v2rc5';
   const EVENT_CACHE={};
   const PRIOR_EVIDENCE_CACHE={};
   let PULSE_RUNNING=false;
@@ -6030,7 +6067,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 
   const h=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const teamName=ab=>TEAM_NAMES?.[ab]||ab;
-  const rank=v=>Number.isFinite(Number(v))?'#'+Math.round(Number(v)):'—';
+  const rank=v=>Number.isFinite(Number(v))&&Number(v)>0?'#'+Math.round(Number(v)):'—';
   const n=v=>{if(v==null)return null;const m=String(v).replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):null};
   const safeJSON=(x,fallback)=>{try{return JSON.parse(x)}catch(_){return fallback}};
   const storeLoad=()=>safeJSON(localStorage.getItem(STORE_KEY)||'{}',{});
@@ -6050,6 +6087,13 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   }
   function recordBefore(ab,w){
     let wins=0,losses=0;MODEL_GAMES_2026.filter(g=>g[0]<Number(w)&&(g[1]===ab||g[2]===ab)).forEach(g=>{const away=g[1]===ab,us=away?g[3]:g[4],them=away?g[4]:g[3];us>them?wins++:losses++});return `${wins}-${losses}`;
+  }
+  function decorateMatchHeader(card,away,home,w){
+    const buttons=card?.querySelectorAll('.model-match-teams > .model-team-logo-btn');if(!buttons||buttons.length<2)return;
+    [[buttons[0],away],[buttons[buttons.length-1],home]].forEach(([btn,ab])=>{
+      let el=btn.querySelector('.rc5-team-record');if(!el){el=document.createElement('small');el.className='rc5-team-record';btn.appendChild(el)}
+      el.textContent=recordBefore(ab,w);
+    });
   }
   function recentGames(ab,w,limit=2){
     return MODEL_GAMES_2026.filter(g=>g[0]<Number(w)&&(g[1]===ab||g[2]===ab)).sort((a,b)=>b[0]-a[0]).slice(0,limit).map(g=>{const away=g[1]===ab,opp=away?g[2]:g[1],us=away?g[3]:g[4],them=away?g[4]:g[3];return `W${g[0]} ${us>them?'beat':'lost to'} ${opp} ${us}-${them}`}).reverse();
@@ -6163,48 +6207,69 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   function rowVal(snapshot,label,side){return snapshot?.stats?.rows?.find(r=>r.label===label)?.[side]??'—'}
   function liveParagraph(snapshot,away,home,pred){
     if(!snapshot||snapshot.label==='PRE')return '';
-    const score=`${away} ${snapshot.awayScore}-${home} ${snapshot.homeScore}`,rushA=rowVal(snapshot,'Rushing yards','away'),rushH=rowVal(snapshot,'Rushing yards','home'),passA=rowVal(snapshot,'Passing yards','away'),passH=rowVal(snapshot,'Passing yards','home'),toA=rowVal(snapshot,'Turnovers','away'),toH=rowVal(snapshot,'Turnovers','home'),thirdA=rowVal(snapshot,'Third down','away'),thirdH=rowVal(snapshot,'Third down','home');
+    const score=`${away} ${snapshot.awayScore}-${home} ${snapshot.homeScore}`,
+      rushA=rowVal(snapshot,'Rushing yards','away'),rushH=rowVal(snapshot,'Rushing yards','home'),
+      passA=rowVal(snapshot,'Passing yards','away'),passH=rowVal(snapshot,'Passing yards','home'),
+      toA=rowVal(snapshot,'Turnovers','away'),toH=rowVal(snapshot,'Turnovers','home'),
+      thirdA=rowVal(snapshot,'Third down','away'),thirdH=rowVal(snapshot,'Third down','home'),
+      sacksA=rowVal(snapshot,'Sacks / yards lost','away'),sacksH=rowVal(snapshot,'Sacks / yards lost','home');
     const pick=pred?.pick||home,leading=Number(snapshot.awayScore)>Number(snapshot.homeScore)?away:Number(snapshot.homeScore)>Number(snapshot.awayScore)?home:'tied';
-    let txt=`<b>${snapshot.label==='FINAL'?'Postgame model review':'On-the-pulse read'}.</b> At the ${snapshot.label==='START'?'opening-game':snapshot.label.toLowerCase()} checkpoint the score is ${score}`;
-    if(snapshot.label!=='FINAL')txt+=`, and the live score/time model leans ${snapshot.livePick} at ${(Number(snapshot.livePct||.5)*100).toFixed(0)}%`;txt+=`. `;
-    if(rushA!=='—'||rushH!=='—')txt+=`The run-game split is ${away} ${rushA} to ${home} ${rushH} rushing yards; `;
-    if(passA!=='—'||passH!=='—')txt+=`the passing split is ${away} ${passA} to ${home} ${passH}. `;
-    if(toA!=='—'||toH!=='—')txt+=`Turnovers are ${away} ${toA}, ${home} ${toH}, and third-down results are ${away} ${thirdA} versus ${home} ${thirdH}. `;
     const topEdges=[...(modelMatchupUnitForecastAtWeek(away,home,Number(document.getElementById('predWeekSel')?.value||MODEL_CURRENT_WEEK+1))||[]).map(x=>({team:away,...x})),...(modelMatchupUnitForecastAtWeek(home,away,Number(document.getElementById('predWeekSel')?.value||MODEL_CURRENT_WEEK+1))||[]).map(x=>({team:home,...x}))].sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff)).slice(0,2);
-    if(topEdges.length)txt+=`The pregame report said the largest structural pressure points were ${topEdges.map(x=>`${x.team} ${x.label.toLowerCase()} (${x.detail})`).join(' and ')}. The live box score should be read against those specific expectations rather than against the final score alone. `;
-    const leaders=[...(snapshot.stats?.awayLeaders||[]).map(x=>`${away}: ${x}`),...(snapshot.stats?.homeLeaders||[]).map(x=>`${home}: ${x}`)];if(leaders.length)txt+=`Key player production so far: ${h(leaders.slice(0,6).join(' | '))}. `;
-    if(snapshot.stats?.plays?.length)txt+=`The most consequential recent plays include ${h(snapshot.stats.plays.slice(-3).join(' | '))}. `;
-    if(snapshot.label==='FINAL'){
-      const winner=Number(snapshot.awayScore)>Number(snapshot.homeScore)?away:home,correct=winner===pick,margin=Math.abs(Number(snapshot.awayScore)-Number(snapshot.homeScore));
-      txt+=`${correct?`The original ${pick} winner call held.`:`The original ${pick} winner call was flipped by ${winner}.`} `;
-      const ta=n(toA),th=n(toH),turnSwing=ta!=null&&th!=null?Math.abs(ta-th):0;
-      if(margin<=3)txt+=`Because the margin was ${margin}, late-down execution and one or two possessions deserve extra weight before changing the underlying team-strength view. `;
-      if(turnSwing>=2)txt+=`The ${turnSwing}-turnover differential is large enough that game state should be separated from repeatable unit performance. `;
-      txt+=`For the next matchup, ${away} should carry forward what proved repeatable here—especially the unit and player production that matched the pregame thesis—while treating turnover-driven or single-play swings cautiously. ${home} should be evaluated the same way: preserve structural strengths that held, but downgrade any area that was repeatedly attacked rather than rescued or sunk by one isolated play.`;
-    }else{
-      txt+=`${leading==='tied'?'Neither team has separated yet.':`${leading} currently has scoreboard control.`} A script flip should only be declared if the underlying efficiency—run success, protection, explosive passing, third downs or turnovers—also supports the score.`;
+    const aLead=topLeader(snapshot.stats?.awayLeaders||[]),hLead=topLeader(snapshot.stats?.homeLeaders||[]),turning=(snapshot.stats?.plays||[]).slice(-2);
+    let txt='';
+    if(snapshot.label!=='FINAL'&&snapshot.label!=='POST'){
+      txt+=`<b>On-the-pulse read.</b> At ${snapshot.label==='START'?'the opening checkpoint':snapshot.label}, the score is ${score} and the live score/time model leans ${snapshot.livePick} at ${(Number(snapshot.livePct||.5)*100).toFixed(0)}%. `;
+      if(rushA!=='—'||rushH!=='—')txt+=`${away} has ${rushA} rushing yards and ${home} ${rushH}; `;
+      if(passA!=='—'||passH!=='—')txt+=`the passing split is ${passA} to ${passH}. `;
+      if(toA!=='—'||toH!=='—')txt+=`Turnovers are ${away} ${toA}, ${home} ${toH}, with third downs at ${thirdA} versus ${thirdH}. `;
+      if(topEdges.length)txt+=`The useful question is whether those numbers are confirming the pregame pressure points—${topEdges.map(x=>`${x.team} ${x.label.toLowerCase()}`).join(' and ')}—rather than simply following the scoreboard. `;
+      txt+=`${leading==='tied'?'Neither team has separated yet.':`${leading} has scoreboard control.`} A genuine script flip requires the efficiency profile—run success, protection, explosive passing, third downs or turnovers—to move with the score.`;
+      return txt;
     }
+    const winner=Number(snapshot.awayScore)>Number(snapshot.homeScore)?away:home,correct=winner===pick,margin=Math.abs(Number(snapshot.awayScore)-Number(snapshot.homeScore));
+    txt+=`<b>Postgame model review.</b> The frozen pregame call was ${pick}; ${correct?`${winner} won and the winner call held`:`${winner} won, flipping the original lean`}, ${score}. `;
+    if(topEdges.length)txt+=`The pregame report identified ${topEdges.map(x=>`${x.team}'s ${x.label.toLowerCase()}`).join(' and ')} as the largest structural pressure points. `;
+    if(rushA!=='—'||rushH!=='—')txt+=`The final rushing split (${away} ${rushA}, ${home} ${rushH}) shows which offense actually controlled the ground game; `;
+    if(passA!=='—'||passH!=='—')txt+=`the passing split finished ${away} ${passA} to ${home} ${passH}. `;
+    if(toA!=='—'||toH!=='—')txt+=`Turnovers finished ${away} ${toA} to ${home} ${toH}, while third-down conversion was ${thirdA} versus ${thirdH}${sacksA!=='—'||sacksH!=='—'?` and the sack/yards-lost line was ${away} ${sacksA}, ${home} ${sacksH}`:''}. `;
+    if(aLead||hLead)txt+=`The player evidence that best represents each side was ${aLead?`${away}: ${h(aLead)}`:''}${aLead&&hLead?' and ':''}${hLead?`${home}: ${h(hLead)}`:''}. `;
+    if(turning.length)txt+=`Among the logged high-leverage plays, ${h(turning.join(' | '))}; those moments matter because they changed possession, field position or scoring opportunity rather than merely adding yardage. `;
+    if(margin<=3)txt+=`With only a ${margin}-point margin, one or two late possessions carry more explanatory weight than they would in a one-sided game, so the model should avoid overcorrecting the underlying team-strength view. `;
+    const ta=n(toA),th=n(toH),turnSwing=ta!=null&&th!=null?Math.abs(ta-th):0;if(turnSwing>=2)txt+=`The ${turnSwing}-turnover gap is large enough to separate game-state variance from repeatable unit performance. `;
+    txt+=`For the next matchup, both teams should be updated from the repeatable parts of this result: which line/unit won consistently, whether the pregame script actually appeared, and whether the decisive production came from sustainable usage or from isolated high-variance plays.`;
     return txt;
   }
 
+  function checkpointButtonsHtml(snaps,active){
+    return ['PRE','START','Q1','HALF','Q3','FINAL'].map(l=>`<button class="rc4-checkpoint-btn ${active===l?'active':''}" ${l!=='PRE'&&!snaps[l]?'disabled':''} onclick="event.stopPropagation();modelPulseSelectCheckpoint(this,'${l}')">${l}</button>`).join('');
+  }
+  function updateLeftPulse(card,active,snaps,pre,live){
+    const box=card?.querySelector('.rc5-left-pulse');if(!box)return;
+    const last=live?.capturedAt||pre?.capturedAt;
+    box.innerHTML=`<div class="rc5-left-pulse-head"><b>GAME CHECKPOINT</b><span class="rc4-pulse-meta">${active} · ${h(fmtTime(last))}${pre?.locked?' · PRE FROZEN':''}</span></div><div class="rc4-checkpoints">${checkpointButtonsHtml(snaps,active)}</div>`;
+  }
+  function topLeader(lines){
+    if(!lines?.length)return null;let best=null,bestY=-1;for(const line of lines){const m=String(line).match(/YDS\s+(\d+)/i),y=m?Number(m[1]):-1;if(y>bestY){bestY=y;best=line}}return best||lines[0];
+  }
   async function renderReportForCard(card,activeLabel){
     if(!card)return;const away=card.dataset.away,home=card.dataset.home,w=Number(card.dataset.week),pred=modelForecastForGame(away,home,w),snaps=getSnapshots(w,away,home),active=activeLabel||card.dataset.activeCheckpoint||(snaps.FINAL?'FINAL':snaps.Q3?'Q3':snaps.HALF?'HALF':snaps.Q1?'Q1':snaps.START?'START':'PRE');card.dataset.activeCheckpoint=active;
     const report=card.querySelector('.rc4-report-content');if(!report)return;
     const pre=snaps.PRE||pregameSnapshot(away,home,w,pred,false),aNews=pre.awayNews||[],hNews=pre.homeNews||[];
     let priorA=null,priorH=null;try{[priorA,priorH]=await Promise.all([priorGameEvidence(away,w),priorGameEvidence(home,w)])}catch(_){ }
-    const live=active!=='PRE'?snaps[active]:null;
-    const buttons=['PRE','START','Q1','HALF','Q3','FINAL'].map(l=>`<button class="rc4-checkpoint-btn ${active===l?'active':''}" ${l!=='PRE'&&!snaps[l]?'disabled':''} onclick="event.stopPropagation();modelPulseSelectCheckpoint(this,'${l}')">${l}</button>`).join('');
-    const last=live?.capturedAt||pre.capturedAt;
-    report.innerHTML=`<div class="model-report-head"><div class="model-report-kicker">MATCHUP PULSE · ${PREDICTOR_VERSION}</div><div class="model-report-title">${away} @ ${home}: ${pred.pick} is the current pregame lean</div><div class="model-report-deck">The pregame model freezes at kickoff. Live checkpoints explain how the actual game is validating or breaking that script without rewriting the original prediction.</div></div><div class="model-report-metrics"><div class="model-report-metric"><b>MODEL PICK</b><strong>${pred.pick}</strong></div><div class="model-report-metric"><b>CALIBRATED</b><strong>${(pred.confidence*100).toFixed(0)}%</strong></div><div class="model-report-metric"><b>RELIABILITY</b><strong>${pred.reliability?.label||'LOW'}</strong></div><div class="model-report-metric"><b>SCORE LENS</b><strong>${pred.score?`${away} ${pred.score.away}–${home} ${pred.score.home}`:'—'}</strong></div></div><div class="rc4-pulse-bar"><div class="rc4-checkpoints">${buttons}</div><div class="rc4-pulse-meta">${active} · ${h(fmtTime(last))}${pre.locked?' · PRE FROZEN':''}</div></div><div class="rc4-report-prose"><p>${teamParagraph(away,home,w,aNews,priorA)}</p><p>${teamParagraph(home,away,w,hNews,priorH)}</p><p>${matchupParagraph(away,home,w,pred)}</p>${live?`<p class="rc4-live-read">${liveParagraph(live,away,home,pred)}</p>`:''}</div>${newsHtml([...(aNews||[]),...(hNews||[])])}<div class="rc4-refresh-note">Pregame re-analysis refreshes from available public/news data while the page is open; game checkpoints are captured at START, Q1, HALF, Q3 and FINAL. The original PRE forecast is never rewritten after kickoff.</div>`;
+    const selected=active!=='PRE'?snaps[active]:null,post=snaps.POST||null,reviewSnap=(active==='FINAL'&&post)?post:selected;
+    updateLeftPulse(card,active,snaps,pre,selected);
+    const postStatus=active==='FINAL'?`<div class="rc5-postgame-status">${post?'POSTGAME REVIEW · REFRESHED FINAL DATA':'FINAL QUICK READ · POSTGAME VERIFICATION PENDING'}</div>`:'';
+    report.innerHTML=`<div class="model-report-head"><div class="model-report-kicker">MATCHUP PULSE · ${PREDICTOR_VERSION}</div><div class="model-report-title">${away} @ ${home}: ${pred.pick} is the frozen pregame lean</div><div class="model-report-deck">The right side explains the model; the left side holds the checkpoint evidence. PRE freezes at kickoff and is never rewritten by later results.</div></div><div class="model-report-metrics"><div class="model-report-metric"><b>MODEL PICK</b><strong>${pred.pick}</strong></div><div class="model-report-metric"><b>CALIBRATED</b><strong>${(pred.confidence*100).toFixed(0)}%</strong></div><div class="model-report-metric"><b>RELIABILITY</b><strong>${pred.reliability?.label||'LOW'}</strong></div><div class="model-report-metric"><b>SCORE LENS</b><strong>${pred.score?`${away} ${pred.score.away}–${home} ${pred.score.home}`:'—'}</strong></div></div><div class="rc4-report-prose"><p>${teamParagraph(away,home,w,aNews,priorA)}</p><p>${teamParagraph(home,away,w,hNews,priorH)}</p><p>${matchupParagraph(away,home,w,pred)}</p>${reviewSnap?`${postStatus}<p class="rc4-live-read">${liveParagraph(reviewSnap,away,home,pred)}</p>`:''}</div>${newsHtml([...(aNews||[]),...(hNews||[])])}`;
   }
 
   function liveStatsHtml(snap,away,home){
     if(!snap||snap.label==='PRE')return '';
     const rows=snap.stats?.rows||[];
-    const table=rows.length?`<table class="rc4-live-table"><thead><tr><th>${away}</th><th>LIVE GAME STAT</th><th>${home}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${h(r.away)}</td><td class="metric">${h(r.label)}</td><td>${h(r.home)}</td></tr>`).join('')}</tbody></table>`:`<div class="model-v2-historical-note">The live public box-score feed has not returned detailed team statistics for this checkpoint yet.</div>`;
-    const leaders=[...(snap.stats?.awayLeaders||[]).map(x=>`${away}: ${x}`),...(snap.stats?.homeLeaders||[]).map(x=>`${home}: ${x}`)];
-    const plays=snap.stats?.plays||[];
-    return `<div class="rc4-live-stat-title">${snap.label} SNAPSHOT · ${away} ${snap.awayScore}-${home} ${snap.homeScore}</div>${table}${leaders.length?`<div class="rc4-player-lines"><b>Key player production:</b> ${h(leaders.join(' | '))}</div>`:''}${plays.length?`<div class="rc4-key-plays"><b>Key plays:</b>${plays.slice(-5).map(x=>`<div>${h(x)}</div>`).join('')}</div>`:''}`;
+    const table=rows.length?`<table class="rc4-live-table"><thead><tr><th>${away}</th><th>GAME STAT</th><th>${home}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${h(r.away)}</td><td class="metric">${h(r.label)}</td><td>${h(r.home)}</td></tr>`).join('')}</tbody></table>`:`<div class="model-v2-historical-note">The public box-score feed has not returned detailed team statistics for this checkpoint yet.</div>`;
+    const aLeaders=snap.stats?.awayLeaders||[],hLeaders=snap.stats?.homeLeaders||[],plays=snap.stats?.plays||[];
+    const leadersHtml=(aLeaders.length||hLeaders.length)?`<div class="rc5-player-lines"><b>KEY PLAYER PRODUCTION</b>${aLeaders.map(x=>`<div class="rc5-player-line"><span class="teamtag">${away}</span>${h(x)}</div>`).join('')}${hLeaders.map(x=>`<div class="rc5-player-line"><span class="teamtag">${home}</span>${h(x)}</div>`).join('')}</div>`:'';
+    const playsHtml=plays.length?`<div class="rc5-key-plays"><b>KEY PLAYS</b>${plays.slice(-6).map(x=>`<div class="rc5-play-line">${h(x)}</div>`).join('')}</div>`:'';
+    return `<div class="rc4-live-stat-title">${snap.label} SNAPSHOT · ${away} ${snap.awayScore}-${home} ${snap.homeScore}</div>${table}${leadersHtml}${playsHtml}`;
   }
   function renderStatsForCard(card,label){
     const away=card.dataset.away,home=card.dataset.home,w=Number(card.dataset.week),snaps=getSnapshots(w,away,home),box=card.querySelector('.rc4-checkpoint-stats');if(!box)return;
@@ -6218,11 +6283,12 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   }
   window.modelMatchReportHtml=function(away,home,w,pred){return `<div class="model-match-report-pane"><div class="rc4-report-content">Loading evidence-backed matchup report…</div></div>`};
   window.modelMatchDetailHtml=function(away,home,w,pred){
-    const ac=modelTeamColor(away),hc=modelTeamColor(home),stats=w<=MODEL_CURRENT_WEEK?modelPregameStatsTable(away,home,w):model2026StatsTable(away,home);
-    return `<div class="model-match-detail-shell" style="--away-color:${ac};--home-color:${hc}"><div class="model-match-data-pane"><div class="sec-lbl">TEAM HEALTH + STATS</div>${compactHealthPair(away,home,w)}<div class="model-stat-tabs"><label>CHECKPOINT STATS</label></div><div class="rc4-checkpoint-stats">${stats}</div></div>${modelMatchReportHtml(away,home,w,pred)}</div>`;
+    const ac=modelTeamColor(away),hc=modelTeamColor(home),stats=w<=MODEL_CURRENT_WEEK?modelPregameStatsTable(away,home,w):model2026StatsTable(away,home),snaps=getSnapshots(w,away,home);
+    const active=snaps.FINAL?'FINAL':snaps.Q3?'Q3':snaps.HALF?'HALF':snaps.Q1?'Q1':snaps.START?'START':'PRE';
+    return `<div class="model-match-detail-shell" style="--away-color:${ac};--home-color:${hc}"><div class="model-match-data-pane"><div class="sec-lbl">TEAM HEALTH + STATS</div>${compactHealthPair(away,home,w)}<div class="rc5-left-pulse"><div class="rc5-left-pulse-head"><b>GAME CHECKPOINT</b><span class="rc4-pulse-meta">${active}</span></div><div class="rc4-checkpoints">${checkpointButtonsHtml(snaps,active)}</div></div><div class="model-stat-tabs"><label>CHECKPOINT STATS</label></div><div class="rc4-checkpoint-stats">${stats}</div></div>${modelMatchReportHtml(away,home,w,pred)}</div>`;
   };
 
-  function identifyCard(card){const teams=[...card.querySelectorAll('.model-team-name-link')].map(x=>x.textContent.trim());if(teams.length<2)return null;const w=Number(document.getElementById('predWeekSel')?.value||MODEL_CURRENT_WEEK+1);card.dataset.away=teams[0];card.dataset.home=teams[1];card.dataset.week=String(w);return {away:teams[0],home:teams[1],w}}
+  function identifyCard(card){const teams=[...card.querySelectorAll('.model-team-name-link')].map(x=>x.textContent.trim());if(teams.length<2)return null;const w=Number(document.getElementById('predWeekSel')?.value||MODEL_CURRENT_WEEK+1);card.dataset.away=teams[0];card.dataset.home=teams[1];card.dataset.week=String(w);decorateMatchHeader(card,teams[0],teams[1],w);return {away:teams[0],home:teams[1],w}}
   async function initOpenCard(card){const id=identifyCard(card);if(!id)return;const pred=modelForecastForGame(id.away,id.home,id.w),snaps=getSnapshots(id.w,id.away,id.home);if(!snaps.PRE)savePregame(id.away,id.home,id.w,pred,false);const active=card.dataset.activeCheckpoint||(snaps.FINAL?'FINAL':'PRE');renderStatsForCard(card,active);await renderReportForCard(card,active)}
   window.modelToggleMatchCard=function(el){const card=el.closest('.model-match-card');if(!card)return;card.classList.toggle('open');identifyCard(card);if(card.classList.contains('open'))initOpenCard(card)};
 
@@ -6231,7 +6297,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   const basePredLoad=window.predLoadWeek;
   window.predLoadWeek=async function(silent=false){
     if(FULL_REFRESH_RUNNING)return;FULL_REFRESH_RUNNING=true;const open=openCardKeys();try{await basePredLoad(silent)}finally{FULL_REFRESH_RUNNING=false}
-    await restoreCards(open);modelStartMatchAutoRefresh();
+    document.querySelectorAll('.model-match-card').forEach(identifyCard);await restoreCards(open);modelStartMatchAutoRefresh();
   };
 
   async function refreshNewsAndPregame(w,lockNearKickoff=false){
@@ -6247,6 +6313,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
         if(!st.isLive&&!st.completed){if(!snaps.PRE)savePregame(st.away,st.home,w,pred,false);const tminus=kick-60000;if(tminus>now)nextSpecial=Math.min(nextSpecial,tminus-now);else if(now<kick+60000){savePregame(st.away,st.home,w,pred,true);nextSpecial=Math.min(nextSpecial,60000)}}
         if(st.isLive){anyLive=true;if(!snaps.PRE?.locked)savePregame(st.away,st.home,w,pred,true);const label=checkpointNeeded(st,getSnapshots(w,st.away,st.home));if(label){st.summary=await fetchSummary(st.eventId);saveGameSnapshot(label,st,pred);for(const card of document.querySelectorAll('.model-match-card.open')){const id=identifyCard(card);if(id&&id.away===st.away&&id.home===st.home&&id.w===w){card.dataset.activeCheckpoint=label;renderStatsForCard(card,label);await renderReportForCard(card,label)}}}}
         if(st.completed&&!snaps.FINAL){st.summary=await fetchSummary(st.eventId);saveGameSnapshot('FINAL',st,pred);for(const card of document.querySelectorAll('.model-match-card.open')){const id=identifyCard(card);if(id&&id.away===st.away&&id.home===st.home&&id.w===w){card.dataset.activeCheckpoint='FINAL';renderStatsForCard(card,'FINAL');await renderReportForCard(card,'FINAL')}}}
+        const afterFinal=getSnapshots(w,st.away,st.home);if(st.completed&&afterFinal.FINAL&&!afterFinal.POST){const wait=10*60*1000-(now-new Date(afterFinal.FINAL.capturedAt).getTime());if(wait<=0){st.summary=await fetchSummary(st.eventId);saveGameSnapshot('POST',st,pred);for(const card of document.querySelectorAll('.model-match-card.open')){const id=identifyCard(card);if(id&&id.away===st.away&&id.home===st.home&&id.w===w&&card.dataset.activeCheckpoint==='FINAL'){await renderReportForCard(card,'FINAL')}}}else nextSpecial=Math.min(nextSpecial,wait)}
       }
       const nowDate=new Date(),midnight=new Date(nowDate);midnight.setHours(24,0,0,0);nextSpecial=Math.min(nextSpecial,midnight.getTime()-now);
       nextDelay=anyLive?60000:Math.max(30000,Math.min(10*60*1000,nextSpecial));
@@ -6262,13 +6329,13 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 
   /* Guide: document the pulse timeline and client-only scheduling limitation. */
   const oldGuide=window.renderModelGuide;
-  window.renderModelGuide=function(){oldGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc4-guide]'))return;el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc4-guide><summary>V2.0-RC4 · MATCHUP PULSE & CHECKPOINT ANALYSIS</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Daily pregame pulse</b><div class="model-guide-copy">While Fantasy HQ is open, the matchup layer rechecks the public schedule/news context at the daily rollover and again near kickoff. The latest PRE report may evolve before the game, but it becomes immutable once kickoff is detected.</div></div><div class="model-guide-row"><b>Game checkpoints</b><div class="model-guide-copy">The app watches game status during active games and captures START (about one minute into play), end of Q1, halftime, end of Q3, and FINAL snapshots. Live box-score statistics are preliminary and may later be corrected by the provider.</div></div><div class="model-guide-row"><b>Frozen prediction versus live read</b><div class="model-guide-copy">The original model pick, calibrated confidence, reliability and score lens stay frozen after kickoff. The live read uses score, clock and checkpoint stats to explain whether the original game script is holding, weakening or flipping; it never rewrites the pregame record.</div></div><div class="model-guide-row"><b>No AI query every minute</b><div class="model-guide-copy">The browser uses lightweight public-data checks to detect status changes. The deeper written analysis is regenerated only when evidence changes at a scheduled/checkpoint event, not every polling cycle. This RC4 file does not call an AI service for every refresh.</div></div><div class="model-guide-row"><b>Browser limitation</b><div class="model-guide-copy">A standalone HTML file cannot wake itself while the browser is closed. RC4 captures these scheduled checkpoints while Fantasy HQ is open. A future small backend/service can run the same schedule unattended and cache the snapshots for every user.</div></div></div></details>`)};
+  window.renderModelGuide=function(){oldGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc5-guide]'))return;el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc5-guide><summary>V2.0-RC5 · MATCHUP PULSE & CHECKPOINT ANALYSIS</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Pregame and checkpoint lifecycle</b><div class="model-guide-copy"><b>Pregame re-analysis refreshes from available public/news data while the page is open; game checkpoints are captured at START, Q1, HALF, Q3 and FINAL. The original PRE forecast is never rewritten after kickoff.</b></div></div><div class="model-guide-row"><b>FINAL versus Postgame Review</b><div class="model-guide-copy">FINAL is the quick game-end snapshot from the live provider. The right-side Postgame Review is refreshed again after final so the analysis can use a more settled box score and compare the frozen pregame script with what actually happened. Provider stat corrections can still occur later, so the app preserves the timestamp of every snapshot rather than silently rewriting history.</div></div><div class="model-guide-row"><b>Daily pregame pulse</b><div class="model-guide-copy">While Fantasy HQ is open, the matchup layer rechecks public schedule/news context at the daily rollover and again near kickoff. The latest PRE report may evolve before the game, but it becomes immutable once kickoff is detected.</div></div><div class="model-guide-row"><b>Evidence left, interpretation right</b><div class="model-guide-copy">The left pane holds Team Health, checkpoint statistics, key-player production and key plays. The right pane explains what those numbers mean for the frozen pregame thesis and the postgame audit; it avoids repeating the raw player/play list as a second stat dump.</div></div><div class="model-guide-row"><b>Game checkpoints</b><div class="model-guide-copy">The app watches game status during active games and captures START (about one minute into play), end of Q1, halftime, end of Q3 and FINAL. Live box-score statistics are preliminary and may later be corrected by the provider.</div></div><div class="model-guide-row"><b>No AI query every minute</b><div class="model-guide-copy">Lightweight public-data checks detect status changes. Deeper written analysis is regenerated only when evidence changes at a scheduled/checkpoint event, not every polling cycle.</div></div><div class="model-guide-row"><b>Browser limitation</b><div class="model-guide-copy">A standalone HTML file cannot wake itself while the browser is closed. RC5 captures scheduled checkpoints while Fantasy HQ is open. A future small backend/service can run the same schedule unattended and cache snapshots for every user.</div></div></div></details>`)};
 
-  /* Visible version separation: app V2.0-RC4, predictor V1.3.2. */
+  /* Visible version separation: app V2.0-RC5, predictor V1.3.2. */
   try{document.title='Fantasy HQ '+APP_VERSION;document.querySelectorAll('#panel-predictor [style*="font-size:26px"] span').forEach(x=>{if(/V\d/.test(x.textContent))x.textContent=PREDICTOR_VERSION})}catch(_){ }
 
   /* Kick off the pulse if the matchup tab is already visible. */
-  setTimeout(()=>{try{const p=document.getElementById('pred-match');if(p&&p.style.display!=='none')modelStartMatchAutoRefresh()}catch(_){}},1200);
+  setTimeout(()=>{try{document.querySelectorAll('.model-match-card').forEach(identifyCard);const p=document.getElementById('pred-match');if(p&&p.style.display!=='none')modelStartMatchAutoRefresh()}catch(_){}},1200);
 })();
 </script>
 
