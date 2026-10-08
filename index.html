@@ -6715,5 +6715,72 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 })();
 </script>
 
+
+<style id="modelV2RC8Styles">
+/* ===== FANTASY HQ V2.0-RC8 WEEK-5 INGESTION / FINAL MODEL-TAB PUSH ===== */
+.rc8-ingest-badge{display:inline-flex;align-items:center;gap:6px;font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+</style>
+<script id="modelV2RC8Patch">
+/* RC8 preserves NFL Predictor V1.3.2. It ingests completed Week 4 game results into the
+   season ledger so Week 5 records, PF/PA, point differential and score-environment inputs
+   use four completed games. CTX/PERF/unit ranks remain the last validated frozen ranking
+   checkpoint until their dedicated Week-4 statistical audit is supplied; RC8 does not
+   manufacture new rank fields from game scores alone. */
+(function(){
+  const RC8_APP='V2.0-RC8';
+  const esc8=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const WEEK4_RESULTS=[
+    [4,'PIT','CLE',24,27],[4,'IND','WAS',30,13],[4,'TEN','BAL',18,24],[4,'NE','BUF',29,26],
+    [4,'NYJ','CHI',12,23],[4,'JAX','CIN',22,17],[4,'DAL','HOU',34,30],[4,'ARI','NYG',24,36],
+    [4,'LAR','PHI',24,20],[4,'GB','TB',17,14],[4,'MIA','MIN',10,15],[4,'KC','LV',30,27],
+    [4,'LAC','SEA',23,30],[4,'DEN','SF',14,24],[4,'DET','CAR',26,32],[4,'ATL','NO',45,24]
+  ];
+  window.MODEL_WEEK4_INGEST=WEEK4_RESULTS.map(x=>x.slice());
+  const key=g=>`${g[0]}:${g[1]}:${g[2]}`;
+  const have=new Set(MODEL_GAMES_2026.map(key));
+  WEEK4_RESULTS.forEach(g=>{if(!have.has(key(g)))MODEL_GAMES_2026.push(g.slice())});
+  MODEL_GAMES_2026.sort((a,b)=>a[0]-b[0]);
+
+  function refreshSeasonThrough4(){
+    Object.keys(MODEL_TEAM_DATA).forEach(ab=>{
+      const games=MODEL_GAMES_2026.filter(g=>g[0]<=4&&(g[1]===ab||g[2]===ab));
+      if(!games.length)return;
+      let w=0,l=0,tie=0,pf=0,pa=0;
+      games.forEach(g=>{const away=g[1],as=Number(g[3]),hs=Number(g[4]),isAway=away===ab,forPts=isAway?as:hs,againstPts=isAway?hs:as;pf+=forPts;pa+=againstPts;if(forPts>againstPts)w++;else if(forPts<againstPts)l++;else tie++});
+      const tm=MODEL_TEAM_DATA[ab],n=games.length;
+      tm.rec=`${w}-${l}${tie?'-'+tie:''}`;
+      tm.pf=+(pf/n).toFixed(1);tm.pa=+(pa/n).toFixed(1);tm.pdg=+((pf-pa)/n).toFixed(1);
+      tm.gamesThrough=4;tm.resultsThrough=4;
+    });
+  }
+  refreshSeasonThrough4();
+
+  // Week 5 score projections now naturally see Weeks 1-4 because modelPriorPointAvg reads MODEL_GAMES_2026.
+  // Do not alter modelPriorStrength/unit interactions until a validated W4 ranking/unit checkpoint exists.
+
+  const board7=window.renderModelLeagueBoard;
+  window.renderModelLeagueBoard=function(){refreshSeasonThrough4();board7?.()};
+
+  const health7=window.renderModelHealth;
+  window.renderModelHealth=function(){refreshSeasonThrough4();health7?.()};
+
+  const external7=window.renderModelExternal;
+  window.renderModelExternal=function(){refreshSeasonThrough4();external7?.()};
+
+  const guide7=window.renderModelGuide;
+  window.renderModelGuide=function(){guide7?.();const el=document.getElementById('modelGuideBody');if(!el)return;
+    const old=el.querySelector('[data-rc8-cycle]');if(old)old.remove();
+    el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc8-cycle><summary>WEEKLY PUBLICATION CYCLE</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Official weekly checkpoint</b><div class="model-guide-copy">Target publication is <b>12:00 PM Pacific on the day before the first game of the new NFL week</b>. By that point the prior slate should be complete, results and core statistics should be validated, and the new checkpoint can be frozen without rewriting older weeks.</div></div><div class="model-guide-row"><b>Week 5 ingestion state</b><div class="model-guide-copy">RC8 includes all finalized Week 4 scores in the season ledger. Team records, PF/G, PA/G, average point differential and Week 5 score-environment calculations therefore use four completed games. CTX, Performance and unit ranks remain the last validated frozen ranking checkpoint until the dedicated Week-4 statistical ranking audit is loaded; RC8 does not invent those ranks from final scores alone.</div></div><div class="model-guide-row"><b>Hot off the press</b><div class="model-guide-copy">After a new official checkpoint is published, the update should call out leaderboard leaders and movers, meaningful CTX/Performance/media-gap changes, Team Health changes, picks that flipped, and major confidence or score-lens changes.</div></div></div></details>`);
+    const weekly=[...el.querySelectorAll('.model-guide-row')].find(x=>x.querySelector('b')?.textContent.trim()==='Weekly freeze');
+    if(weekly){const c=weekly.querySelector('.model-guide-copy');if(c)c.innerHTML='The official weekly checkpoint targets <b>12:00 PM Pacific on the day before the first game of the new NFL week</b>. Once published, that snapshot remains immutable; later news may update current interpretation without rewriting the historical checkpoint.'}
+  };
+
+  // Keep process notes in the Guide rather than duplicating them around football content.
+  function cleanup8(){document.querySelectorAll('.rc6-board-note,.rc6-wed-snapshot').forEach(n=>n.remove())}
+  try{document.title='Fantasy HQ '+RC8_APP}catch(_){ }
+  setTimeout(()=>{try{refreshSeasonThrough4();window.renderModelLeagueBoard?.();cleanup8();if(document.getElementById('pred-health')?.style.display!=='none')window.renderModelHealth?.();if(document.getElementById('pred-guide')?.style.display!=='none')window.renderModelGuide?.()}catch(e){console.warn('RC8 ingest repaint',e)}},500);
+})();
+</script>
+
 </body>
 </html>
