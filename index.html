@@ -6486,5 +6486,234 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 })();
 </script>
 
+<style id="modelV2RC7Styles">
+/* ===== FANTASY HQ V2.0-RC7 MODEL-POLISH PATCH ===== */
+/* Predictor math remains V1.3.2. RC7 is presentation, comparison, guide and player-projection UX only. */
+
+/* Matchups: make the layout grid intentionally visible. */
+#pred-match .model-match-card,
+#pred-match .model-match-main,
+#pred-match .model-match-detail-shell,
+#pred-match .model-match-data-pane,
+#pred-match .model-match-report-pane,
+#pred-match .model-season-profile,
+#pred-match .rc5-left-pulse,
+#pred-match .model-game-stats-shell,
+#pred-match .rc4-report-prose,
+#pred-match .rc4-live-read,
+#pred-match .model-report-metrics {
+  border-color: color-mix(in srgb,var(--text) 28%,var(--border)) !important;
+}
+#pred-match .model-match-card { border:1px solid color-mix(in srgb,var(--text) 34%,var(--border)) !important; margin-bottom:14px !important; }
+#pred-match .model-match-main { border-bottom:1px solid color-mix(in srgb,var(--text) 30%,var(--border)) !important; }
+#pred-match .model-match-teams { border-right:1px solid color-mix(in srgb,var(--text) 30%,var(--border)) !important; }
+#pred-match .model-pick-box { border-right:1px solid color-mix(in srgb,var(--text) 24%,var(--border)) !important; }
+#pred-match .model-match-detail-shell { border-top:1px solid color-mix(in srgb,var(--text) 30%,var(--border)) !important; gap:12px !important; padding-top:12px !important; }
+#pred-match .model-match-data-pane,
+#pred-match .model-match-report-pane { border:1px solid color-mix(in srgb,var(--text) 28%,var(--border)) !important; padding:10px !important; }
+#pred-match .model-match-data-pane { background:color-mix(in srgb,var(--card) 96%,var(--text) 4%) !important; }
+#pred-match .model-match-report-pane { background:var(--card) !important; }
+#pred-match .model-season-profile,
+#pred-match .model-game-stats-shell,
+#pred-match .rc5-left-pulse,
+#pred-match .rc4-report-prose,
+#pred-match .rc4-live-read { border:1px solid color-mix(in srgb,var(--text) 20%,var(--border)) !important; }
+#pred-match .rc4-checkpoints { border:1px solid color-mix(in srgb,var(--text) 30%,var(--border)) !important; padding:4px !important; gap:4px !important; }
+#pred-match .rc4-checkpoint-btn { border:1px solid color-mix(in srgb,var(--text) 22%,var(--border)) !important; }
+#pred-match .rc4-checkpoint-btn.active { background:var(--blue)!important; color:#fff!important; border-color:var(--blue)!important; }
+#pred-match .rc4-report-prose p>b:first-child,
+#pred-match .rc4-live-read>b:first-child,
+#pred-match .rc4-live-read p>b:first-child,
+#pred-match .model-game-stats-shell>strong:first-child,
+#pred-match .rc5-left-pulse>strong:first-child { display:block!important; margin:0 0 6px!important; }
+
+/* Process/provenance belongs in Guide, not football-reading surfaces. */
+.rc6-wed-snapshot,.rc6-board-note,.model-player-compare-hint { display:none!important; }
+#modelPlayerCompareStatus { color:var(--muted); font-size:11px; }
+.model-player-data-tools span { display:none!important; }
+
+/* League Board RC7 */
+.rc7-board-toolbar{display:flex;align-items:end;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 9px}
+.rc7-board-toolbar label{font:700 10px 'Courier New',monospace;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.rc7-board-toolbar select{min-width:190px}
+#pred-rank .model-board-head,#pred-rank .model-board-row{grid-template-columns:minmax(220px,2fr) 54px 54px 58px 66px 58px minmax(112px,.9fr) 48px 48px!important;min-width:860px!important}
+#pred-rank .model-board-head>div,#pred-rank .model-board-row>div{justify-content:center;text-align:center;min-width:0}
+#pred-rank .model-board-head>div:first-child,#pred-rank .model-board-row>div:first-child{justify-content:flex-start;text-align:left}
+#pred-rank .model-team-cell{min-width:0}
+#pred-rank .model-team-name{white-space:normal;line-height:1.15}
+#pred-rank .model-team-sub{display:flex;gap:7px;flex-wrap:wrap}
+#pred-rank .rc7-delta-wrap{position:relative;display:flex;justify-content:center;align-items:center;outline:none}
+#pred-rank .rc7-delta-chip{min-width:38px;padding:5px 7px;border:1px solid var(--border);font-weight:900;background:var(--card)}
+#pred-rank .rc7-delta-chip.up{color:var(--green)}#pred-rank .rc7-delta-chip.down{color:var(--red)}
+#pred-rank .rc7-delta-tooltip{position:absolute;z-index:60;left:50%;top:calc(100% + 8px);transform:translateX(-50%);width:min(360px,78vw);padding:11px;border:1px solid color-mix(in srgb,var(--text) 28%,var(--border));background:var(--card);color:var(--text);font-size:11px;line-height:1.5;text-align:left;opacity:0;visibility:hidden;pointer-events:none}
+#pred-rank .rc7-delta-tooltip b{display:block;font-size:12px;margin-bottom:5px}
+#pred-rank .rc7-delta-wrap:hover .rc7-delta-tooltip,#pred-rank .rc7-delta-wrap:focus .rc7-delta-tooltip{opacity:1;visibility:visible}
+#pred-rank .model-board-row.move-up{background:color-mix(in srgb,var(--green) 16%,var(--card))!important}
+#pred-rank .model-board-row.move-down{background:color-mix(in srgb,var(--red) 15%,var(--card))!important}
+#pred-rank .model-board-row.move-flat{background:var(--card)!important}
+#pred-rank .model-board-row>div:nth-child(6){display:flex;justify-content:center;align-items:center!important}
+
+/* Compare / player compare readability. */
+.rc7-player-card{display:grid;grid-template-columns:54px minmax(0,1fr);gap:9px;align-items:center;border:1px solid var(--border);padding:9px;background:var(--card)}
+.rc7-player-photo{width:54px;height:54px;overflow:hidden;border:1px solid var(--border);background:var(--dark3);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px}
+.rc7-player-photo img{width:100%;height:100%;object-fit:cover;object-position:top}
+.rc7-player-card h4{margin:0 0 3px;font-size:14px}.rc7-player-card .meta{font-size:11px;color:var(--muted);line-height:1.45}
+.model-player-graph-full svg,.model-compare-chart svg{display:block;width:100%;height:auto}
+.model-player-graph-full{overflow-x:auto}.model-player-graph-full svg{min-width:1180px}
+.rc7-legend-note{font-size:10px;color:var(--muted);margin:4px 0 8px}
+
+/* Remove decorative snapshot styling anywhere RC6 inserted it before RC7 cleanup executes. */
+.rc6-wed-snapshot{border:0!important;background:transparent!important;padding:0!important;margin:0!important}
+
+@media(max-width:760px){
+  #pred-rank{overflow-x:hidden}
+  .rc7-board-toolbar{align-items:stretch}.rc7-board-toolbar label,.rc7-board-toolbar select{width:100%}
+  #pred-rank .model-board-head,#pred-rank .model-board-row{grid-template-columns:minmax(160px,1fr) 42px 42px 46px 52px 46px 90px!important;min-width:680px!important}
+  #pred-rank .model-board-head>div:nth-child(5),#pred-rank .model-board-row>div:nth-child(5),#pred-rank .model-board-head>div:nth-child(6),#pred-rank .model-board-row>div:nth-child(6),#pred-rank .model-board-head>div:nth-child(7),#pred-rank .model-board-row>div:nth-child(7){display:flex!important}#pred-rank .model-board-head>div:nth-child(8),#pred-rank .model-board-row>div:nth-child(8),#pred-rank .model-board-head>div:nth-child(9),#pred-rank .model-board-row>div:nth-child(9){display:none!important}
+  #pred-rank .model-board-head-wrap{overflow-x:auto;padding-bottom:5px}
+  #pred-match .model-match-teams{border-right:0!important}
+  #pred-match .model-match-data-pane,#pred-match .model-match-report-pane{padding:8px!important}
+  #pred-match .model-match-detail-shell{gap:8px!important}
+  .rc7-player-card{grid-template-columns:46px minmax(0,1fr)}.rc7-player-photo{width:46px;height:46px}
+}
+</style>
+<script id="modelV2RC7Patch">
+(function(){
+  const RC7_APP='V2.0-RC7';
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const pct=n=>Number.isFinite(Number(n))?Number(n).toFixed(1):'—';
+  const unitLabel=i=>['overall offense','pass offense','run offense','protection','overall defense','pass defense','run defense','pass rush'][i]||'unit';
+  const CONF={ARI:'NFC',ATL:'NFC',BAL:'AFC',BUF:'AFC',CAR:'NFC',CHI:'NFC',CIN:'AFC',CLE:'AFC',DAL:'NFC',DEN:'AFC',DET:'NFC',GB:'NFC',HOU:'AFC',IND:'AFC',JAX:'AFC',KC:'AFC',LAC:'AFC',LAR:'NFC',LV:'AFC',MIA:'AFC',MIN:'NFC',NE:'AFC',NO:'NFC',NYG:'NFC',NYJ:'AFC',PHI:'NFC',PIT:'AFC',SEA:'NFC',SF:'NFC',TB:'NFC',TEN:'AFC',WAS:'NFC'};
+
+  function bestWorst(t){const arr=[0,1,2,3,4,5,6,7].map(i=>({i,r:Number(t.u3[i])}));return {best:[...arr].sort((a,b)=>a.r-b.r)[0],worst:[...arr].sort((a,b)=>b.r-a.r)[0]}}
+  function mediaGapInfo7(ab){
+    const t=MODEL_TEAM_DATA[ab]; if(!t)return {gap:0,title:'No comparison',body:'No media benchmark is stored.'};
+    const gap=Number(t.media)-Number(t.w3c),bw=bestWorst(t);
+    let body='';
+    if(ab==='TEN') body=`Tennessee is a good example of the rock-paper-scissors logic behind Context. Media has TEN #${t.media}; our Context rank is #${t.w3c}. The offense is still a major problem (#${t.u3[0]} overall, #${t.u3[1]} passing), but the profile is not bottom-of-the-league everywhere: defense is #${t.u3[4]}, run defense #${t.u3[6]}, the run game #${t.u3[2]}, and protection #${t.u3[3]}. We are not calling Tennessee a strong team. We are saying its two-sided matchup profile is less hopeless than a pure record/reputation view suggests.`;
+    else if(gap>0) body=`We have ${ab} ${gap} spot${gap===1?'':'s'} higher than the media benchmark. ${unitLabel(bw.best.i)} (#${bw.best.r}) is the clearest reason the profile holds up, while ${unitLabel(bw.worst.i)} (#${bw.worst.r}) is the main brake. Context rewards the interaction of those strengths and weaknesses rather than treating record or reputation as the whole answer.`;
+    else if(gap<0) body=`Media has ${ab} ${Math.abs(gap)} spot${Math.abs(gap)===1?'':'s'} higher than we do. The biggest reason for our caution is ${unitLabel(bw.worst.i)} (#${bw.worst.r}); the strongest counterweight is ${unitLabel(bw.best.i)} (#${bw.best.r}). That weakness can matter disproportionately when an opponent is built to attack it.`;
+    else body=`Our Context rank and the media benchmark agree at #${t.w3c}. ${unitLabel(bw.best.i)} (#${bw.best.r}) is the strongest part of the profile, while ${unitLabel(bw.worst.i)} (#${bw.worst.r}) is the largest drag.`;
+    return {gap,title:`${TEAM_NAMES[ab]||ab}: our #${t.w3c} vs media #${t.media}`,body};
+  }
+  function deltaHtml7(ab){const x=mediaGapInfo7(ab),txt=x.gap>0?`+${x.gap}`:String(x.gap),cl=x.gap>0?'up':x.gap<0?'down':'even';return `<div class="rc7-delta-wrap" tabindex="0"><span class="rc7-delta-chip ${cl}">${txt}</span><div class="rc7-delta-tooltip"><b>${esc(x.title)}</b>${esc(x.body)}</div></div>`}
+
+  let BOARD_SORT='ctx';
+  function ensureBoardToolbar(){
+    const rank=document.getElementById('pred-rank'); if(!rank)return;
+    rank.querySelector('.rc6-board-note')?.remove();
+    if(rank.querySelector('.rc7-board-toolbar'))return;
+    const label=rank.querySelector('.sec-lbl');
+    label?.insertAdjacentHTML('afterend',`<div class="rc7-board-toolbar"><label>SORT LEAGUE BOARD<select class="pred-inp" id="rc7BoardSort"><option value="ctx">Context rank</option><option value="alpha">Team A–Z</option><option value="alphaDesc">Team Z–A</option><option value="conference">Conference</option><option value="perf">Performance rank</option><option value="media">Media rank</option><option value="delta">Largest model/media gap</option><option value="off">Offense rank</option><option value="def">Defense rank</option></select></label></div>`);
+    document.getElementById('rc7BoardSort')?.addEventListener('change',e=>{BOARD_SORT=e.target.value;window.renderModelLeagueBoard()});
+  }
+  function sortTeams(list){
+    const name=ab=>TEAM_NAMES[ab]||ab;
+    return list.sort((a,b)=>{
+      const A=MODEL_TEAM_DATA[a],B=MODEL_TEAM_DATA[b];
+      if(BOARD_SORT==='alpha')return name(a).localeCompare(name(b));
+      if(BOARD_SORT==='alphaDesc')return name(b).localeCompare(name(a));
+      if(BOARD_SORT==='conference')return (CONF[a]||'').localeCompare(CONF[b]||'')||A.w3c-B.w3c;
+      if(BOARD_SORT==='perf')return A.w3p-B.w3p;
+      if(BOARD_SORT==='media')return A.media-B.media;
+      if(BOARD_SORT==='delta')return Math.abs(B.media-B.w3c)-Math.abs(A.media-A.w3c)||A.w3c-B.w3c;
+      if(BOARD_SORT==='off')return A.u3[0]-B.u3[0];
+      if(BOARD_SORT==='def')return A.u3[4]-B.u3[4];
+      return A.w3c-B.w3c;
+    });
+  }
+  window.renderModelLeagueBoard=function(){
+    const el=document.getElementById('predRankList');if(!el)return;ensureBoardToolbar();
+    const head=document.querySelector('#pred-rank .model-board-head');if(head){head.parentElement?.classList.add('model-board-head-wrap');head.innerHTML='<div>TEAM</div><div>CTX</div><div>PERF</div><div>MEDIA</div><div>DELTA</div><div>MOVE</div><div>AVG POINT DIFFERENTIAL</div><div>OFF</div><div>DEF</div>'}
+    const teams=sortTeams(Object.keys(MODEL_TEAM_DATA));
+    el.innerHTML=teams.map(ab=>{const t=MODEL_TEAM_DATA[ab],m=modelRankMove(t),sel=ab===MODEL_SELECTED_TEAM?' selected':'',moveClass=m.n>0?' move-up':m.n<0?' move-down':' move-flat';return `<div class="model-board-row${moveClass}${sel}" data-model-team="${ab}" onclick="modelSelectTeam('${ab}','health')"><div class="model-team-cell"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/${ab.toLowerCase()}.png" onerror="this.style.display='none'"><div><div class="model-team-name">${esc(TEAM_NAMES[ab]||ab)}</div><div class="model-team-sub"><span>${CONF[ab]||''}</span><span>${t.rec}</span><span>PF ${pct(t.pf)}</span><span>PA ${pct(t.pa)}</span></div></div></div><div class="model-rank-num">${t.w3c}</div><div class="model-rank-num">${t.w3p}</div><div class="model-rank-num">${t.media}</div><div onclick="event.stopPropagation()">${deltaHtml7(ab)}</div><div>${m.html}</div><div class="model-rank-num">${t.pdg>=0?'+':''}${pct(t.pdg)}</div><div class="model-rank-num">${t.u3[0]}</div><div class="model-rank-num">${t.u3[4]}</div></div>`}).join('');
+    const sort=document.getElementById('rc7BoardSort');if(sort)sort.value=BOARD_SORT;
+  };
+
+  function currentNews7(ab){const arr=(typeof allNewsItems!=='undefined'&&Array.isArray(allNewsItems))?allNewsItems:[];const full=(TEAM_NAMES[ab]||'').toLowerCase(),nick=(TEAM_NAMES[ab]||'').split(/\s+/).slice(-1)[0].toLowerCase();return arr.filter(n=>{const s=((n.headline||'')+' '+(n.impact||'')).toLowerCase();return (full&&s.includes(full))||(nick.length>3&&s.includes(nick))}).slice(0,2)}
+  function healthContext7(ab){
+    const t=MODEL_TEAM_DATA[ab];if(!t)return'';const news=currentNews7(ab);let extra='';
+    if(ab==='PHI')extra=' Philadelphia is also working through major offensive-line continuity changes and a thinner backfield, so protection and replacement-RB usage deserve more weight than the old full-strength identity.';
+    else if(ab==='BAL')extra=' Baltimore added Cam Jurgens to the interior-line mix, while quarterback availability remains capable of changing the offensive ceiling quickly.';
+    else if(news.length)extra=' Recent team news worth carrying into the next matchup: '+news.map(n=>n.headline).join(' · ')+'.';
+    return extra;
+  }
+  function cleanHealth7(){
+    const root=document.getElementById('modelHealthBody');if(!root)return;
+    root.querySelectorAll('.rc6-wed-snapshot').forEach(n=>n.remove());
+    const p=root.querySelector('#modelOverviewSection>p');if(p&&!p.dataset.rc7Context){const add=healthContext7(MODEL_SELECTED_TEAM);if(add){p.insertAdjacentText('beforeend',add);p.dataset.rc7Context='1'}}
+  }
+  const health6=window.renderModelHealth;window.renderModelHealth=function(){health6?.();cleanHealth7();setTimeout(cleanHealth7,0)};
+
+  function cleanMetaNotes7(root=document){
+    const phrases=['Deeper unit splits were not preserved before this game.','Frozen W4 pregame model','Reconstructed from prior frozen data','The player layer uses the verified weekly data actually loaded in Fantasy HQ.','Structural snapshot only:','This miss is preserved for calibration;','The pregame model freezes at kickoff.'];
+    root.querySelectorAll('p,div,span,small').forEach(el=>{if(el.children.length>5)return;const txt=(el.textContent||'').trim();if(!txt)return;for(const ph of phrases){if(txt.startsWith(ph)&&txt.length<360){if(ph==='This miss is preserved for calibration;'){el.textContent=txt.replace(/^This miss is preserved for calibration;\s*/,'');}else el.remove();break}}});
+  }
+  function conversationalize7(root=document){
+    root.querySelectorAll('#pred-match p,#pred-health p,#pred-external p,#pred-external .rc6-compare-subtitle').forEach(el=>{
+      if(el.dataset.rc7Voice)return;let h=el.innerHTML;
+      h=h.replace(/\bThe model grades\b/g,'Our current grades put').replace(/\bThe model sees\b/g,'We see').replace(/\bThe model is\b/g,'Our model is').replace(/\bThe model's\b/g,"Our model's").replace(/\bthe model's\b/g,"our model's");
+      h=h.replace(/\bThe report below uses the unit interaction rather than treating the rankings as standalone trivia\.?/gi,'Those ranks matter most where the two teams directly stress each other.');
+      h=h.replace(/RC6 reserves this layer for verified charting\/feed data when available\.?/gi,'Those details appear only when verified charting data is available.').replace(/The Compare tab is meant to explain how the teams are built and where styles collide; the Matchups tab remains the official game pick because it also applies score environment, home field, confidence calibration, availability and the frozen pregame script\.?/gi,'This comparison explains how the teams are built and where their styles collide; the game pick also accounts for score environment, home field, availability and calibrated confidence.');
+      el.innerHTML=h;el.dataset.rc7Voice='1';
+    });
+  }
+  function polishMatchups7(){const root=document.getElementById('pred-match');if(!root)return;cleanMetaNotes7(root);conversationalize7(root)}
+  const predLoad6=window.predLoadWeek;window.predLoadWeek=async function(silent=false){const out=await predLoad6?.(silent);polishMatchups7();setTimeout(polishMatchups7,0);return out};
+
+  function teamCompareAxisSvg7(){
+    const teams=MODEL_COMPARE_TEAMS.filter(ab=>MODEL_TEAM_DATA[ab]),colors=['#0aa860','#1a5fd0','#e8720c','#b8860b'],W=1880,H=540,L=64,R=28,T=46,B=80,plotBottom=H-B,x=w=>L+(w/22)*(W-L-R),y=r=>T+(Number(r)-1)*(plotBottom-T)/31;
+    let h='';[1,8,16,24,32].forEach(r=>h+=`<line x1="${L}" y1="${y(r)}" x2="${W-R}" y2="${y(r)}" stroke="var(--border)"/><text x="${L-10}" y="${y(r)+4}" text-anchor="end" font-size="12" fill="var(--muted)">#${r}</text>`);
+    for(let w=0;w<=18;w++)h+=`<text x="${x(w)}" y="${H-24}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--text)">${w===0?'W0':'W'+w}</text>`;
+    [[19,'WC'],[20,'DIV'],[21,'CONF'],[22,'SB']].forEach(([w,l])=>h+=`<text x="${x(w)}" y="${H-24}" text-anchor="middle" font-size="10" font-weight="800" fill="var(--text)">${l}</text>`);
+    teams.forEach((ab,ti)=>{const p=model2025Profiles()[ab],sr={off:[p?.offRank||null,modelWeekUnitRank(ab,1,0),modelWeekUnitRank(ab,2,0),MODEL_TEAM_DATA[ab].u3[0]],def:[p?.defRank||null,modelWeekUnitRank(ab,1,4),modelWeekUnitRank(ab,2,4),MODEL_TEAM_DATA[ab].u3[4]]},c=colors[ti];for(const kind of ['off','def']){if(MODEL_COMPARE_HIDDEN.has(`${ab}:${kind}`))continue;const arr=sr[kind],pts=arr.map((r,i)=>r?`${x(i)},${y(r)}`:null).filter(Boolean).join(' ');if(pts)h+=`<polyline points="${pts}" fill="none" stroke="${c}" stroke-width="3" ${kind==='def'?'stroke-dasharray="8 5"':''}/>`;arr.forEach((r,i)=>{if(!r)return;h+=`<circle cx="${x(i)}" cy="${y(r)}" r="5" fill="${kind==='off'?c:'var(--card)'}" stroke="${c}" stroke-width="2"><title>${ab} ${kind} #${r} · ${i===0?'W0':'W'+i}</title></circle>`})}});
+    return `<svg viewBox="0 0 ${W} ${H}" aria-label="Team offense and defense trend Week 0 through Super Bowl">${h}</svg>`;
+  }
+  window.modelTeamCompareGraphSvg=teamCompareAxisSvg7;
+
+  function playerPhoto7(p){const initials=(p?.name||'?').split(/\s+/).map(x=>x[0]).join('').slice(0,2);if(p?.espnId)return `<div class="rc7-player-photo"><img src="https://a.espncdn.com/i/headshots/nfl/players/full/${p.espnId}.png" alt="${esc(p.name)}" onerror="this.parentElement.textContent='${esc(initials)}'"></div>`;return `<div class="rc7-player-photo">${esc(initials)}</div>`}
+  function nextPlayerProjection7(name,season,metric,scoring){
+    if(String(season)!=='2026')return[];const p=DRAFT_PLAYERS.find(x=>x.name===name);if(!p||!MODEL_TEAM_DATA[p.team])return[];
+    const rows=modelPlayerHistoricalRows(name,season),vals=rows.map(r=>modelPlayerRowValue(r,metric,scoring)).filter(Number.isFinite),base=vals.length?vals.slice(-4).reduce((a,b)=>a+b,0)/Math.min(4,vals.length):Number(p.proj||0);if(!Number.isFinite(base)||base<=0)return[];
+    const out=[];for(let w=Math.max(5,MODEL_CURRENT_WEEK+1);w<=18;w++){const g=MODEL_MATCHUP_CACHE[`${p.team}-${w}`];if(!g||!MODEL_TEAM_DATA[g.opp])continue;const opp=MODEL_TEAM_DATA[g.opp];let r=p.pos==='RB'?opp.u3[6]:['WR','TE','QB'].includes(p.pos)?opp.u3[5]:p.pos==='DST'?opp.u3[0]:opp.u3[4];let factor=1+(Number(r)-16.5)/110;factor=Math.max(.82,Math.min(1.18,factor));if(p.pos==='DST')factor=2-factor;const site=g.site==='@'?'@':'vs';out.push({week:w,value:null,projection:base*factor,opponent:g.opp,site,future:true});if(out.length>=6)break}return out;
+  }
+  function seriesWithFuture7(name,season,metric,scoring){const actual=modelPlayerCompareSeries(name,season,metric,scoring);return actual.concat(nextPlayerProjection7(name,season,metric,scoring))}
+  function playerSvg7(series,season,metric,scoring,full=false){
+    const W=full?1880:1180,H=full?500:350,L=64,R=26,T=44,B=74,colors=['#0aa860','#1a5fd0','#e8720c','#b8860b'],vals=series.flatMap(s=>s.pts.flatMap(p=>[p.value,p.projection]).filter(Number.isFinite)),max=Math.max(1,...vals),x=w=>L+(w/22)*(W-L-R),y=v=>T+(max-v)*(H-T-B)/max;let svg=`<svg viewBox="0 0 ${W} ${H}" aria-label="Player weekly comparison Week 0 through Super Bowl">`;
+    for(let g=0;g<=4;g++){const yy=T+(H-T-B)*g/4,val=max*(1-g/4);svg+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--border)" stroke-dasharray="4 4"/><text x="${L-9}" y="${yy+5}" text-anchor="end" font-size="${full?13:11}" fill="var(--muted)">${val.toFixed(metric==='fantasy'?1:0)}</text>`}
+    for(let w=0;w<=18;w++)svg+=`<text x="${x(w)}" y="${H-22}" text-anchor="middle" font-size="${full?12:10}" font-weight="700" fill="var(--text)">${w===0?'W0':'W'+w}</text>`;[[19,'WC'],[20,'DIV'],[21,'CONF'],[22,'SB']].forEach(([w,l])=>svg+=`<text x="${x(w)}" y="${H-22}" text-anchor="middle" font-size="${full?12:10}" font-weight="800" fill="var(--text)">${l}</text>`);
+    series.forEach((sr,si)=>{const c=colors[si],actual=sr.pts.filter(p=>Number.isFinite(p.value)).map(p=>`${x(p.week)},${y(p.value)}`).join(' '),basePts=sr.pts.filter(p=>!p.future&&Number.isFinite(p.projection)).map(p=>`${x(p.week)},${y(p.projection)}`).join(' '),future=sr.pts.filter(p=>p.future&&Number.isFinite(p.projection)).map(p=>`${x(p.week)},${y(p.projection)}`).join(' ');if(actual)svg+=`<polyline points="${actual}" fill="none" stroke="${c}" stroke-width="3"/>`;if(basePts)svg+=`<polyline points="${basePts}" fill="none" stroke="${c}" stroke-width="2" stroke-dasharray="7 5" opacity=".45"/>`;if(future){const lastActual=sr.pts.filter(p=>Number.isFinite(p.value)).at(-1),connect=lastActual?`${x(lastActual.week)},${y(lastActual.value)} `:'';svg+=`<polyline points="${connect}${future}" fill="none" stroke="${c}" stroke-width="3" stroke-dasharray="2 6" opacity=".85"/>`}sr.pts.filter(p=>Number.isFinite(p.value)).forEach(p=>{const n=sr.name.replaceAll("'","\\'");svg+=`<circle cx="${x(p.week)}" cy="${y(p.value)}" r="${full?5:4}" fill="${c}" stroke="var(--card)" stroke-width="1.5" ${full?`onclick="modelOpenPlayerNodeDetail('${n}',${season},${p.week},'${metric}','${scoring}')"`:''}><title>${esc(sr.name)} · W${p.week} · ${p.value.toFixed(2)}</title></circle>`});sr.pts.filter(p=>p.future&&Number.isFinite(p.projection)).forEach(p=>svg+=`<circle cx="${x(p.week)}" cy="${y(p.projection)}" r="${full?5:4}" fill="var(--card)" stroke="${c}" stroke-width="2"><title>${esc(sr.name)} · W${p.week} ${p.site||''} ${p.opponent||''} · matchup projection ${p.projection.toFixed(2)}</title></circle>`)});return svg+'</svg>';
+  }
+  window.modelPlayerCompareSvgFixed=playerSvg7;
+
+  window.renderModelPlayerCompare=async function(){
+    const chart=document.getElementById('modelPlayerCompareChart'),summary=document.getElementById('modelPlayerCompareSummary'),chips=document.getElementById('modelPlayerCompareChips'),status=document.getElementById('modelPlayerCompareStatus');if(!chart||!summary||!chips||typeof DRAFT_PLAYERS==='undefined')return;
+    modelUpdatePlayerCompareControls();modelRefreshPlayerCompareChips();await Promise.all([...new Set(MODEL_COMPARE_PLAYERS.map(n=>DRAFT_PLAYERS.find(x=>x.name===n)?.team).filter(Boolean))].map(t=>modelFetchTeamSchedule(t).catch(()=>null)));const season=document.getElementById('modelPlayerCompareSeason')?.value||'2026',metric=document.getElementById('modelPlayerCompareMetric')?.value||'fantasy',scoring=document.getElementById('modelPlayerCompareScoring')?.value||'ppr';
+    if(!modelHistoryUsable()){if(status)status.textContent='Loading weekly player history…';if(fhqHistoryState.status!=='loading')await loadHistoricalPlayerData(false);else return}
+    const series=MODEL_COMPARE_PLAYERS.map(n=>({name:n,pts:seriesWithFuture7(n,season,metric,scoring)})).filter(s=>s.pts.some(p=>Number.isFinite(p.value)||Number.isFinite(p.projection)));
+    if(status)status.textContent=`${season} · ${metric==='fantasy'?scoring.toUpperCase()+' fantasy points':metric} · solid actual · dashed baseline · dotted matchup projection`;
+    if(!series.length){chart.innerHTML='<div class="cmp-empty"><div><b>No weekly data for the selected players yet.</b></div></div>';summary.innerHTML='';return}
+    chart.innerHTML=playerSvg7(series,season,metric,scoring,false);
+    summary.innerHTML=series.map(sr=>{const p=DRAFT_PLAYERS.find(x=>x.name===sr.name),actual=sr.pts.filter(x=>Number.isFinite(x.value)).map(x=>x.value),avg=actual.length?actual.reduce((a,b)=>a+b,0)/actual.length:null,next=sr.pts.find(x=>x.future&&Number.isFinite(x.projection));return `<div class="rc7-player-card">${playerPhoto7(p)}<div><h4>${esc(sr.name)}${p?` · ${p.pos} ${p.team}`:''}</h4><div class="meta">${actual.length?`${actual.length} games · Avg ${avg.toFixed(2)} · High ${Math.max(...actual).toFixed(2)} · Low ${Math.min(...actual).toFixed(2)}`:'No completed-game sample yet'}${next?`<br>Next matchup projection: W${next.week} ${next.site} ${next.opponent} · ${next.projection.toFixed(2)}`:''}</div></div></div>`}).join('');
+    conversationalize7(document.getElementById('pred-external'));
+  };
+  const openPlayer6=window.modelOpenPlayerGraphModal;window.modelOpenPlayerGraphModal=function(){const season=document.getElementById('modelPlayerCompareSeason')?.value||'2026',metric=document.getElementById('modelPlayerCompareMetric')?.value||'fantasy',scoring=document.getElementById('modelPlayerCompareScoring')?.value||'ppr',series=MODEL_COMPARE_PLAYERS.map(n=>({name:n,pts:seriesWithFuture7(n,season,metric,scoring)})).filter(s=>s.pts.length);if(!series.length)return;const m=modelEnsurePlayerGraphModal();m.classList.add('on');document.body.style.overflow='hidden';const full=document.getElementById('modelPlayerGraphFull');if(full)full.innerHTML=playerSvg7(series,season,metric,scoring,true);const analysis=document.getElementById('modelPlayerGraphAnalysis');if(analysis&&typeof playerAnalysisHtml==='function')analysis.innerHTML=playerAnalysisHtml();};
+
+  const external6=window.renderModelExternal;window.renderModelExternal=function(){external6?.();const d=document.querySelector('#modelCompareTeamPane details:nth-of-type(3) summary');if(d)d.textContent='MODEL VS MEDIA · WHERE WE DISAGREE';document.querySelectorAll('#modelExternalRows th').forEach(th=>{if(th.textContent.trim()==='ΔMODEL'||th.textContent.trim()==='ΔMEDIA')th.textContent='DELTA'});conversationalize7(document.getElementById('pred-external'))};
+
+  const guide6=window.renderModelGuide;window.renderModelGuide=function(){guide6?.();const el=document.getElementById('modelGuideBody');if(!el)return;
+    const banner=el.querySelector('.model-v2-banner');if(banner)banner.innerHTML='<strong>NFL PREDICTOR V1.3.2 · HOW TO READ THE MODEL</strong> Rankings describe overall team strength; matchup forecasts ask how those strengths and weaknesses collide in a specific game.';
+    el.querySelector('[data-rc6-guide]')?.remove();
+    if(!el.querySelector('[data-rc7-guide]'))el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc7-guide><summary>RANKINGS, DELTA & FOOTBALL ROCK-PAPER-SCISSORS</summary><div class="model-collapse-body"><div class="model-guide-row"><b>CTX</b><div class="model-guide-copy">Our broader Context rank: current performance plus the football context we have actually verified.</div></div><div class="model-guide-row"><b>PERF</b><div class="model-guide-copy">Performance rank: current-season statistical production at the frozen checkpoint.</div></div><div class="model-guide-row"><b>Delta</b><div class="model-guide-copy">Media rank minus our Context rank. Positive means we rate the team higher than the stored media benchmark; negative means media does. Hover or focus a League Board Delta value for the team-specific football reason.</div></div><div class="model-guide-row"><b>MOVE</b><div class="model-guide-copy">Change in Context rank from the preseason/Week-0 baseline. Green is up; red is down.</div></div><div class="model-guide-row"><b>Average Point Differential</b><div class="model-guide-copy">Average points scored minus average points allowed per game. Positive means the team is outscoring opponents on average; negative means it is being outscored.</div></div><div class="model-guide-row"><b>Why rankings do not decide every matchup</b><div class="model-guide-copy">Think of football strength like rock-paper-scissors with many more pieces. A higher-ranked team can still run into an opponent whose pass rush attacks its line, whose run defense removes its preferred offense, or whose personnel/coaching/availability changes the matchup. Rankings summarize the whole profile; the Matchups tab evaluates the specific collision.</div></div></div></details><details class="model-collapse" open data-rc7-checkpoints><summary>CHECKPOINTS, FREEZES & DATA INTEGRITY</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Weekly freeze</b><div class="model-guide-copy">The regular weekly model checkpoint is preserved once published so later information cannot rewrite what we knew at the time. Team-health prose can reflect newly verified news without silently changing an old historical rank.</div></div><div class="model-guide-row"><b>Pregame refresh</b><div class="model-guide-copy">While the page is open, pregame analysis can refresh from available public/news data. The PRE forecast freezes at kickoff.</div></div><div class="model-guide-row"><b>Live checkpoints</b><div class="model-guide-copy">START, Q1, HALF, Q3 and FINAL are live snapshots. FINAL is the quick game-end read; Postgame Review is the later, more settled interpretation after statistics/context have had time to verify.</div></div><div class="model-guide-row"><b>Missing historical detail</b><div class="model-guide-copy">If an older checkpoint did not preserve a deeper unit split, the app leaves it unavailable rather than importing information from the future. That rule belongs here in the Guide instead of repeating inside every matchup.</div></div></div></details>`);
+    conversationalize7(el);
+  };
+
+  function cleanupAll7(){document.querySelectorAll('.rc6-board-note,.rc6-wed-snapshot').forEach(n=>n.remove());cleanMetaNotes7(document);conversationalize7(document);cleanHealth7()}
+  const healthRoot=document.getElementById('modelHealthBody');if(healthRoot&&typeof MutationObserver!=='undefined'){new MutationObserver(()=>{healthRoot.querySelectorAll('.rc6-wed-snapshot').forEach(n=>n.remove())}).observe(healthRoot,{childList:true,subtree:true})}
+  try{document.title='Fantasy HQ '+RC7_APP}catch(_){ }
+  setTimeout(()=>{try{renderModelLeagueBoard();cleanupAll7();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();if(document.getElementById('pred-external')?.style.display!=='none')renderModelExternal();if(document.getElementById('pred-guide')?.style.display!=='none')renderModelGuide();if(document.getElementById('pred-match')?.style.display!=='none')polishMatchups7()}catch(e){console.warn('RC7 repaint',e)}},350);
+})();
+</script>
+
 </body>
 </html>
