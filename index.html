@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Fantasy HQ V2.0-RC6</title>
+<title>Fantasy HQ V2.0-RC15</title>
 <meta name="theme-color" content="#0aa860">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -6338,7 +6338,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   window.renderModelGuide=function(){oldGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc5-guide]'))return;el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc5-guide><summary>V2.0-RC6 · MATCHUP PULSE & CHECKPOINT ANALYSIS</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Pregame and checkpoint lifecycle</b><div class="model-guide-copy"><b>Pregame re-analysis refreshes from available public/news data while the page is open; game checkpoints are captured at START, Q1, HALF, Q3 and FINAL. The original PRE forecast is never rewritten after kickoff.</b></div></div><div class="model-guide-row"><b>FINAL versus Postgame Review</b><div class="model-guide-copy">FINAL is the quick game-end snapshot from the live provider. The right-side Postgame Review is refreshed again after final so the analysis can use a more settled box score and compare the frozen pregame script with what actually happened. Provider stat corrections can still occur later, so the app preserves the timestamp of every snapshot rather than silently rewriting history.</div></div><div class="model-guide-row"><b>Daily pregame pulse</b><div class="model-guide-copy">While Fantasy HQ is open, the matchup layer rechecks public schedule/news context at the daily rollover and again near kickoff. The latest PRE report may evolve before the game, but it becomes immutable once kickoff is detected.</div></div><div class="model-guide-row"><b>Evidence left, interpretation right</b><div class="model-guide-copy">The left pane holds Team Health, checkpoint statistics, key-player production and key plays. The right pane explains what those numbers mean for the frozen pregame thesis and the postgame audit; it avoids repeating the raw player/play list as a second stat dump.</div></div><div class="model-guide-row"><b>Game checkpoints</b><div class="model-guide-copy">The app watches game status during active games and captures START (about one minute into play), end of Q1, halftime, end of Q3 and FINAL. Live box-score statistics are preliminary and may later be corrected by the provider.</div></div><div class="model-guide-row"><b>No AI query every minute</b><div class="model-guide-copy">Lightweight public-data checks detect status changes. Deeper written analysis is regenerated only when evidence changes at a scheduled/checkpoint event, not every polling cycle.</div></div><div class="model-guide-row"><b>Browser limitation</b><div class="model-guide-copy">A standalone HTML file cannot wake itself while the browser is closed. RC6 captures scheduled checkpoints while Fantasy HQ is open. A future small backend/service can run the same schedule unattended and cache snapshots for every user.</div></div></div></details>`)};
 
   /* Visible version separation: app V2.0-RC5, predictor V1.3.2. */
-  try{document.title='Fantasy HQ '+APP_VERSION;document.querySelectorAll('#panel-predictor [style*="font-size:26px"] span').forEach(x=>{if(/V\d/.test(x.textContent))x.textContent=PREDICTOR_VERSION})}catch(_){ }
+  try{document.title='Fantasy HQ V2.0-RC15';document.querySelectorAll('#panel-predictor [style*="font-size:26px"] span').forEach(x=>{if(/V\d/.test(x.textContent))x.textContent=PREDICTOR_VERSION})}catch(_){ }
 
   /* Kick off the pulse if the matchup tab is already visible. */
   setTimeout(()=>{try{document.querySelectorAll('.model-match-card').forEach(identifyCard);const p=document.getElementById('pred-match');if(p&&p.style.display!=='none')modelStartMatchAutoRefresh()}catch(_){}},1200);
@@ -6487,7 +6487,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   const baseGuide=window.renderModelGuide;window.renderModelGuide=function(){baseGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc6-guide]'))return;el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc6-guide><summary>LEAGUE BOARD · SCORE, MOVE & MEDIA DELTA</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Score (0–100)</b><div class="model-guide-copy">The League Board Score is the stored normalized Performance composite for that checkpoint. It is <b>not</b> a win probability. Rank tells you ordering; Score tells you spacing. A 72.1 team is 7.1 normalized points above a 65.0 team, while 65 vs 64 is only a one-point separation and should be treated as much closer.</div></div><div class="model-guide-row"><b>MOVE</b><div class="model-guide-copy">Change in Context rank from the preseason/Week-0 baseline. Green means the team has risen, red means it has fallen. The stronger RC6 row tint is visual emphasis only; it does not change the math.</div></div><div class="model-guide-row"><b>ΔMEDIA</b><div class="model-guide-copy">Media rank minus our Context rank. Positive means our model rates the team higher; negative means media rates it higher. Hover or keyboard-focus the value for the football reason behind the disagreement. Tennessee is a useful example: the model sees a poor offense but a much better defensive profile than a #32 public ranking implies.</div></div><div class="model-guide-row"><b>REC / PD/G</b><div class="model-guide-copy">REC is win-loss record at the frozen checkpoint. PD/G is scoring differential per game (PF minus PA); positive means the team scores more than it allows on average.</div></div></div></details><details class="model-collapse" open data-rc6-glossary><summary>FOOTBALL + FANTASY LANGUAGE / ABBREVIATIONS</summary><div class="model-collapse-body"><div class="model-guide-key"><b>CTX</b><span>Context rank: broader team-strength view after current performance plus verified football context.</span></div><div class="model-guide-key"><b>PERF</b><span>Performance rank: current-season statistical production only.</span></div><div class="model-guide-key"><b>PF / PA / PD</b><span>Points For / Points Against / Point Differential. PF/G, PA/G and PD/G are per-game versions.</span></div><div class="model-guide-key"><b>OFF / DEF</b><span>Overall offense / overall defense rank.</span></div><div class="model-guide-key"><b>Pass O / Run O / OL</b><span>Passing offense / rushing offense / offensive-line or protection grade.</span></div><div class="model-guide-key"><b>Pass D / Run D / Rush</b><span>Pass defense / run defense / pass-rush grade.</span></div><div class="model-guide-key"><b>PPG</b><span>Points per game.</span></div><div class="model-guide-key"><b>EPA/play</b><span>Expected Points Added per play; an efficiency measure describing how much each play changes expected scoring.</span></div><div class="model-guide-key"><b>Y/P · YPC · YPA</b><span>Yards per play · yards per carry · yards per pass attempt.</span></div><div class="model-guide-key"><b>C/ATT</b><span>Pass completions / pass attempts.</span></div><div class="model-guide-key"><b>CAR · REC · TGT · YDS · AVG · LONG</b><span>Carries · receptions · targets · yards · average yards · longest gain.</span></div><div class="model-guide-key"><b>TD · INT · FUM</b><span>Touchdown · interception · fumble.</span></div><div class="model-guide-key"><b>SCK · TFL · PD</b><span>Sack · tackle for loss · pass defended. Context determines whether PD means pass defended or point differential.</span></div><div class="model-guide-key"><b>3D / RZ</b><span>Third down / red zone. 3D% is conversion rate; RZ TD% is red-zone trips ending in touchdowns.</span></div><div class="model-guide-key"><b>TO</b><span>Turnover(s). Giveaways are bad for an offense; takeaways are good for a defense.</span></div><div class="model-guide-key"><b>PPR / Half PPR / Standard</b><span>Fantasy scoring: 1 point per reception / 0.5 per reception / no reception bonus.</span></div><div class="model-guide-key"><b>ADP</b><span>Average Draft Position.</span></div><div class="model-guide-key"><b>FLEX / D/ST</b><span>Fantasy lineup spot generally usable by RB/WR/TE · team Defense/Special Teams.</span></div><div class="model-guide-key"><b>IR / PUP</b><span>Injured Reserve / Physically Unable to Perform list.</span></div><div class="model-guide-key"><b>Q / D / OUT</b><span>Questionable / Doubtful / Out injury designations.</span></div><div class="model-guide-key"><b>Snap share / route participation / target share</b><span>Share of team offensive snaps / pass plays on which a player ran a route / team pass targets going to that player.</span></div><div class="model-guide-key"><b>Air yards / YAC</b><span>Distance a pass travels before the catch / yards after catch.</span></div><div class="model-guide-key"><b>Pressure / blitz</b><span>QB disruption by the rush / sending extra rushers beyond a standard front.</span></div><div class="model-guide-key"><b>Man / zone</b><span>Coverage families where defenders primarily match receivers or defend areas of the field.</span></div><div class="model-guide-key"><b>11 / 12 / 21 personnel</b><span>RB-TE counts: 11 = 1 RB, 1 TE; 12 = 1 RB, 2 TE; 21 = 2 RB, 1 TE. The remaining eligible skill spots are receivers.</span></div><div class="model-guide-key"><b>RPO / play action</b><span>Run-pass option / a pass concept using a run fake to influence defenders.</span></div><div class="model-guide-key"><b>Explosive play</b><span>A chunk gain; the app's exact threshold is shown where that metric is used.</span></div></div></details>`)};
 
   /* Repaint after the RC6 overrides are installed. */
-  try{document.title='Fantasy HQ '+RC6_APP}catch(_){ }
+  try{document.title='Fantasy HQ V2.0-RC15'}catch(_){ }
   setTimeout(()=>{try{renderModelLeagueBoard();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();if(document.getElementById('pred-external')?.style.display!=='none')renderModelExternal();if(document.getElementById('pred-guide')?.style.display!=='none')renderModelGuide()}catch(e){console.warn('RC6 repaint',e)}},250);
 })();
 </script>
@@ -6716,7 +6716,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 
   function cleanupAll7(){document.querySelectorAll('.rc6-board-note,.rc6-wed-snapshot').forEach(n=>n.remove());cleanMetaNotes7(document);conversationalize7(document);cleanHealth7()}
   const healthRoot=document.getElementById('modelHealthBody');if(healthRoot&&typeof MutationObserver!=='undefined'){new MutationObserver(()=>{healthRoot.querySelectorAll('.rc6-wed-snapshot').forEach(n=>n.remove())}).observe(healthRoot,{childList:true,subtree:true})}
-  try{document.title='Fantasy HQ '+RC7_APP}catch(_){ }
+  try{document.title='Fantasy HQ V2.0-RC15'}catch(_){ }
   setTimeout(()=>{try{renderModelLeagueBoard();cleanupAll7();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();if(document.getElementById('pred-external')?.style.display!=='none')renderModelExternal();if(document.getElementById('pred-guide')?.style.display!=='none')renderModelGuide();if(document.getElementById('pred-match')?.style.display!=='none')polishMatchups7()}catch(e){console.warn('RC7 repaint',e)}},350);
 })();
 </script>
@@ -6783,7 +6783,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 
   // Keep process notes in the Guide rather than duplicating them around football content.
   function cleanup8(){document.querySelectorAll('.rc6-board-note,.rc6-wed-snapshot').forEach(n=>n.remove())}
-  try{document.title='Fantasy HQ '+RC8_APP}catch(_){ }
+  try{document.title='Fantasy HQ V2.0-RC15'}catch(_){ }
   setTimeout(()=>{try{refreshSeasonThrough4();window.renderModelLeagueBoard?.();cleanup8();if(document.getElementById('pred-health')?.style.display!=='none')window.renderModelHealth?.();if(document.getElementById('pred-guide')?.style.display!=='none')window.renderModelGuide?.()}catch(e){console.warn('RC8 ingest repaint',e)}},500);
 })();
 </script>
@@ -6941,7 +6941,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   setInterval(clockTick9,60000);
 
   /* Default Matchups to the derived active forecast week once, but keep manual browsing intact. */
-  setTimeout(()=>{try{const sel=document.getElementById('predWeekSel');if(sel&&Number(sel.value||4)<=4&&MODEL_FORECAST_WEEK>=5){sel.value=String(MODEL_FORECAST_WEEK);if(document.getElementById('pred-match')?.style.display!=='none')predLoadWeek(true)}renderModelLeagueBoard();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();document.title='Fantasy HQ '+APP}catch(e){console.warn('RC9 init',e)}},700);
+  setTimeout(()=>{try{const sel=document.getElementById('predWeekSel');if(sel&&Number(sel.value||4)<=4&&MODEL_FORECAST_WEEK>=5){sel.value=String(MODEL_FORECAST_WEEK);if(document.getElementById('pred-match')?.style.display!=='none')predLoadWeek(true)}renderModelLeagueBoard();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();document.title='Fantasy HQ V2.0-RC15'}catch(e){console.warn('RC9 init',e)}},700);
 
   const oldGuide=window.renderModelGuide;window.renderModelGuide=function(){oldGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc9-guide]'))return;el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc9-guide><summary>RC9 · CLOCK, LIVE CONFIDENCE & PERSONNEL</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Calendar state</b><div class="model-guide-copy">Fantasy HQ derives the active forecast week in <b>America/Los_Angeles</b>. Results/current records and the official forecast week are separate from the latest validated CTX/Performance/unit checkpoint, so a completed game cannot silently rewrite historical rankings.</div></div><div class="model-guide-row"><b>Automatic refresh while open</b><div class="model-guide-copy">At midnight Pacific and at the noon-Pacific weekly checkpoint, the open page rechecks completed games, records, scoring averages and news. Ten minutes before each game it records a final pregame confidence point. During live games a lightweight 60-second pulse records the live confidence curve; START, Q1, HALF, Q3 and FINAL remain the major labeled checkpoints.</div></div><div class="model-guide-row"><b>Live confidence</b><div class="model-guide-copy">The live curve begins from the frozen pregame probability, then uses actual score/time plus currently available box-score evidence such as yards per play, turnovers, first downs and sack signals. This live evidence lens is experimental and remains separate from the frozen pregame calibration.</div></div><div class="model-guide-row"><b>Hot Off The Press</b><div class="model-guide-copy">Notifications are capped at ten words. Opening the News article shows the current statistics, the confidence swing and a paragraph explanation of whether the original game script is holding, weakening or flipping.</div></div><div class="model-guide-row"><b>Personnel</b><div class="model-guide-copy">Open Matchups can load current roster number/name/position for both teams. Individual position ranks and task-specific grades are intentionally blank until a source supports them; the app does not infer an offensive-lineman or coverage grade from a basic box score.</div></div><div class="model-guide-row"><b>Static-page limit</b><div class="model-guide-copy">These timed jobs run while Fantasy HQ is open. A static GitHub HTML page cannot wake itself while closed; unattended capture still requires the scheduled workflow or a future backend/GitHub Action.</div></div></div></details>`)};
 })();
@@ -7100,7 +7100,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   // RC10 guide correction: PRE/Q1/HALF/Q3/FINAL only; START is no longer a user-facing checkpoint.
   const oldGuide=window.renderModelGuide;window.renderModelGuide=function(){oldGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc10-guide]'))return;el.querySelectorAll('[data-rc9-guide] .model-guide-copy').forEach(x=>{x.innerHTML=x.innerHTML.replace(/START, Q1, HALF, Q3 and FINAL/g,'Q1, HALF, Q3 and FINAL').replace(/START, Q1, HALF, Q3 and FINAL remain/g,'Q1, HALF, Q3 and FINAL remain')});el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc10-guide><summary>RC10 · CONFIDENCE HISTORY & LIVE MATCHUP LAYOUT</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Confidence history</b><div class="model-guide-copy">Both teams are plotted on the same fixed win-probability graph. The x-axis uses daily midnight checkpoints, the official noon-Pacific weekly checkpoint, PRE -10, Q1, HALF, Q3 and FINAL. Sixty-second live samples fill the in-game space without expanding the chart indefinitely.</div></div><div class="model-guide-row"><b>Persistence</b><div class="model-guide-copy">Captured points are written to local browser storage immediately and remain available on reload on the same site/device. True cross-device and public historical synchronization still needs a shared data store; static GitHub Pages cannot securely write a common live history by itself.</div></div><div class="model-guide-row"><b>Checkpoint UI</b><div class="model-guide-copy">The user-facing game checkpoints are PRE, Q1, HALF, Q3 and FINAL. Last-minute roster/inactive changes are incorporated by the PRE refresh and the live 60-second tracker instead of a separate START checkpoint.</div></div><div class="model-guide-row"><b>Matchup evidence order</b><div class="model-guide-copy">The left pane is ordered Win Probability → Game Checkpoint → Roster + Live Evidence. Each section is collapsible. The center strip between team logos shows live score and possession/down-distance when supplied by the live feed.</div></div></div></details>`)};
 
-  try{document.title='Fantasy HQ '+APP}catch(_){ }
+  try{document.title='Fantasy HQ V2.0-RC15'}catch(_){ }
   setTimeout(()=>{enhanceAll();refreshScoreCenters()},900);
 })();
 </script>
@@ -7139,10 +7139,10 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 @media(max-width:700px){.rc11-roster-row{grid-template-columns:35px minmax(105px,1fr) 42px minmax(78px,auto)}.rc11-card{min-height:330px}.rc11-board-head button{font-size:11px!important}.rc11-conf-svg{min-width:900px}}
 </style>
 <script id="modelV2RC11Patch">
-/* Fantasy HQ V2.0-RC14. NFL Predictor remains V1.3.2; this patch completes the data/checkpoint and presentation pipeline without changing the published forecast formula version. */
+/* Fantasy HQ V2.0-RC15. NFL Predictor remains V1.3.2; this patch completes the data/checkpoint and presentation pipeline without changing the published forecast formula version. */
 (function(){
 'use strict';
-const APP='V2.0-RC14', TZ='America/Los_Angeles', CK='fhq_weekly_checkpoint_rc11_', HIST='fhq_confidence_history_rc9', ART='fhq_hot_articles_rc9';
+const APP='V2.0-RC15', TZ='America/Los_Angeles', CK='fhq_weekly_checkpoint_rc11_', HIST='fhq_confidence_history_rc9', ART='fhq_hot_articles_rc9';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const TEAM_CONF={ARI:'NFC',ATL:'NFC',BAL:'AFC',BUF:'AFC',CAR:'NFC',CHI:'NFC',CIN:'AFC',CLE:'AFC',DAL:'NFC',DEN:'AFC',DET:'NFC',GB:'NFC',HOU:'AFC',IND:'AFC',JAX:'AFC',KC:'AFC',LAC:'AFC',LAR:'NFC',LV:'AFC',MIA:'AFC',MIN:'NFC',NE:'AFC',NO:'NFC',NYG:'NFC',NYJ:'AFC',PHI:'NFC',PIT:'AFC',SEA:'NFC',SF:'NFC',TB:'NFC',TEN:'AFC',WAS:'NFC'};
@@ -7214,27 +7214,51 @@ function axisSlots(w,kickoff){const kp=laParts(kickoff),kd=pseudoDate(kp.date),d
 function pointProgress(q,kickoff){const lab=String(q.label||'').toUpperCase();if(lab.includes('FINAL'))return 1;if(lab.includes('Q3'))return .75;if(lab.includes('HALF'))return .5;if(lab==='Q1'||lab.includes(' Q1'))return .25;const per=Number(q.period||q.meta?.period||0),clock=String(q.clock||q.meta?.clock||'');if(per>=1){const m=clock.match(/(\d+):(\d+)/),left=m?Number(m[1])+Number(m[2])/60:15;return clamp(((per-1)*15+(15-left))/60,0,1)}if(q.t>=kickoff)return clamp((q.t-kickoff)/(3.2*3600000),0,1);return null}
 function confidencePointProgress11(q,kickoff){
   const lab=String(q?.label||'').toUpperCase(),per=Number(q?.period||q?.meta?.period||0),clock=String(q?.clock||q?.meta?.clock||'');
-  // Actual NFL game clock is authoritative for live samples.
-  if(per>=1){
-    const m=clock.match(/(\d+):(\d+)/);
-    if(m){
-      const left=Number(m[1])+Number(m[2])/60;
-      let elapsed=(Math.max(1,Math.min(per,4))-1)*15+(15-left);
-      if(/FINAL/.test(lab)) elapsed=60;
-      return clamp(elapsed/60,0,1);
-    }
-  }
-  // Checkpoint labels are only fallbacks when the feed did not preserve a clock.
+  // Official checkpoint labels live on exact quarter boundaries. This is safe
+  // because only explicit checkpoint points get these labels; ordinary LIVE
+  // samples continue to use their actual game clock.
   if(/FINAL/.test(lab))return 1;
   if(/Q3/.test(lab))return .75;
   if(/HALF/.test(lab))return .5;
   if(lab==='Q1'||/\bQ1\b/.test(lab))return .25;
+  if(per>=1){
+    const m=clock.match(/(\d+):(\d+)/);
+    if(m){
+      const left=Number(m[1])+Number(m[2])/60;
+      const elapsed=(Math.max(1,Math.min(per,4))-1)*15+(15-left);
+      return clamp(elapsed/60,0,1);
+    }
+  }
   return null;
 }
+function checkpointOverlay11(raw){
+  const points=raw.filter(q=>Number.isFinite(Number(q?.p))&&Number(q?.period||q?.meta?.period||0)>=1);
+  const periodOf=q=>Number(q?.period||q?.meta?.period||0), timeOf=q=>Number(q?.t)||0;
+  const byPeriod=n=>points.filter(q=>periodOf(q)===n).sort((a,b)=>timeOf(a)-timeOf(b));
+  const explicit=label=>points.filter(q=>String(q.label||'').toUpperCase()===label).sort((a,b)=>timeOf(a)-timeOf(b));
+  const out=[];
+  const add=(label,anchor,primary,fallback)=>{
+    let src=null;
+    const p=byPeriod(primary);
+    if(p.length)src=p[p.length-1];
+    if(!src&&fallback){const f=byPeriod(fallback);if(f.length)src=f[0]}
+    if(!src){const e=explicit(label);if(e.length)src=e[e.length-1]}
+    if(src)out.push({...src,label,checkpointFixed:true,checkpointAnchor:anchor,priority:5});
+  };
+  // End-of-quarter snapshots are reconstructed from the closest stored live
+  // observation if an older build missed the named checkpoint itself.
+  if(points.some(q=>periodOf(q)>=2))add('Q1',.25,1,2);
+  if(points.some(q=>periodOf(q)>=3))add('HALF',.5,2,3);
+  if(points.some(q=>periodOf(q)>=4))add('Q3',.75,3,4);
+  const fin=explicit('FINAL');
+  if(fin.length)out.push({...fin[fin.length-1],label:'FINAL',checkpointFixed:true,checkpointAnchor:1,priority:5});
+  return out;
+}
 function confidenceSvg11(w,a,h,kickoff){
-  if(!Number.isFinite(Number(kickoff)))return '<div class="rc11-conf-note" style="padding:18px 6px;font-size:12px;font-weight:800">Loading official kickoff timeline…</div>';
+  if(!Number.isFinite(Number(kickoff)))return '<div class="rc11-conf-note" style="padding:18px 6px;font-size:12px;font-weight:800">Loading official kickoff timeline...</div>';
   kickoff=Number(kickoff);
   const raw=hist(w,a,h).filter(q=>Number.isFinite(Number(q?.p))&&Number.isFinite(Number(q?.t))&&!/^START$/i.test(String(q?.label||''))).sort((x,z)=>Number(x.t)-Number(z.t));
+  const history=[...raw,...checkpointOverlay11(raw)];
   const slots=axisSlots(w,kickoff),preSlots=slots.filter(s=>s.kind!=='game'),W=1240,H=350,L=64,R=42,T=34,B=82,plot=W-L-R,preWidth=plot*.56,gameWidth=plot-preWidth;
   const preMin=preSlots[0]?.t??kickoff-4*86400000,preMax=kickoff-10*60000;
   const xPre=t=>L+clamp((Number(t)-preMin)/Math.max(1,preMax-preMin),0,1)*preWidth;
@@ -7244,44 +7268,35 @@ function confidenceSvg11(w,a,h,kickoff){
   [0,25,50,75,100].forEach(p=>{const yy=y(p);s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--border)" ${p===50?'stroke-width="1.5"':'stroke-dasharray="4 6"'}/><text x="${L-10}" y="${yy+5}" text-anchor="end" font-size="13" font-weight="900" fill="var(--muted)">${p}%</text>`});
   slots.forEach(sl=>{const xx=sl.kind==='game'?xGame(sl.g):xPre(sl.t);const parts=String(sl.label).split(' ');s+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B+7}" stroke="var(--border)" opacity="${sl.kind==='freeze'?.7:.34}" ${sl.kind==='freeze'?'stroke-dasharray="3 4"':''}/><text x="${xx}" y="${H-47}" text-anchor="middle" font-size="12" font-weight="900" fill="var(--text)"><tspan x="${xx}">${esc(parts[0])}</tspan>${parts.length>1?`<tspan x="${xx}" dy="14">${esc(parts.slice(1).join(' '))}</tspan>`:''}</text>`});
 
-  // Build candidate points from the stored history. The final rendered series is
-  // x-sorted and deduplicated, so each team has exactly one y-value at any x.
   const cand=[];
-  for(const q0 of raw){
+  for(const q0 of history){
     const q={...q0},lab=String(q.label||'').toUpperCase(),t=Number(q.t),per=Number(q.period||q.meta?.period||0);
     let x=null,progress=null;
-    if(t<kickoff){
+    if(q.checkpointFixed&&Number.isFinite(Number(q.checkpointAnchor))){
+      progress=Number(q.checkpointAnchor);x=xGame(progress);
+    }else if(t<kickoff){
       x=xPre(t);
     }else{
       progress=confidencePointProgress11(q,kickoff);
-      // Legacy CURRENT READ samples captured after kickoff without game state are invalid.
-      if(progress==null){
-        if(per===0)continue;
-        continue;
-      }
+      if(progress==null){if(per===0)continue;continue}
       x=xGame(progress);
     }
-    const checkpoint=/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P/.test(lab);
-    cand.push({...q,x,progress,priority:checkpoint?3:1});
+    const checkpoint=q.checkpointFixed||/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P/.test(lab);
+    cand.push({...q,x,progress,priority:Number(q.priority||0)||(checkpoint?3:1)});
   }
-  // Use a tenth of an SVG unit as the uniqueness bucket. A later observation at
-  // the same x replaces the earlier one; an official checkpoint gets label priority.
+  // One rendered observation per x coordinate. Reconstructed named checkpoints
+  // win their exact boundary; otherwise the later observation wins.
   const unique=new Map();
   for(const q of cand){
     const key=Math.round(q.x*10)/10,old=unique.get(key);
-    if(!old){unique.set(key,q);continue}
-    if(q.priority>old.priority){unique.set(key,{...q,p:q.p});continue}
-    if(q.priority===old.priority&&Number(q.t)>=Number(old.t))unique.set(key,q);
-    else if(q.priority<old.priority&&Number(q.t)>Number(old.t))unique.set(key,{...old,p:q.p,t:q.t,rel:q.rel||old.rel});
+    if(!old||q.priority>old.priority||(q.priority===old.priority&&Number(q.t)>=Number(old.t)))unique.set(key,q);
   }
   const pts=[...unique.values()].sort((x,z)=>x.x-z.x||Number(x.t)-Number(z.t));
-  // Last guard: never allow a rendered path command to move backward on x.
   const clean=[];
   for(const q of pts){
     const prev=clean.at(-1);
-    if(prev&&q.x<=prev.x+.05){
-      if(Number(q.t)>=Number(prev.t))clean[clean.length-1]={...q,x:prev.x};
-    }else clean.push(q);
+    if(prev&&q.x<=prev.x+.05){if(q.priority>prev.priority||(q.priority===prev.priority&&Number(q.t)>=Number(prev.t)))clean[clean.length-1]={...q,x:prev.x}}
+    else clean.push(q);
   }
 
   const homeD=clean.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(q.p).toFixed(2)}`).join(' ');
@@ -7289,12 +7304,12 @@ function confidenceSvg11(w,a,h,kickoff){
   if(homeD)s+=`<path d="${homeD}" fill="none" stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
   if(awayD)s+=`<path d="${awayD}" fill="none" stroke="var(--orange)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
   clean.forEach((q,i)=>{
-    const lab=String(q.label||'').toUpperCase(),major=/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P/.test(lab),latest=i===clean.length-1,show=major||latest,r=show?5.5:2.2,hp=Number(q.p),ap=100-hp,hy=y(hp),ay=y(ap);
-    s+=`<circle cx="${q.x}" cy="${hy}" r="${r}" fill="${show?'var(--card)':'var(--blue)'}" stroke="var(--blue)" stroke-width="2"><title>${esc(h)} ${hp.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'—')}</title></circle><circle cx="${q.x}" cy="${ay}" r="${r}" fill="${show?'var(--card)':'var(--orange)'}" stroke="var(--orange)" stroke-width="2"><title>${esc(a)} ${ap.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'—')}</title></circle>`;
+    const lab=String(q.label||'').toUpperCase(),major=q.checkpointFixed||/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P/.test(lab),latest=i===clean.length-1,show=major||latest,r=show?5.5:2.2,hp=Number(q.p),ap=100-hp,hy=y(hp),ay=y(ap);
+    s+=`<circle cx="${q.x}" cy="${hy}" r="${r}" fill="${show?'var(--card)':'var(--blue)'}" stroke="var(--blue)" stroke-width="2"><title>${esc(h)} ${hp.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'-')}</title></circle><circle cx="${q.x}" cy="${ay}" r="${r}" fill="${show?'var(--card)':'var(--orange)'}" stroke="var(--orange)" stroke-width="2"><title>${esc(a)} ${ap.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'-')}</title></circle>`;
     if(show){const hY=hy<52?hy+20:hy-11,aY=ay>H-B-16?ay-11:ay+19;s+=`<text x="${q.x}" y="${hY}" text-anchor="middle" font-size="12" font-weight="950" fill="var(--blue)">${hp.toFixed(0)}%</text><text x="${q.x}" y="${aY}" text-anchor="middle" font-size="12" font-weight="950" fill="var(--orange)">${ap.toFixed(0)}%</text>`}
   });
   if(clean.length){const q=clean.at(-1),hp=Number(q.p),ap=100-hp,lx=Math.min(W-R-4,q.x+11);s+=`<text x="${lx}" y="${y(hp)-2}" font-size="12" font-weight="950" fill="var(--blue)">${esc(h)}</text><text x="${lx}" y="${y(ap)-2}" font-size="12" font-weight="950" fill="var(--orange)">${esc(a)}</text>`}
-  else s+=`<text x="${(L+W-R)/2}" y="${(T+H-B)/2}" text-anchor="middle" font-size="13" font-weight="800" fill="var(--muted)">Timeline ready · captured analyses will fill this graph</text>`;
+  else s+=`<text x="${(L+W-R)/2}" y="${(T+H-B)/2}" text-anchor="middle" font-size="13" font-weight="800" fill="var(--muted)">Timeline ready - captured analyses will fill this graph</text>`;
   return `<div class="rc11-conf-wrap"><svg class="rc11-conf-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(a)} and ${esc(h)} win probability history">${s}</svg></div>`
 }
 function ensureInitial(w,a,h){const ar=hist(w,a,h);if(ar.length)return;const p=modelGameForecast(a,h,w);if(p)savePoint(w,a,h,p.pHome*100,'CURRENT READ',p.reliability?.label||'—',{v:11,period:0,clock:'',away:a,home:h})}
@@ -7352,10 +7367,22 @@ window.modelOpenPlayerGraphModal=function(){const season=document.getElementById
 const guide11=window.renderModelGuide;window.renderModelGuide=function(){guide11?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc11-guide]'))return;el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc11-guide><summary>RC11 · COMPLETE WEEKLY / LIVE DATA PIPELINE</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Official statistical checkpoint</b><div class="model-guide-copy">At or after the noon-Pacific publication gate before a new NFL week, Fantasy HQ can build the prior-week frozen checkpoint from completed ESPN game summaries. Eight cumulative efficiency units are ranked: overall offense, pass offense, run offense, protection, overall defense, pass defense, run defense and pass rush. Performance is the mean of those eight percentile-style unit scores; Context is 88% current Performance plus the existing 12% 2025 prior. The saved checkpoint is immutable unless explicitly rebuilt.</div></div><div class="model-guide-row"><b>W1 / W2 / W3 / W4 / W8 / W12</b><div class="model-guide-copy">These vertical model checkpoints are restored on the Team Health graph. They are evaluation milestones for how quickly current-season evidence becomes useful for identifying the eventual playoff/Super-Bowl-quality breadbasket; they are not extra game predictions.</div></div><div class="model-guide-row"><b>Unified Team Health graph</b><div class="model-guide-copy">Context, Performance and the frozen baseline use the left rank axis. Opponent-specific matchup win probability uses the right percentage axis on the same weekly timeline. The compact graph always includes the next matchup projection.</div></div><div class="model-guide-row"><b>Live history</b><div class="model-guide-copy">Both teams' win probabilities are captured together. The graph has fixed daily midnight/noon-Publication/PRE/Q1/HALF/Q3/FINAL anchors; 60-second live samples fill the space between them. FINAL history is retained locally rather than cleared.</div></div><div class="model-guide-row"><b>Shared devices</b><div class="model-guide-copy">Local history works immediately. RC11 also contains an optional shared-store adapter, but automatic phone/laptop/public synchronization requires one real backend project and access rules. Until that one-time setup exists, Export/Import History is the safe cross-device fallback.</div></div><div class="model-guide-row"><b>Personnel evidence</b><div class="model-guide-copy">Fantasy positions can show cumulative PPR positional rank through the previous week when the player log exists. OL/defensive players show the corresponding frozen unit rank until individual task-grade data exists. Live player box-score lines are displayed when ESPN supplies them; unsupported technique grades are not invented.</div></div><div class="model-guide-row"><b>Player Compare</b><div class="model-guide-copy">Standard, Half-PPR and PPR projection and actual are displayed together. Projected nodes remain after the game, so the distance to the actual node is the preserved projection error. Player cards now have clean, splash and foil visual tiers, a flip side and a replaceable art slot for the verified licensed-photo catalog.</div></div></div></details>`)};
 async function refreshCheckpointIfNeeded(){const target=Number(window.MODEL_CALENDAR_STATE?.completedWeek||MODEL_CURRENT_WEEK||0),have=checkpointWeek();if(target>=4&&target>have){const cp=await buildCheckpoint(target);if(cp){renderModelLeagueBoard();renderModelHealth();if(document.getElementById('pred-match')?.style.display!=='none')predLoadWeek(true)}}}
 window.addEventListener('pageshow',()=>setTimeout(()=>{refreshCheckpointIfNeeded();enhanceMatch11()},450));setInterval(()=>{refreshCheckpointIfNeeded();livePulse();enhanceMatch11()},60000);
-try{document.title='Fantasy HQ '+APP}catch(_){ }
+try{document.title='Fantasy HQ V2.0-RC15'}catch(_){ }
 setTimeout(async()=>{try{await refreshCheckpointIfNeeded();renderModelLeagueBoard();modelPopulateTeamSelect();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();if(document.getElementById('pred-external')?.style.display!=='none')renderModelPlayerCompare();if(document.getElementById('pred-guide')?.style.display!=='none')renderModelGuide();await livePulse();await enhanceMatch11()}catch(e){console.warn('RC11 init',e)}},1000);
 })();
 </script>
+
+/* RC15 title lock: legacy RC6-RC10 timers may still attempt to rename the browser tab. */
+(function(){
+  const wanted='Fantasy HQ V2.0-RC15';
+  const apply=()=>{if(document.title!==wanted)document.title=wanted};
+  apply();
+  window.addEventListener('pageshow',apply);
+  window.addEventListener('focus',apply);
+  const titleEl=document.querySelector('title');
+  if(titleEl&&typeof MutationObserver!=='undefined')new MutationObserver(apply).observe(titleEl,{childList:true,characterData:true,subtree:true});
+  setTimeout(apply,250);setTimeout(apply,800);setTimeout(apply,1600);
+})();
 
 </body>
 </html>
