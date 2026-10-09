@@ -7704,5 +7704,297 @@ setTimeout(stabilizeAll,120);setTimeout(stabilizeAll,650);setTimeout(stabilizeAl
 })();
 </script>
 
+<style id="modelV2RC18Styles">
+/* ===== Fantasy HQ V2.0-RC18 · UX consolidation patch ===== */
+:root{--rc18-neutral-rule:color-mix(in srgb,var(--text) 16%,var(--border));}
+
+/* Global restraint: color communicates state, not decoration. */
+#panel-home .spin-banner,
+#pred-match .model-match-report-pane,
+#pred-match .rc10-left-section,
+#pred-match .rc18-game-evidence,
+#pred-rank .rc18-board-analysis,
+#pred-health .model-health-section,
+#panel-home .money-tracker{
+  background:var(--card)!important;
+  border-color:var(--rc18-neutral-rule)!important;
+  box-shadow:none!important;
+}
+#panel-home .spin-banner{background:var(--card)!important;border-radius:6px!important}
+#panel-home .spin-lbl{color:var(--muted)!important}
+#panel-home .mt-live{background:none!important;border:0!important;border-radius:0!important;padding:0!important;color:var(--muted)!important}
+#panel-home .season-box{border:0!important;padding:3px 2px!important;background:none!important}
+#panel-home .wk-chip{box-shadow:none!important}
+#panel-home .wk-chip:not(.paid){background:var(--card)!important}
+
+/* Larger, theme-aware roulette presentation. */
+#spinOverlay{backdrop-filter:blur(7px);background:color-mix(in srgb,var(--dark) 72%,transparent)!important}
+#spinOverlay>div{max-width:760px;padding:24px 18px}
+#spinOverlay .spin-overlay-title{font-size:clamp(28px,4vw,46px)!important;letter-spacing:.075em!important}
+#spinOverlay .spin-overlay-wheel{width:min(520px,78vw)!important;height:min(520px,78vw)!important;margin:20px auto 24px!important}
+#spinOverlay #overlayCanvas{box-shadow:0 20px 70px color-mix(in srgb,var(--green) 22%,transparent)!important}
+#spinOverlay .spin-overlay-result{font-size:clamp(30px,5vw,54px)!important;line-height:1.05!important}
+#spinOverlay .spin-overlay-close{min-height:44px!important;padding:10px 18px!important}
+
+/* Matchup: graph first, detail controls second, detail panes reflow with no dead columns. */
+#pred-match .model-match-detail-shell{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-template-areas:"graph" "controls" "details"!important;
+  gap:10px!important;
+  align-items:start!important;
+}
+#pred-match .rc17-confidence-wide{grid-area:graph!important}
+#pred-match .rc18-detail-controls{
+  grid-area:controls!important;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:2px 2px 3px;border-bottom:1px solid var(--border);
+  font:800 10px 'Courier New',monospace;letter-spacing:.055em;color:var(--muted)
+}
+#pred-match .rc18-detail-controls button{
+  appearance:none;border:0;background:none;color:var(--muted);padding:6px 0;cursor:pointer;
+  font:inherit;text-transform:uppercase;min-height:34px
+}
+#pred-match .rc18-detail-controls button:hover,
+#pred-match .rc18-detail-controls button:focus-visible{color:var(--text);outline:none;text-decoration:underline;text-underline-offset:3px}
+#pred-match .rc18-detail-controls .rc18-detail-master{margin-left:auto;color:var(--text)}
+#pred-match .rc18-detail-grid{
+  grid-area:details!important;
+  display:flex!important;gap:12px!important;align-items:flex-start!important;min-width:0!important;width:100%!important
+}
+#pred-match .rc18-detail-grid>.rc16-evidence-wide{flex:1 1 45%!important;min-width:300px!important}
+#pred-match .rc18-detail-grid>.rc17-checkpoint-rail{flex:0 0 92px!important;min-width:92px!important}
+#pred-match .rc18-detail-grid>.model-match-report-pane{flex:1 1 55%!important;min-width:320px!important;position:static!important;margin:0!important}
+#pred-match .rc18-hidden-panel{display:none!important}
+#pred-match .rc17-checkpoint-rail>summary{pointer-events:auto!important;cursor:pointer!important}
+#pred-match .rc17-checkpoint-rail:not([open]) .rc10-left-body{display:none!important}
+#pred-match .rc18-pulse-summary{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  min-height:38px;padding:8px 10px;border-bottom:1px solid var(--border);
+  font:900 10px 'Courier New',monospace;letter-spacing:.06em;color:var(--text);text-transform:uppercase
+}
+#pred-match .rc18-pulse-summary button{appearance:none;border:0;background:none;color:var(--muted);font:inherit;cursor:pointer;padding:5px}
+#pred-match .rc18-pulse-summary button:hover{color:var(--text)}
+#pred-match .rc18-pulse-body{min-width:0}
+
+/* Matchup panels are neutral, not colored text boxes. */
+#pred-match .model-match-report-pane,
+#pred-match .rc17-checkpoint-rail,
+#pred-match .rc16-evidence-wide,
+#pred-match .rc17-confidence-wide{border-color:var(--rc18-neutral-rule)!important;background:var(--card)!important}
+#pred-match .model-report-head{background:transparent!important;border-bottom:1px solid var(--border)!important}
+#pred-match .rc17-checkpoint-chip,
+#pred-match .rc17-script-tag{background:none!important;border-color:var(--border)!important;border-radius:3px!important}
+#pred-match .rc17-analysis-section{border-bottom:1px solid var(--border)!important}
+#pred-match .rc18-source-credit{font:700 9.5px 'Courier New',monospace;line-height:1.45;color:var(--muted);border-top:1px solid var(--border);padding-top:9px;margin-top:12px}
+
+/* Evidence is recorded once on the left; analysis references it on the right. */
+#pred-match .rc4-checkpoint-stats>.rc5-player-lines,
+#pred-match .rc4-checkpoint-stats>.rc5-key-plays{display:none!important}
+#pred-match .rc18-game-evidence{margin-top:10px;padding:10px 0 0;border:0!important;border-top:1px solid var(--border)!important;border-radius:0!important}
+#pred-match .rc18-game-evidence h4{font-size:11px;margin:0 0 7px;letter-spacing:.055em;text-transform:uppercase}
+#pred-match .rc18-evidence-row{display:grid;grid-template-columns:28px minmax(0,1fr);gap:7px;padding:6px 0;border-bottom:1px solid color-mix(in srgb,var(--border) 72%,transparent);font-size:12px;line-height:1.45}
+#pred-match .rc18-evidence-id{font:900 10px 'Courier New',monospace;color:var(--muted)}
+#pred-match .rc18-sequence{margin-top:9px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;line-height:1.5}
+#pred-match .rc18-sequence b{display:block;font-size:10px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
+
+/* Personnel: offense/defense independently collapsible on desktop and mobile. */
+#pred-match .rc18-personnel-group{border-top:1px solid var(--border);margin-top:7px}
+#pred-match .rc18-personnel-group>summary{list-style:none;cursor:pointer;padding:8px 0;font:900 10px 'Courier New',monospace;letter-spacing:.06em;color:var(--text)}
+#pred-match .rc18-personnel-group>summary::-webkit-details-marker{display:none}
+#pred-match .rc18-personnel-group>summary::after{content:' +';color:var(--muted)}
+#pred-match .rc18-personnel-group[open]>summary::after{content:' −'}
+#pred-match .rc11-roster-row .rk:empty,#pred-match .rc10-roster-row .rank:empty{display:none!important}
+
+/* League Board: 5/8 table + 3/8 analysis on desktop. */
+#pred-rank .rc11-ingest,#pred-rank .rc9-board-tools,#pred-rank .rc7-board-toolbar{display:none!important}
+#pred-rank .rc18-board-tools{display:flex;align-items:center;gap:10px;margin:0 0 9px;font-size:11px}
+#pred-rank .rc18-board-tools label{font:800 10px 'Courier New',monospace;letter-spacing:.05em;color:var(--muted)}
+#pred-rank .rc18-board-tools .pred-inp{width:auto!important;min-width:92px!important;margin:0!important}
+#pred-rank .rc18-board-split{display:grid;grid-template-columns:minmax(0,5fr) minmax(280px,3fr);gap:14px;align-items:start}
+#pred-rank .rc18-board-scroll{min-width:0;overflow-x:auto;border:1px solid var(--border)}
+#pred-rank .rc18-board-scroll .model-board-head{position:sticky;top:0;z-index:8}
+#pred-rank .model-board-head,#pred-rank .model-board-row{
+  grid-template-columns:minmax(210px,2fr) 52px 52px 56px 62px 58px minmax(96px,.9fr) 48px 48px!important;
+  min-width:830px!important
+}
+#pred-rank .model-board-head>*{display:flex!important}
+#pred-rank .model-board-head>button{display:flex!important;align-items:center;justify-content:center;gap:3px}
+#pred-rank .model-board-head>button:first-child{justify-content:flex-start!important}
+#pred-rank .model-board-row{position:relative}
+#pred-rank .model-board-row.rc18-afc{box-shadow:inset 3px 0 0 color-mix(in srgb,var(--blue) 55%,var(--border))}
+#pred-rank .model-board-row.rc18-nfc{box-shadow:inset 3px 0 0 color-mix(in srgb,var(--green) 55%,var(--border))}
+#pred-rank .model-rank-move.up{color:var(--green)!important;font-weight:900!important}
+#pred-rank .model-rank-move.down{color:var(--red)!important;font-weight:900!important}
+#pred-rank .rc18-board-analysis{position:sticky;top:8px;border:1px solid var(--border);padding:13px;min-width:0}
+#pred-rank .rc18-board-analysis h3{font-size:16px;margin:0 0 10px}
+#pred-rank .rc18-board-analysis h4{font-size:10px;letter-spacing:.055em;text-transform:uppercase;margin:14px 0 5px;color:var(--muted)}
+#pred-rank .rc18-board-analysis p{font-size:12.5px;line-height:1.55;margin:0 0 8px}
+#pred-rank .rc18-board-analysis .rc18-analysis-row{padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;line-height:1.4;cursor:pointer}
+#pred-rank .rc18-board-analysis .rc18-analysis-row:last-child{border-bottom:0}
+
+/* Mobile: readable type, true horizontal tables, sticky team column, stacked detail sections. */
+@media(max-width:900px){
+  #pred-rank .rc18-board-split{grid-template-columns:1fr}
+  #pred-rank .rc18-board-analysis{position:static}
+}
+@media(max-width:820px){
+  #panel-predictor{font-size:14px}
+  #panel-predictor .news-pill,#panel-predictor button,#panel-predictor select{min-height:40px}
+  #pred-match .rc18-detail-grid{flex-direction:column!important;gap:8px!important}
+  #pred-match .rc18-detail-grid>*{width:100%!important;min-width:0!important;flex:1 1 auto!important}
+  #pred-match .rc17-checkpoint-rail>summary{display:flex!important;align-items:center;justify-content:space-between;text-align:left!important;padding:10px!important}
+  #pred-match .rc17-checkpoint-rail .rc10-checkpoint-row{display:flex!important;gap:7px!important;overflow-x:auto!important}
+  #pred-match .rc17-checkpoint-rail .rc4-checkpoint-btn{min-width:72px!important;min-height:42px!important}
+  #pred-match .rc18-detail-controls{gap:10px}
+  #pred-match .rc18-detail-controls .rc18-detail-master{margin-left:0;width:100%;text-align:left;border-top:1px solid var(--border)}
+  #pred-match .rc17-analysis-section p{font-size:14px!important;line-height:1.6!important}
+  #pred-match .rc4-live-table{min-width:650px}
+  #pred-match .rc4-checkpoint-stats{overflow-x:auto}
+  #pred-rank .rc18-board-scroll{overflow-x:auto!important;-webkit-overflow-scrolling:touch}
+  #pred-rank .model-board-head,#pred-rank .model-board-row{min-width:830px!important}
+  #pred-rank .model-board-head>*:nth-child(n),#pred-rank .model-board-row>*:nth-child(n){display:flex!important}
+  #pred-rank .model-board-head>*:first-child,#pred-rank .model-board-row>*:first-child{position:sticky;left:0;z-index:6;background:var(--card)}
+  #pred-rank .model-board-head>*:first-child{z-index:10;background:var(--dark2)}
+  #pred-health .model-health-section:not([data-rc18-primary]){margin-top:7px}
+  #pred-health .model-health-section>summary{min-height:42px;display:flex;align-items:center}
+  #spinOverlay .spin-overlay-wheel{width:min(360px,84vw)!important;height:min(360px,84vw)!important}
+}
+</style>
+<script id="modelV2RC18Patch">
+(function(){
+'use strict';
+const APP18='V2.0-RC18', PULSE18='fhq_matchup_pulse_v2rc5', HIST18='fhq_confidence_history_rc9', ART18='fhq_hot_articles_rc9', LEAGUE18='fhq_league_news_rc18';
+const esc18=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const load18=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(_){return d}};
+const save18=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(_){return false}};
+const num18=v=>{if(v==null)return null;const m=String(v).replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):null};
+const clamp18=(v,a,b)=>Math.max(a,Math.min(b,v));
+const key18=(w,a,h)=>`${Number(w)}:${a}:${h}`;
+const CONF18={ARI:'NFC',ATL:'NFC',BAL:'AFC',BUF:'AFC',CAR:'NFC',CHI:'NFC',CIN:'AFC',CLE:'AFC',DAL:'NFC',DEN:'AFC',DET:'NFC',GB:'NFC',HOU:'AFC',IND:'AFC',JAX:'AFC',KC:'AFC',LAC:'AFC',LAR:'NFC',LV:'AFC',MIA:'AFC',MIN:'NFC',NE:'AFC',NO:'NFC',NYG:'NFC',NYJ:'AFC',PHI:'NFC',PIT:'AFC',SEA:'NFC',SF:'NFC',TB:'NFC',TEN:'AFC',WAS:'NFC'};
+const FIRST18={1:'2026-09-09',2:'2026-09-17',3:'2026-09-24',4:'2026-10-01',5:'2026-10-08',6:'2026-10-15',7:'2026-10-22',8:'2026-10-29',9:'2026-11-05',10:'2026-11-12',11:'2026-11-19',12:'2026-11-26',13:'2026-12-03',14:'2026-12-10',15:'2026-12-17',16:'2026-12-24',17:'2026-12-31',18:'2027-01-03'};
+function laDate18(){try{return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Los_Angeles',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}catch(_){return new Date().toISOString().slice(0,10)}}
+function currentWeek18(){
+  const live=Number(window.MODEL_CALENDAR_STATE?.forecastWeek||window.MODEL_FORECAST_WEEK||0);if(live>=1&&live<=18)return live;
+  const today=laDate18();let w=1;for(let i=1;i<=18;i++){if(FIRST18[i]<=today)w=i}return w;
+}
+function setCurrentMatchWeek18(load=true){const sel=document.getElementById('predWeekSel');if(!sel)return;const w=currentWeek18();if(Number(sel.value)!==w)sel.value=String(w);if(load&&document.getElementById('pred-match')?.style.display!=='none')window.predLoadWeek?.(true)}
+
+/* Matchups always open on the live/current NFL week. Manual browsing remains possible until the tab is re-entered. */
+const oldPredTab18=window.predTab;
+window.predTab=function(name,btn){if(name==='match'){const sel=document.getElementById('predWeekSel');if(sel)sel.value=String(currentWeek18())}const r=oldPredTab18?.(name,btn);if(name==='match')setTimeout(()=>setCurrentMatchWeek18(false),50);return r};
+
+/* Theme-aware roulette renderer. */
+window.drawWheelOn=function(canvasId,angle,size,highlightIdx=-1,showText=false){
+  const canvas=document.getElementById(canvasId);if(!canvas)return;const overlay=canvasId==='overlayCanvas',S=overlay?560:size;canvas.width=S;canvas.height=S;const ctx=canvas.getContext('2d'),css=getComputedStyle(document.documentElement),v=n=>css.getPropertyValue(n).trim()||'#222',palette=[v('--green'),v('--blue'),v('--orange'),v('--gold'),v('--green-dim'),v('--red'),v('--dark3')],cx=S/2,cy=S/2,r=S/2-4,slice=(2*Math.PI)/Math.max(1,categories.length);ctx.clearRect(0,0,S,S);
+  categories.forEach((cat,i)=>{const start=angle+i*slice-Math.PI/2,end=start+slice;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();ctx.fillStyle=i===highlightIdx?v('--orange'):palette[i%palette.length];ctx.fill();ctx.strokeStyle=v('--border');ctx.lineWidth=2;ctx.stroke();if(showText){ctx.save();ctx.translate(cx,cy);ctx.rotate(start+slice/2);ctx.textAlign='right';ctx.fillStyle=v('--text');const fs=overlay?15:Math.max(10,Math.round(S/27)),lh=fs+2,textR=r-14;ctx.font=`800 ${fs}px Arial`;const words=String(cat).split(' '),mid=(words.length-1)/2;words.forEach((word,li)=>ctx.fillText(word,textR,(li-mid)*lh+lh*.3));ctx.restore()}});
+  ctx.beginPath();ctx.arc(cx,cy,overlay?34:Math.max(12,S/14),0,Math.PI*2);ctx.fillStyle=v('--card');ctx.fill();ctx.strokeStyle=v('--border');ctx.lineWidth=3;ctx.stroke();
+};
+
+/* League news / local notification bridge. A future shared backend can emit the same event objects cross-device. */
+function notify18(title,body){try{if('Notification'in window&&Notification.permission==='granted')new Notification(title,{body})}catch(_){}}
+function publishLeague18(item){let a=load18(LEAGUE18,[]);if(item.dedupe&&a.some(x=>x.dedupe===item.dedupe))return;a.unshift({...item,id:item.id||('l'+Date.now()+Math.random().toString(36).slice(2,6)),ts:item.ts||Date.now()});save18(LEAGUE18,a.slice(0,120));try{window.renderNewsCards?.('all');window.renderNotis?.()}catch(_){}}
+const oldSaveSpin18=window.saveSpinState;
+if(oldSaveSpin18)window.saveSpinState=function(state){const prev=typeof getSpinState==='function'?getSpinState():{};const r=oldSaveSpin18(state);if(state?.locked&&state.result&&(!prev?.locked||prev.result!==state.result)){const wk=state.week||'—';publishLeague18({kind:'ROULETTE',dedupe:`roulette:${wk}:${state.result}`,title:`Week ${wk} roulette: ${state.result}`,body:`The weekly roulette category is ${state.result}.`,week:wk,result:state.result});notify18('Fantasy HQ · Roulette',`Week ${wk}: ${state.result}`)}return r};
+const oldPayout18=window.autoCreatePayoutTask;
+if(oldPayout18)window.autoCreatePayoutTask=function(week,category){const before=typeof getPayoutTasks==='function'?getPayoutTasks().length:0,r=oldPayout18(week,category),tasks=typeof getPayoutTasks==='function'?getPayoutTasks():[],t=tasks.length>before?tasks[tasks.length-1]:tasks.find(x=>String(x.week)===String(week)&&x.category===category);if(t?.winner){publishLeague18({kind:'ROULETTE WINNER',dedupe:`roulette-winner:${week}:${t.winner}`,title:`${t.winner} wins Week ${week} roulette`,body:`${t.winner} won the ${category||t.category||'weekly'} roulette category${t.player?` with ${t.player}`:''}.`,week,winner:t.winner,category:category||t.category});notify18('Fantasy HQ · Roulette Winner',`${t.winner} won Week ${week} · ${category||t.category||''}`)}return r};
+
+/* News: halftime analysis is the model-facing live feature; routine Q1/Q3/FINAL model alerts stay in Matchups. */
+const oldRenderNews18=window.renderNewsCards;
+window.renderNewsCards=function(filter){oldRenderNews18?.(filter);const c=document.getElementById('newsCards');if(!c)return;const art=load18(ART18,[]);c.querySelectorAll('.rc9-model-alert').forEach(n=>{const id=n.dataset.modelArticle,a=art.find(x=>x.id===id);if(!a||String(a.label||'').toUpperCase()!=='HALF'){n.remove();return}const tag=n.querySelector('.news-tag');if(tag)tag.textContent='HALFTIME PULSE';const meta=n.querySelector('.news-meta');if(meta)meta.textContent=`MATCHUP · ${new Date(a.ts).toLocaleString()}`});if(!['all','league'].includes(filter))return;load18(LEAGUE18,[]).slice(0,18).reverse().forEach(x=>{if(c.querySelector(`[data-league-news="${x.id}"]`))return;c.insertAdjacentHTML('afterbegin',`<div class="news-card league rc18-league-news" data-league-news="${esc18(x.id)}"><div class="news-tag league">${esc18(x.kind||'LEAGUE')}</div><div class="news-headline">${esc18(x.title||'League update')}</div><div class="news-meta">LEAGUE · ${new Date(x.ts).toLocaleString()}</div><div class="news-impact">${esc18(x.body||'')}</div></div>`)})};
+const oldRenderNotis18=window.renderNotis;
+window.renderNotis=function(){oldRenderNotis18?.();const e=document.getElementById('newsNotis');if(!e)return;e.querySelectorAll('.rc9-model-alert').forEach(n=>n.remove());const xs=load18(LEAGUE18,[]).slice(0,6);if(xs.length){const h=`<div class="sec-lbl" style="font-size:13px">LEAGUE UPDATES</div>${xs.map(x=>`<div style="border-bottom:1px solid var(--border);padding:9px 0"><div style="font:900 9px 'Courier New',monospace;letter-spacing:.06em;color:var(--muted)">${esc18(x.kind||'LEAGUE')}</div><div style="font-size:12px;font-weight:750;margin-top:2px">${esc18(x.title||'')}</div></div>`).join('')}`;e.insertAdjacentHTML('afterbegin',h)}};
+
+/* Matchup persistence + retrospective reconstruction. */
+function pulseStore18(){return load18(PULSE18,{})}
+function snaps18(w,a,h){return pulseStore18()[key18(w,a,h)]?.snapshots||{}}
+function saveSnap18(w,a,h,label,snap){const all=pulseStore18(),k=key18(w,a,h);all[k]=all[k]||{snapshots:{},pregameHistory:[]};if(!all[k].snapshots[label])all[k].snapshots[label]=snap;save18(PULSE18,all);return all[k].snapshots[label]}
+function hist18(w,a,h){return load18(HIST18,{})[key18(w,a,h)]||[]}
+function pointFor18(w,a,h,label){const L=String(label).toUpperCase();return [...hist18(w,a,h)].reverse().find(x=>String(x.label||'').toUpperCase()===L)||null}
+function pre18(w,a,h,s){const f=s?.PRE?.forecast;try{return f||modelForecastForGame(a,h,w)||{}}catch(_){return f||{}}}
+function preHome18(pre,h){if(Number.isFinite(Number(pre?.pHome)))return Number(pre.pHome);if(Number.isFinite(Number(pre?.confidence))&&pre.pick)return pre.pick===h?Number(pre.confidence):1-Number(pre.confidence);return .5}
+function homeProb18(w,a,h,label,snap,pre){const p=pointFor18(w,a,h,label);if(Number.isFinite(Number(p?.p)))return clamp18(Number(p.p)/100,.01,.99);if(snap?.livePick&&Number.isFinite(Number(snap.livePct))){const q=Number(snap.livePct);return snap.livePick===h?q:1-q}if(snap){try{return clamp18(modelLiveProbability(preHome18(pre,h),Number(snap.homeScore||0),Number(snap.awayScore||0),{period:Number(snap.period||0),displayClock:snap.clock||'0:00'}),.01,.99)}catch(_){}}return preHome18(pre,h)}
+function rowsMap18(snap){const m={};for(const r of (snap?.stats?.rows||[]))m[String(r.label||'').toLowerCase()]=r;return m}
+function row18(m,needle){const k=Object.keys(m).find(x=>x.includes(needle));return k?m[k]:null}
+function frac18(v){const m=String(v??'').match(/(\d+)\s*[-\/]\s*(\d+)/);return m&&Number(m[2])?Number(m[1])/Number(m[2]):null}
+function metrics18(snap){const m=rowsMap18(snap),ypp=row18(m,'yards per play'),rush=row18(m,'rushing yards'),pass=row18(m,'passing yards'),turn=row18(m,'turnover'),third=row18(m,'third down'),sacks=row18(m,'sacks'),red=row18(m,'red zone'),pos=row18(m,'possession'),yac=row18(m,'yards after catch')||row18(m,'yac');return {ypp,rush,pass,turn,third,sacks,red,pos,yac}}
+function evidenceRefs18(snap,a,h){const M=metrics18(snap),out=[],add=(title,body)=>out.push({id:`E${out.length+1}`,title,body});
+  if(M.ypp)add('Yards/play',`${a} ${M.ypp.away} · ${h} ${M.ypp.home}`);
+  if(M.turn)add('Turnovers',`${a} ${M.turn.away} · ${h} ${M.turn.home}`);
+  if(M.third)add('Third down',`${a} ${M.third.away} · ${h} ${M.third.home}`);
+  if(M.rush)add('Rushing',`${a} ${M.rush.away} yds · ${h} ${M.rush.home} yds`);
+  if(M.sacks)add('Sacks / lost yards',`${a} ${M.sacks.away} · ${h} ${M.sacks.home}`);
+  if(M.yac)add('Yards after catch',`${a} ${M.yac.away} · ${h} ${M.yac.home}`);
+  const plays=snap?.stats?.plays||[],hi=plays.filter(x=>/touchdown|field goal|intercept|fumble|turnover|safety|\b(?:[2-9]\d|1\d\d)\s*yard/i.test(String(x))).slice(-4);if(hi.length)add('High leverage',hi.join(' | '));return out.slice(0,7)}
+function decisive18(snap){const plays=snap?.stats?.plays||[];return plays.filter(x=>/touchdown|field goal|intercept|fumble|turnover|safety|\b(?:[3-9]\d|1\d\d)\s*yard/i.test(String(x))).slice(-6)}
+function source18(snap){return `${snap?.reconstructed?'RECONSTRUCTED · ':''}ESPN scoreboard / game summary${(snap?.stats?.plays||[]).length?' / play-by-play':''} · Fantasy HQ frozen model · ${snap?.capturedAt?new Date(snap.capturedAt).toLocaleString():new Date().toLocaleString()}`}
+function gradeWords18(a,h,snap){const M=metrics18(snap),bits=[];const yA=num18(M.ypp?.away),yH=num18(M.ypp?.home);if(yA!=null&&yH!=null){const t=yA>yH?a:h,d=Math.abs(yA-yH);bits.push(`${t} has the per-play efficiency edge by ${d.toFixed(1)} yards/play [E1]${d<.5?', which is too small to treat as a decisive structural advantage.':d>=1?', a meaningful down-to-down separation.':', a developing but reversible edge.'}`)}const ta=num18(M.turn?.away),th=num18(M.turn?.home);if(ta!=null&&th!=null&&ta!==th){const good=ta<th?a:h,d=Math.abs(ta-th),id=evidenceRefs18(snap,a,h).find(x=>x.title==='Turnovers')?.id;bits.push(`${good} owns the turnover edge by ${d}${id?` [${id}]`:''}. Treat that as game-state leverage first; it becomes a repeatable team signal only when pressure, decision-making or ball-security evidence repeatedly points the same way.`)}const ra=num18(M.rush?.away),rh=num18(M.rush?.home);if(ra!=null&&rh!=null&&Math.abs(ra-rh)>=40){const t=ra>rh?a:h,id=evidenceRefs18(snap,a,h).find(x=>x.title==='Rushing')?.id;bits.push(`${t}'s rushing advantage${id?` [${id}]`:''} is large enough to ask whether the line/scheme is creating clean access or whether one explosive run is carrying the total. The next layer should separate yards before contact, yards after contact and success rate when those feeds are available.`)}return bits}
+function unitRead18(a,h,w,snap,pre){const out=[];try{for(const team of [a,h]){const opp=team===a?h:a,rows=modelMatchupUnitForecastAtWeek(team,opp,w)||[],best=[...rows].sort((x,y)=>Number(y.diff||0)-Number(x.diff||0))[0],risk=[...rows].sort((x,y)=>Number(x.diff||0)-Number(y.diff||0))[0];if(best)out.push(`${team}'s strongest pregame interaction was ${String(best.label||'').toLowerCase()} (${best.detail}). The live evidence should confirm the mechanism—not just the score—before that edge is carried forward.`);if(risk&&Number(risk.diff)<0)out.push(`${team}'s main pregame risk was ${String(risk.label||'').toLowerCase()} (${risk.detail}). Pressure, YAC/explosive gains, down-and-distance and repeated matchup losses are stronger confirmation than a single result.`)}}catch(_){ }return out.slice(0,3)}
+function reportBody18(w,a,h,label,snap,s,pre){if(label==='PRE'){let edges=[];try{edges=[...(modelMatchupUnitForecastAtWeek(pre.pick||h,(pre.pick||h)===a?h:a,w)||[])].sort((x,y)=>Number(y.diff||0)-Number(x.diff||0)).slice(0,3)}catch(_){}return `<div class="rc17-analysis-section"><h4>Pregame thesis</h4><p>${esc18(pre.pick||'—')} is the frozen lean at <b>${Math.round(Number(pre.confidence||.5)*100)}%</b>${pre.reliability?.label?` with <b>${esc18(pre.reliability.label)}</b> reliability`:''}. The live checkpoints test whether the specific unit interactions behind that forecast actually appear.</p>${edges.length?`<p>${edges.map(x=>`${esc18(x.label)}: ${esc18(x.detail)}`).join(' · ')}</p>`:''}</div><div class="rc18-source-credit">Sources: frozen Fantasy HQ model checkpoint${s?.PRE?.capturedAt?` · ${new Date(s.PRE.capturedAt).toLocaleString()}`:''}</div>`}
+  const hp=homeProb18(w,a,h,label,snap,pre),ap=1-hp,score=`${a} ${Number(snap.awayScore||0)}–${h} ${Number(snap.homeScore||0)}`,leader=Number(snap.awayScore)>Number(snap.homeScore)?a:Number(snap.homeScore)>Number(snap.awayScore)?h:'Neither team',refs=evidenceRefs18(snap,a,h),reads=gradeWords18(a,h,snap),unit=unitRead18(a,h,w,snap,pre),dec=decisive18(snap),half=label==='HALF',post=label==='POST';
+  const intro=post?`The game is complete. This audit separates repeatable efficiency/personnel evidence from turnovers, isolated explosives and other high-variance events before anything is carried into the next projection.`:half?`This Halftime Pulse is the deep live audit: score and probability are checked against efficiency, possession value, pressure/protection, player production and high-leverage plays rather than read in isolation.`:`This checkpoint reads the live score and probability against the evidence preserved at ${label}.`;
+  let html=`<div class="rc17-analysis-section"><h4>${post?'Postgame audit':half?'Halftime Pulse':'Score + game probability'}</h4><p>${intro} <b>${score}</b>; ${leader} has the scoreboard edge. Win probability is ${a} <b>${Math.round(ap*100)}%</b> · ${h} <b>${Math.round(hp*100)}%</b>.</p></div>`;
+  html+=`<div class="rc17-analysis-section"><h4>Evidence read</h4>${reads.length?reads.map(x=>`<p>${esc18(x)}</p>`).join(''):`<p>The preserved checkpoint does not yet contain enough separating efficiency data to make a strong causal claim. The analysis therefore keeps the score/probability read provisional.</p>`}${refs.length?`<p><b>Referenced evidence:</b> ${refs.map(x=>`${x.id} ${x.title}`).join(' · ')}.</p>`:''}</div>`;
+  html+=`<div class="rc17-analysis-section"><h4>Pregame thesis vs live game</h4>${unit.length?unit.map(x=>`<p>${esc18(x)}</p>`).join(''):`<p>The frozen unit sheet is unavailable for this game, so this checkpoint is not inventing a matchup mechanism.</p>`}</div>`;
+  if(dec.length)html+=`<div class="rc17-analysis-section"><h4>Decisive sequence</h4><p>The left-side event record shows: ${esc18(dec.join(' → '))}. The audit should distinguish structural wins from field-position/turnover swings and one-off coverage or tackling failures.</p></div>`;
+  html+=`<div class="rc17-analysis-section"><h4>${post?'What carries forward':'Next inflection'}</h4><p>${post?'Carry forward repeated protection stress, sustained rushing/pass efficiency, coverage/spacing problems, verified injuries and stable role changes. Down-weight isolated turnovers or single explosive plays unless the same mechanism repeats.':'The next stable shift should come from repeatable efficiency, protection, third-down sustainability, red-zone finishing or another high-leverage possession—not raw yardage alone.'}</p></div>`;
+  html+=`<div class="rc18-source-credit">Sources: ${esc18(source18(snap))}${snap?.reconstructed?' · Quarter score/play sequence reconstructed retrospectively; final-game team totals are not imported backward into the missed checkpoint.':''}</div>`;return html;
+}
+function report18(card,label){const pane=card?.querySelector('.model-match-report-pane');if(!pane)return;const a=card.dataset.away,h=card.dataset.home,w=Number(card.dataset.week),s=snaps18(w,a,h),snap=label==='PRE'?null:s[label]||null,pre=pre18(w,a,h,s),title=label==='HALF'?`${a} @ ${h} · Halftime Pulse`:label==='POST'?`${a} @ ${h} · Postgame audit`:label==='PRE'?`${a} @ ${h} · Pregame matchup thesis`:`${a} @ ${h} · ${label} game-state interpretation`,hp=snap?homeProb18(w,a,h,label,snap,pre):preHome18(pre,h),score=snap?`${a} ${Number(snap.awayScore||0)}–${h} ${Number(snap.homeScore||0)}`:pre.score?`${a} ${pre.score.away}–${h} ${pre.score.home}`:'—';let r=pane.querySelector('.rc4-report-content');if(!r){r=document.createElement('div');r.className='rc4-report-content';pane.querySelector('.rc18-pulse-body')?.appendChild(r)||pane.appendChild(r)}r.innerHTML=`<div class="rc16-pulse-report rc17-pulse-report rc18-pulse-report"><div class="model-report-head"><div class="model-report-kicker">${label==='HALF'?'HALFTIME PULSE':'MATCHUP PULSE'} <span class="rc17-checkpoint-chip">${esc18(label)}</span></div><div class="model-report-title">${esc18(title)}</div></div><div class="model-report-metrics">${snap?`<div class="model-report-metric"><b>${esc18(a)} WIN</b><strong>${Math.round((1-hp)*100)}%</strong></div><div class="model-report-metric"><b>${esc18(h)} WIN</b><strong>${Math.round(hp*100)}%</strong></div><div class="model-report-metric"><b>CHECKPOINT</b><strong>${esc18(label)}</strong></div><div class="model-report-metric"><b>SCORE</b><strong>${esc18(score)}</strong></div>`:`<div class="model-report-metric"><b>MODEL PICK</b><strong>${esc18(pre.pick||'—')}</strong></div><div class="model-report-metric"><b>CALIBRATED</b><strong>${Math.round(Number(pre.confidence||.5)*100)}%</strong></div><div class="model-report-metric"><b>RELIABILITY</b><strong>${esc18(pre.reliability?.label||'—')}</strong></div><div class="model-report-metric"><b>SCORE LENS</b><strong>${esc18(score)}</strong></div>`}</div><div class="rc4-report-prose">${reportBody18(w,a,h,label,snap,s,pre)}</div></div>`;if(label==='HALF'&&snap)publishHalf18(w,a,h,snap,pre)}
+function evidenceHtml18(snap,a,h){const refs=evidenceRefs18(snap,a,h),leaders=[...(snap?.stats?.awayLeaders||[]).slice(0,3).map(x=>`${a}: ${x}`),...(snap?.stats?.homeLeaders||[]).slice(0,3).map(x=>`${h}: ${x}`)],seq=decisive18(snap);if(!refs.length&&!leaders.length&&!seq.length)return'';return `<div class="rc18-game-evidence"><h4>Game evidence</h4>${refs.map(x=>`<div class="rc18-evidence-row"><span class="rc18-evidence-id">${x.id}</span><span><b>${esc18(x.title)}:</b> ${esc18(x.body)}</span></div>`).join('')}${leaders.length?`<div class="rc18-sequence"><b>Key player production</b>${leaders.map(x=>`<div>${esc18(x)}</div>`).join('')}</div>`:''}${seq.length?`<div class="rc18-sequence"><b>High-leverage sequence</b>${esc18(seq.join(' → '))}</div>`:''}<div class="rc18-source-credit">${esc18(source18(snap))}</div></div>`}
+function decorateEvidence18(card,label){const box=card?.querySelector('.rc4-checkpoint-stats');if(!box)return;box.querySelector('.rc18-game-evidence')?.remove();const s=snaps18(Number(card.dataset.week),card.dataset.away,card.dataset.home),snap=s[label];if(label!=='PRE'&&snap)box.insertAdjacentHTML('beforeend',evidenceHtml18(snap,card.dataset.away,card.dataset.home))}
+function publishHalf18(w,a,h,snap,pre){let art=load18(ART18,[]),k=key18(w,a,h);if(art.some(x=>x.game===k&&String(x.label||'').toUpperCase()==='HALF'))return;const hp=homeProb18(w,a,h,'HALF',snap,pre),fav=hp>=.5?h:a,refs=evidenceRefs18(snap,a,h);art.unshift({id:'h'+Date.now()+Math.random().toString(36).slice(2,6),game:k,away:a,home:h,p:hp*100,pre:(hp-preHome18(pre,h))*100,label:'HALF',kind:'HALFTIME_PULSE',headline:`${a} @ ${h} Halftime Pulse`,ts:Date.now(),paragraphs:[`${a} ${Number(snap.awayScore||0)}-${h} ${Number(snap.homeScore||0)} at halftime. The live probability leans ${fav} at ${Math.round(Math.max(hp,1-hp)*100)}%.`,refs.length?`Key evidence: ${refs.map(x=>`${x.id} ${x.title} ${x.body}`).join(' · ')}`:'The checkpoint feed preserved limited statistical separation, so the read remains cautious.',`Open the matchup HALF checkpoint for the full evidence-to-analysis audit.`]});save18(ART18,art.slice(0,80));try{window.renderNewsCards?.('all')}catch(_){}}
+
+async function reconstruct18(card){const w=Number(card.dataset.week),a=card.dataset.away,h=card.dataset.home;if(!w||!a||!h)return;let s=snaps18(w,a,h);if(s.Q1&&s.HALF&&s.Q3&&s.POST)return;try{const board=await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=2026`,{cache:'no-store'}).then(r=>r.json()),ev=(board.events||[]).find(e=>{const abs=(e.competitions?.[0]?.competitors||[]).map(x=>x.team?.abbreviation);return abs.includes(a)&&abs.includes(h)});if(!ev)return;const completed=!!ev.status?.type?.completed,period=Number(ev.status?.period||0);if(period<2&&!completed)return;const sum=await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary?event=${ev.id}`,{cache:'no-store'}).then(r=>r.json()),plays=[],seen=new Set();
+      const walk=o=>{if(Array.isArray(o))o.forEach(walk);else if(o&&typeof o==='object'){const text=o.text||o.shortText||o.description,p=Number(o.period?.number||o.period||o.quarter||0),as=num18(o.awayScore??o.awayScoreValue),hs=num18(o.homeScore??o.homeScoreValue),id=String(o.id||`${p}:${text||''}:${as}:${hs}`);if(text&&p&&(!seen.has(id))){seen.add(id);plays.push({id,text:String(text),period:p,awayScore:as,homeScore:hs,clock:o.clock?.displayValue||o.clock||''})}Object.values(o).forEach(walk)}};walk(sum?.plays||sum?.drives||sum);
+      plays.sort((x,y)=>Number(x.id)-Number(y.id));const targets=[['Q1',1],['HALF',2],['Q3',3]];for(const [lab,p] of targets){s=snaps18(w,a,h);if(s[lab])continue;if(!(completed||period>p))continue;const upto=plays.filter(x=>x.period<=p&&x.awayScore!=null&&x.homeScore!=null),last=upto.at(-1);if(!last)continue;const recent=plays.filter(x=>x.period<=p).slice(-8).map(x=>x.text),pt=pointFor18(w,a,h,lab),homeP=pt?Number(pt.p)/100:.5;saveSnap18(w,a,h,lab,{label:lab,capturedAt:new Date().toISOString(),status:'RECONSTRUCTED',period:p,clock:'0:00',awayScore:last.awayScore,homeScore:last.homeScore,livePick:homeP>=.5?h:a,livePct:Math.max(homeP,1-homeP),stats:{rows:[],awayLeaders:[],homeLeaders:[],plays:recent},forecast:s.PRE?.forecast||null,reconstructed:true,source:'ESPN play-by-play reconstruction'})}
+      s=snaps18(w,a,h);if(completed&&s.FINAL&&!s.POST){saveSnap18(w,a,h,'POST',{...s.FINAL,label:'POST',capturedAt:new Date().toISOString(),status:'POSTGAME VERIFIED',reconstructed:false,source:'ESPN final summary refresh'})}
+    }catch(_){ }
+}
+function checkpointButtons18(card){const row=card?.querySelector('.rc10-checkpoint-row');if(!row)return;const s=snaps18(Number(card.dataset.week),card.dataset.away,card.dataset.home),active=card.dataset.activeCheckpoint||(s.FINAL?'FINAL':'PRE'),labels=['PRE','Q1','HALF','Q3','FINAL','POST'];row.innerHTML=labels.map(l=>`<button type="button" class="rc4-checkpoint-btn ${active===l?'active':''}" ${l!=='PRE'&&!s[l]?'disabled':''} onclick="event.stopPropagation();modelPulseSelectCheckpoint(this,'${l}')">${l==='POST'?'POST':l}</button>`).join('')}
+function makePersonnelCollapsible18(card){card?.querySelectorAll('.rc10-roster-team').forEach(team=>{if(team.dataset.rc18groups)return;team.dataset.rc18groups='1';const kids=[...team.children],head=kids.shift();let current=null,groups=[];kids.forEach(el=>{if(el.classList.contains('rc10-roster-group-title')){current={title:el.textContent.trim(),els:[]};groups.push(current);el.remove()}else if(current)current.els.push(el)});groups.forEach(g=>{const d=document.createElement('details');d.className='rc18-personnel-group';d.open=false;d.innerHTML=`<summary>${esc18(g.title)}</summary>`;g.els.forEach(el=>d.appendChild(el));team.appendChild(d)})})}
+function detailControls18(card){const shell=card?.querySelector('.model-match-detail-shell');if(!shell)return;const graph=shell.querySelector('.rc17-confidence-wide'),e=shell.querySelector('.rc16-evidence-wide'),c=shell.querySelector('.rc17-checkpoint-rail'),p=shell.querySelector('.model-match-report-pane');let controls=shell.querySelector('.rc18-detail-controls'),grid=shell.querySelector('.rc18-detail-grid');if(!controls){controls=document.createElement('div');controls.className='rc18-detail-controls';controls.innerHTML='<span>DETAILS</span><button data-kind="evidence">Evidence</button><button data-kind="checkpoint">Checkpoint</button><button data-kind="pulse">Pulse</button><button class="rc18-detail-master">Collapse details</button>';graph?.insertAdjacentElement('afterend',controls)}if(!grid){grid=document.createElement('div');grid.className='rc18-detail-grid';controls.insertAdjacentElement('afterend',grid)}for(const x of [e,c,p])if(x&&x.parentElement!==grid)grid.appendChild(x);if(p&&!p.querySelector('.rc18-pulse-summary')){const body=document.createElement('div');body.className='rc18-pulse-body';while(p.firstChild)body.appendChild(p.firstChild);p.appendChild(Object.assign(document.createElement('div'),{className:'rc18-pulse-summary',innerHTML:'<span>Matchup Pulse</span><button type="button" title="Collapse Pulse">−</button>'}));p.appendChild(body);p.querySelector('.rc18-pulse-summary button').onclick=()=>hideKind18(card,'pulse',true)}
+      const state=JSON.parse(card.dataset.rc18collapse||'{"evidence":false,"checkpoint":false,"pulse":false}');applyCollapse18(card,state);controls.onclick=ev=>{const b=ev.target.closest('button');if(!b)return;if(b.classList.contains('rc18-detail-master')){const st={evidence:true,checkpoint:true,pulse:true};card.dataset.rc18collapse=JSON.stringify(st);applyCollapse18(card,st);return}const k=b.dataset.kind;if(k)hideKind18(card,k,false)};
+      [e,c].forEach((d,i)=>{if(!d||d.dataset.rc18toggle)return;d.dataset.rc18toggle='1';d.addEventListener('toggle',()=>{if(!d.open){const k=i===0?'evidence':'checkpoint';hideKind18(card,k,true)}})});
+}
+function applyCollapse18(card,state){const e=card.querySelector('.rc16-evidence-wide'),c=card.querySelector('.rc17-checkpoint-rail'),p=card.querySelector('.model-match-report-pane'),map={evidence:e,checkpoint:c,pulse:p};Object.entries(map).forEach(([k,el])=>el?.classList.toggle('rc18-hidden-panel',!!state[k]));const bar=card.querySelector('.rc18-detail-controls');if(bar){Object.keys(map).forEach(k=>{const b=bar.querySelector(`[data-kind="${k}"]`);if(b)b.textContent=state[k]?`Show ${k}`:`Hide ${k}`});const all=Object.values(state).every(Boolean),m=bar.querySelector('.rc18-detail-master');if(m)m.textContent=all?'Show all details':'Collapse details'}}
+function hideKind18(card,kind,hide){const state=JSON.parse(card.dataset.rc18collapse||'{"evidence":false,"checkpoint":false,"pulse":false}');state[kind]=hide;card.dataset.rc18collapse=JSON.stringify(state);const el=kind==='evidence'?card.querySelector('.rc16-evidence-wide'):kind==='checkpoint'?card.querySelector('.rc17-checkpoint-rail'):card.querySelector('.model-match-report-pane');if(!hide&&el?.tagName==='DETAILS')el.open=true;applyCollapse18(card,state)}
+async function stabilize18(card){if(!card?.classList.contains('open'))return;detailControls18(card);await reconstruct18(card);checkpointButtons18(card);makePersonnelCollapsible18(card);const label=card.dataset.activeCheckpoint||((snaps18(Number(card.dataset.week),card.dataset.away,card.dataset.home).FINAL)?'FINAL':'PRE');decorateEvidence18(card,label);report18(card,label)}
+function stabilizeAll18(){document.querySelectorAll('.model-match-card.open').forEach(c=>stabilize18(c))}
+const oldSelect18=window.modelPulseSelectCheckpoint;
+window.modelPulseSelectCheckpoint=function(btn,label){const card=btn?.closest('.model-match-card');try{oldSelect18?.(btn,label)}catch(_){ }if(!card)return;card.dataset.activeCheckpoint=label;setTimeout(()=>{checkpointButtons18(card);decorateEvidence18(card,label);report18(card,label);detailControls18(card)},0)};
+const oldToggle18=window.modelToggleMatchCard;
+window.modelToggleMatchCard=function(el){const r=oldToggle18?.(el),card=el?.closest('.model-match-card');[80,350,900].forEach(ms=>setTimeout(()=>stabilize18(card),ms));return r};
+const oldLoad18=window.predLoadWeek;
+window.predLoadWeek=function(silent=false){let p;try{p=Promise.resolve(oldLoad18?.(silent))}catch(_){p=Promise.resolve()}return p.finally(()=>{[80,350,1000].forEach(ms=>setTimeout(stabilizeAll18,ms))})};
+
+/* League Board: three-state sort + analysis pane. */
+let boardConf18='NFL',boardSort18={key:null,dir:0},boardTeam18=null;
+function latest18(ab){const t=MODEL_TEAM_DATA[ab];let w=0;for(let i=1;i<=18;i++)if(Number.isFinite(Number(t?.[`w${i}c`]))&&Number.isFinite(Number(t?.[`w${i}p`])))w=i;const u=(t?.[`u${w}`]||t?.u3||[]).map(Number);return {t,w,ctx:Number(t?.[`w${w}c`]??t?.w3c??99),perf:Number(t?.[`w${w}p`]??t?.w3p??99),u}}
+function boardVal18(ab,k){const v=latest18(ab),t=v.t;return ({team:TEAM_NAMES?.[ab]||ab,ctx:v.ctx,perf:v.perf,media:Number(t.media||99),delta:Number(t.media||99)-v.ctx,move:Number(t.w0c||v.ctx)-v.ctx,pdg:Number(t.pdg||0),off:Number(v.u[0]||99),def:Number(v.u[4]||99)})[k]}
+window.modelBoardSort18=function(k){if(boardSort18.key!==k){boardSort18={key:k,dir:1}}else if(boardSort18.dir===1){boardSort18.dir=-1}else{boardSort18={key:null,dir:0}}window.renderModelLeagueBoard?.()};
+window.modelBoardConference18=function(v){boardConf18=v;window.renderModelLeagueBoard?.()};
+window.rc18BoardSelect=function(ab){boardTeam18=ab;document.querySelectorAll('#predRankList .model-board-row').forEach(r=>r.classList.toggle('selected',r.dataset.modelTeam===ab));renderBoardAnalysis18()};
+function rankAnalysis18(){const teams=Object.keys(MODEL_TEAM_DATA),rows=teams.map(ab=>{const v=latest18(ab),t=v.t;return {ab,v,t,move:Number(t.w0c||v.ctx)-v.ctx,delta:Number(t.media||99)-v.ctx,pdg:Number(t.pdg||0)}}),risers=[...rows].sort((a,b)=>b.move-a.move).slice(0,4),fallers=[...rows].sort((a,b)=>a.move-b.move).slice(0,4),gaps=[...rows].sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta)).slice(0,4);return {rows,risers,fallers,gaps}}
+function renderBoardAnalysis18(){const pane=document.querySelector('#pred-rank .rc18-board-analysis');if(!pane)return;const x=rankAnalysis18();if(boardTeam18&&MODEL_TEAM_DATA[boardTeam18]){const v=latest18(boardTeam18),t=v.t,u=v.u,move=Number(t.w0c||v.ctx)-v.ctx,delta=Number(t.media||99)-v.ctx;pane.innerHTML=`<h3>${esc18(TEAM_NAMES?.[boardTeam18]||boardTeam18)}</h3><p><b>Context #${v.ctx}</b> · Performance #${v.perf} · ${esc18(t.rec||'')}</p><p>Average scoring margin: <b>${Number(t.pdg||0)>=0?'+':''}${Number(t.pdg||0).toFixed(1)}</b> points/game. Offense #${u[0]||'—'} · Defense #${u[4]||'—'}.</p><p>${move>0?`Up ${move} spots from the preseason baseline.`:move<0?`Down ${Math.abs(move)} spots from the preseason baseline.`:'No net Context movement from the preseason baseline.'} ${delta>0?`Our Context rank is ${delta} spots higher than the media benchmark.`:delta<0?`The media benchmark is ${Math.abs(delta)} spots higher than our Context rank.`:'Our Context rank matches the stored media benchmark.'}</p><button class="v2-btn" onclick="modelSelectTeam('${boardTeam18}','health')">Open Team Health</button>`;return}pane.innerHTML=`<h3>League Board Read</h3><p>The board defaults to Context rank. Column headers cycle ascending → descending → standard Context order.</p><h4>Biggest risers</h4>${x.risers.map(r=>`<div class="rc18-analysis-row" onclick="rc18BoardSelect('${r.ab}')"><b>${r.ab}</b> ${r.move>0?'↑'+r.move:'—'} · Context #${r.v.ctx}</div>`).join('')}<h4>Biggest fallers</h4>${x.fallers.map(r=>`<div class="rc18-analysis-row" onclick="rc18BoardSelect('${r.ab}')"><b>${r.ab}</b> ${r.move<0?'↓'+Math.abs(r.move):'—'} · Context #${r.v.ctx}</div>`).join('')}<h4>Model vs media gaps</h4>${x.gaps.map(r=>`<div class="rc18-analysis-row" onclick="rc18BoardSelect('${r.ab}')"><b>${r.ab}</b> ${r.delta>0?'+':''}${r.delta} · CTX #${r.v.ctx} / Media #${r.t.media}</div>`).join('')}`}
+function ensureBoardShell18(){const rank=document.getElementById('pred-rank'),head=rank?.querySelector('.model-board-head'),list=document.getElementById('predRankList');if(!rank||!head||!list)return null;rank.querySelector('.rc18-board-tools')?.remove();const tools=document.createElement('div');tools.className='rc18-board-tools';tools.innerHTML=`<label>CONFERENCE</label><select class="pred-inp" onchange="modelBoardConference18(this.value)"><option ${boardConf18==='NFL'?'selected':''}>NFL</option><option ${boardConf18==='AFC'?'selected':''}>AFC</option><option ${boardConf18==='NFC'?'selected':''}>NFC</option></select>`;rank.querySelector('.sec-lbl')?.insertAdjacentElement('afterend',tools);let split=rank.querySelector('.rc18-board-split');if(!split){split=document.createElement('div');split.className='rc18-board-split';const scroll=document.createElement('div');scroll.className='rc18-board-scroll';head.parentNode.insertBefore(split,head);split.appendChild(scroll);scroll.appendChild(head);scroll.appendChild(list);const analysis=document.createElement('aside');analysis.className='rc18-board-analysis';split.appendChild(analysis)}return rank}
+window.renderModelLeagueBoard=function(){const rank=ensureBoardShell18(),el=document.getElementById('predRankList'),head=document.querySelector('#pred-rank .model-board-head');if(!rank||!el||!head)return;const cols=[['team','TEAM'],['ctx','CTX'],['perf','PERF'],['media','MEDIA'],['delta','DELTA'],['move','MOVE'],['pdg','POINT DIFF/G'],['off','OFF'],['def','DEF']];head.innerHTML=cols.map(([k,l])=>`<button type="button" onclick="modelBoardSort18('${k}')" title="Cycle ${l}: ascending, descending, standard">${l}${boardSort18.key===k?(boardSort18.dir>0?' ↑':' ↓'):''}</button>`).join('');let teams=Object.keys(MODEL_TEAM_DATA).filter(ab=>boardConf18==='NFL'||CONF18[ab]===boardConf18);if(!boardSort18.key)teams.sort((a,b)=>latest18(a).ctx-latest18(b).ctx);else teams.sort((a,b)=>{const A=boardVal18(a,boardSort18.key),B=boardVal18(b,boardSort18.key);if(typeof A==='string')return boardSort18.dir*A.localeCompare(B);return boardSort18.dir*(Number(A)-Number(B))||latest18(a).ctx-latest18(b).ctx});el.innerHTML=teams.map(ab=>{const v=latest18(ab),t=v.t,d=Number(t.media||99)-v.ctx,m=Number(t.w0c||v.ctx)-v.ctx,conf=CONF18[ab]||'';return `<div class="model-board-row rc18-${conf.toLowerCase()}${boardTeam18===ab?' selected':''}" data-model-team="${ab}" onclick="rc18BoardSelect('${ab}')"><div class="model-team-cell"><img src="https://a.espncdn.com/i/teamlogos/nfl/500/${ab.toLowerCase()}.png"><div><div class="model-team-name">${esc18(TEAM_NAMES?.[ab]||ab)}</div><div class="model-team-sub"><span><b>${conf}</b></span><span>${esc18(t.rec||'')}</span><span>PF/G ${Number(t.pf||0).toFixed(1)}</span><span>PA/G ${Number(t.pa||0).toFixed(1)}</span></div></div></div><div class="model-rank-num">${v.ctx}</div><div class="model-rank-num">${v.perf}</div><div class="model-rank-num">${Number(t.media||99)}</div><div><b style="color:${d>0?'var(--green)':d<0?'var(--red)':'var(--muted)'}">${d>0?'+':''}${d}</b></div><div>${m>0?`<span class="model-rank-move up">↑${m}</span>`:m<0?`<span class="model-rank-move down">↓${Math.abs(m)}</span>`:'—'}</div><div class="model-rank-num">${Number(t.pdg||0)>=0?'+':''}${Number(t.pdg||0).toFixed(1)}</div><div class="model-rank-num">${v.u[0]||'—'}</div><div class="model-rank-num">${v.u[4]||'—'}</div></div>`}).join('');renderBoardAnalysis18()};
+
+/* Team Health sections are already semantic details; on phones keep the two decision-critical sections open and collapse the rest. */
+const oldHealth18=window.renderModelHealth;
+window.renderModelHealth=function(){const r=oldHealth18?.();setTimeout(()=>{const root=document.getElementById('modelHealthBody');if(!root)return;const ds=[...root.querySelectorAll(':scope>details.model-health-section')];ds.forEach((d,i)=>{d.dataset.rc18Primary=i<2?'1':'';if(matchMedia('(max-width:820px)').matches)d.open=i<2})},0);return r};
+
+/* Home/member-facing copy cleanup. */
+function cleanCopy18(){const a=document.querySelector('#currentSeasonStandings');if(a&&/standings update each week/i.test(a.textContent))a.innerHTML='<div style="text-align:center;padding:18px;font-size:12px;color:var(--muted)">No standings posted yet.</div>';const b=document.getElementById('currentSeasonWinners');if(b&&/first spin happens/i.test(b.textContent))b.innerHTML='<div style="text-align:center;padding:18px;font-size:12px;color:var(--muted)">No weekly winner yet.</div>';const prop=document.querySelector('#signInOv .modal div[style*="letter-spacing:2px"]');if(prop&&/property/i.test(prop.textContent))prop.textContent='LEAGUE MEMBER SIGN IN';document.querySelectorAll('#panel-home .mt-live').forEach(x=>{if(/PRE-DRAFT SETUP/i.test(x.textContent))x.textContent='PRESEASON'})}
+
+/* Final polish: no fake player grades. Show a grade only when a verified source eventually supplies one. */
+function cleanPersonnelGrades18(){document.querySelectorAll('#pred-match .rc10-roster-row .rank,#pred-match .rc11-roster-row .rk').forEach(x=>{if(/[—-]\s*$/.test(x.textContent.trim())||/PREV WK/i.test(x.textContent))x.textContent=''})}
+
+const list18=document.getElementById('predMatchList');if(list18&&typeof MutationObserver!=='undefined'){let tm;new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>{stabilizeAll18();cleanPersonnelGrades18()},70)}).observe(list18,{childList:true,subtree:true})}
+setInterval(()=>{if(document.getElementById('pred-match')?.style.display!=='none'){stabilizeAll18();cleanPersonnelGrades18()}},60000);
+setTimeout(()=>{try{document.title='Fantasy HQ V2.0-RC18';setCurrentMatchWeek18(false);cleanCopy18();window.renderModelLeagueBoard?.();if(document.getElementById('pred-health')?.style.display!=='none')window.renderModelHealth?.();stabilizeAll18();cleanPersonnelGrades18();window.renderNewsCards?.('all')}catch(e){console.warn('RC18 init',e)}},700);
+})();
+</script>
+
 </body>
 </html>
