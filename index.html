@@ -6941,5 +6941,163 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 })();
 </script>
 
+
+<style id="modelV2RC10Styles">
+/* ===== Fantasy HQ V2.0-RC10: matchup confidence/persistence layout ===== */
+#pred-match .rc9-live-confidence,#pred-match .rc9-personnel{display:none!important}
+#pred-match .rc10-left-section{border:1px solid var(--border);background:var(--card);margin:0 0 9px;border-radius:8px;overflow:hidden}
+#pred-match .rc10-left-section>summary{list-style:none;cursor:pointer;padding:10px 12px;font:900 11px 'Courier New',monospace;letter-spacing:.055em;color:var(--text);display:flex;align-items:center;justify-content:space-between;gap:10px;background:color-mix(in srgb,var(--card) 94%,var(--text) 6%)}
+#pred-match .rc10-left-section>summary::-webkit-details-marker{display:none}
+#pred-match .rc10-left-section>summary:after{content:'+';font:900 16px Arial,sans-serif;color:var(--muted)}
+#pred-match .rc10-left-section[open]>summary:after{content:'−'}
+#pred-match .rc10-left-body{padding:10px 12px;border-top:1px solid var(--border);min-width:0}
+#pred-match .rc10-confidence-box{min-width:0}
+#pred-match .rc10-confidence-scroll{overflow-x:auto;overflow-y:hidden;padding-bottom:3px}
+#pred-match .rc10-confidence-svg{display:block;width:100%;min-width:860px;height:auto}
+#pred-match .rc10-confidence-note{font-size:10px;line-height:1.45;color:var(--muted);margin-top:5px}
+#pred-match .rc10-checkpoint-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+#pred-match .rc10-checkpoint-row .rc4-checkpoint-btn{min-height:38px;font-size:11px;font-weight:900;border-radius:5px}
+#pred-match .rc10-personnel-mount{margin-top:10px}
+#pred-match .rc10-roster-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#pred-match .rc10-roster-team{min-width:0;border:1px solid var(--border);padding:8px;background:var(--dark2)}
+#pred-match .rc10-roster-head{display:flex;align-items:center;gap:7px;margin-bottom:7px;font-weight:900}.rc10-roster-head img{width:26px;height:26px;object-fit:contain}
+#pred-match .rc10-roster-group-title{font:900 9px 'Courier New',monospace;letter-spacing:.06em;color:var(--muted);margin:8px 0 3px}
+#pred-match .rc10-roster-row{display:grid;grid-template-columns:31px minmax(0,1fr) 42px 78px;gap:5px;align-items:center;padding:3px 0;border-bottom:1px solid color-mix(in srgb,var(--border) 55%,transparent);font-size:10px}
+#pred-match .rc10-roster-row:last-child{border-bottom:0}.rc10-roster-row .num,.rc10-roster-row .pos,.rc10-roster-row .rank{font-weight:900}.rc10-roster-row .rank{text-align:right;color:var(--muted);font-size:9px}
+#pred-match .rc10-live-evidence-title{font:900 10px 'Courier New',monospace;letter-spacing:.055em;margin:12px 0 6px}
+#pred-match .rc10-score-main{font-size:20px;font-weight:950;line-height:1.05;letter-spacing:.02em}
+#pred-match .rc10-score-sub{font-size:10px;font-weight:800;color:var(--muted);margin-top:4px;line-height:1.3}
+#pred-match .rc10-possession{display:inline-block;font-weight:950;color:var(--text)}
+#pred-match .model-match-center{min-height:78px}
+#pred-match .rc10-graph-team-label{font-size:12px;font-weight:950}
+#pred-match .rc10-graph-axis{font-size:11px;font-weight:850;fill:var(--text)}
+#pred-match .rc10-graph-y{font-size:11px;font-weight:800;fill:var(--muted)}
+#pred-match .rc10-graph-value{font-size:11px;font-weight:950;paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
+@media(max-width:760px){#pred-match .rc10-roster-grid{grid-template-columns:1fr}#pred-match .rc10-checkpoint-row{grid-template-columns:repeat(5,minmax(54px,1fr));overflow-x:auto}.rc10-left-body{padding:8px!important}}
+</style>
+<script id="modelV2RC10Patch">
+/* Fantasy HQ V2.0-RC10. Predictor remains V1.3.2. */
+(function(){
+  const APP='V2.0-RC10';
+  const HIST='fhq_confidence_history_rc9';
+  const PULSE='fhq_matchup_pulse_v2rc5';
+  const WEEK_FIRST={1:'2026-09-09',2:'2026-09-17',3:'2026-09-24',4:'2026-10-01',5:'2026-10-08',6:'2026-10-15',7:'2026-10-22',8:'2026-10-29',9:'2026-11-05',10:'2026-11-12',11:'2026-11-19',12:'2026-11-26',13:'2026-12-03',14:'2026-12-10',15:'2026-12-17',16:'2026-12-24',17:'2026-12-31',18:'2027-01-03'};
+  const TZ='America/Los_Angeles';
+  const LIVE10={};
+  const ROSTER10={};
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(_){return d}};
+  const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(_){return false}};
+  const key=(w,a,h)=>`${Number(w)}:${a}:${h}`;
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const pct=v=>`${Math.round(Number(v)||0)}%`;
+
+  function laParts(d){
+    const p=new Intl.DateTimeFormat('en-US',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d||new Date()).reduce((o,x)=>(o[x.type]=x.value,o),{});
+    return {date:`${p.year}-${p.month}-${p.day}`,weekday:p.weekday,hour:Number(p.hour)%24,minute:Number(p.minute)};
+  }
+  function utcDate(s){const [y,m,d]=String(s).split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
+  function isoDate(d){return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`}
+  function addDays(s,n){const d=utcDate(s);d.setUTCDate(d.getUTCDate()+n);return isoDate(d)}
+  function mondayFor(s){const d=utcDate(s),day=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()-(day-1));return isoDate(d)}
+  function shortDay(s){const d=utcDate(s);return new Intl.DateTimeFormat('en-US',{weekday:'short',timeZone:'UTC'}).format(d)}
+  function gameHist(w,a,h){return (load(HIST,{})[key(w,a,h)]||[]).filter(x=>String(x.label||'').toUpperCase()!=='START')}
+  function pulseSnaps(w,a,h){return load(PULSE,{})[key(w,a,h)]?.snapshots||{}}
+
+  function seedConfidence(w,a,h){
+    const all=load(HIST,{}),k=key(w,a,h),arr=all[k]||[];
+    if(arr.length)return;
+    try{
+      const pred=modelForecastForGame(a,h,w);if(!pred)return;
+      arr.push({t:Date.now(),p:+(Number(pred.pHome||.5)*100).toFixed(2),label:'INITIAL',rel:pred.reliability?.label||'—',away:a,home:h});all[k]=arr;save(HIST,all);
+    }catch(_){ }
+  }
+
+  function pregameSlots(w,kickoffMs){
+    const first=WEEK_FIRST[w]||laParts(new Date(kickoffMs||Date.now())).date,mon=mondayFor(first),kick=kickoffMs?laParts(new Date(kickoffMs)).date:first,freeze=addDays(first,-1),slots=[];
+    let d=mon,guard=0;while(d<=kick&&guard++<9){slots.push({id:'D:'+d,label:`${shortDay(d)} 12A`,date:d,type:'midnight'});if(d===freeze)slots.push({id:'F:'+d,label:`${shortDay(d)} 12P`,date:d,type:'freeze'});d=addDays(d,1)}
+    slots.push({id:'PRE',label:'PRE -10',type:'pre'});slots.push({id:'Q1',label:'Q1',type:'major'});slots.push({id:'HALF',label:'HALF',type:'major'});slots.push({id:'Q3',label:'Q3',type:'major'});slots.push({id:'FINAL',label:'FINAL',type:'major'});return slots;
+  }
+  function pointSlotIndex(pt,slots){
+    const L=String(pt.label||'').toUpperCase();
+    if(L.includes('PRE'))return slots.findIndex(x=>x.id==='PRE');
+    if(L==='Q1')return slots.findIndex(x=>x.id==='Q1');
+    if(L==='HALF')return slots.findIndex(x=>x.id==='HALF');
+    if(L==='Q3')return slots.findIndex(x=>x.id==='Q3');
+    if(L==='FINAL')return slots.findIndex(x=>x.id==='FINAL');
+    const lp=laParts(new Date(pt.t));
+    if(L.includes('FREEZE')){const i=slots.findIndex(x=>x.type==='freeze'&&x.date===lp.date);if(i>=0)return i}
+    if(L.includes('MIDNIGHT')||L==='INITIAL'){
+      let i=slots.findIndex(x=>x.type==='midnight'&&x.date===lp.date);if(i>=0)return i;
+      const pre=slots.findIndex(x=>x.id==='PRE');return Math.max(0,pre-1);
+    }
+    return -1;
+  }
+  function liveMappedX(pt,arr,slots,x,preI){
+    const majors=['Q1','HALF','Q3','FINAL'];
+    const known=[{i:preI,t:(arr.find(q=>/PRE/.test(String(q.label||'').toUpperCase()))?.t)||LIVE10.__kickoff||pt.t}];
+    majors.forEach(m=>{const q=arr.find(z=>String(z.label||'').toUpperCase()===m),si=slots.findIndex(s=>s.id===m);if(q&&si>=0)known.push({i:si,t:q.t})});
+    known.sort((a,b)=>a.t-b.t);
+    let left=known[0],right=null;for(const k of known){if(k.t<=pt.t)left=k;else{right=k;break}}
+    if(!right){const finalI=slots.findIndex(s=>s.id==='FINAL'),span=Math.max(1,(LIVE10.__finalEstimate||((LIVE10.__kickoff||pt.t)+3.5*3600000))-(left.t||pt.t)),f=clamp((pt.t-left.t)/span,0,1);return x(left.i+(finalI-left.i)*f)}
+    const f=clamp((pt.t-left.t)/Math.max(1,right.t-left.t),0,1);return x(left.i+(right.i-left.i)*f)
+  }
+
+  function confidenceSvg(w,a,h){
+    seedConfidence(w,a,h);
+    const arr=gameHist(w,a,h),state=LIVE10[key(w,a,h)]||{},kickoffMs=state.kickoff||null,slots=pregameSlots(w,kickoffMs),W=1120,H=310,L=52,R=28,T=30,B=76,plotH=H-T-B,x=i=>L+(i/Math.max(1,slots.length-1))*(W-L-R),y=p=>T+(100-clamp(p,0,100))/100*plotH;
+    let s='';[0,25,50,75,100].forEach(v=>{const yy=y(v);s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--border)" stroke-width="1" ${v===50?'':'stroke-dasharray="4 5"'}/><text class="rc10-graph-y" x="${L-8}" y="${yy+4}" text-anchor="end">${v}%</text>`});
+    slots.forEach((q,i)=>{const xx=x(i);s+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B+5}" stroke="var(--border)" stroke-width="1" opacity=".34"/><text class="rc10-graph-axis" x="${xx}" y="${H-45}" text-anchor="middle">${esc(q.label)}</text>`});
+    const preI=slots.findIndex(z=>z.id==='PRE');
+    const mapped=arr.map((q,idx)=>{let si=pointSlotIndex(q,slots),xx;if(si>=0)xx=x(si);else xx=liveMappedX(q,arr,slots,x,preI);return {...q,xx,home:+q.p,away:100-(+q.p),major:/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT/i.test(String(q.label||'')),last:idx===arr.length-1}}).sort((u,v)=>u.t-v.t);
+    if(!mapped.length){s+=`<text x="${W/2}" y="${H/2}" text-anchor="middle" font-size="14" font-weight="850" fill="var(--muted)">Waiting for the first model checkpoint…</text>`}
+    function linePath(prop){return mapped.map((q,i)=>`${i?'L':'M'} ${q.xx.toFixed(1)} ${y(q[prop]).toFixed(1)}`).join(' ')}
+    if(mapped.length){s+=`<path d="${linePath('away')}" fill="none" stroke="var(--away-color)" stroke-width="3"/><path d="${linePath('home')}" fill="none" stroke="var(--home-color)" stroke-width="3"/>`}
+    mapped.forEach(q=>{if(!(q.major||q.last))return;const rh=q.major?5.5:6.5;[['away',a,'var(--away-color)',-10],['home',h,'var(--home-color)',14]].forEach(([prop,team,col,off])=>{const yy=y(q[prop]);s+=`<circle cx="${q.xx}" cy="${yy}" r="${rh}" fill="var(--card)" stroke="${col}" stroke-width="2.5"><title>${team} ${pct(q[prop])} · ${q.label||'LIVE'}</title></circle><text class="rc10-graph-value" x="${q.xx}" y="${yy+Number(off)}" text-anchor="middle" fill="${col}">${pct(q[prop])}</text>`})});
+    s+=`<text class="rc10-graph-team-label" x="${L}" y="17" fill="var(--away-color)">${esc(a)}</text><text class="rc10-graph-team-label" x="${L+54}" y="17" fill="var(--home-color)">${esc(h)}</text>`;
+    return `<div class="rc10-confidence-scroll"><svg class="rc10-confidence-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${a} and ${h} win probability history">${s}</svg></div><div class="rc10-confidence-note">Both teams are plotted simultaneously. Major checkpoints are fixed on the x-axis; 60-second live samples fill the space between PRE and FINAL. Captured history is retained locally on this device after the game.</div>`;
+  }
+
+  function checkpointButtons(w,a,h,active){const snaps=pulseSnaps(w,a,h);return ['PRE','Q1','HALF','Q3','FINAL'].map(l=>`<button type="button" class="rc4-checkpoint-btn ${active===l?'active':''}" ${l!=='PRE'&&!snaps[l]?'disabled':''} onclick="event.stopPropagation();modelPulseSelectCheckpoint(this,'${l}')">${l}</button>`).join('')}
+
+  const oldDetail=window.modelMatchDetailHtml;
+  window.modelMatchDetailHtml=function(away,home,w,pred){
+    const raw=oldDetail?oldDetail(away,home,w,pred):'';const wrap=document.createElement('div');wrap.innerHTML=raw;const shell=wrap.querySelector('.model-match-detail-shell'),left=shell?.querySelector('.model-match-data-pane');if(!shell||!left)return raw;
+    left.querySelector('.rc5-left-pulse')?.remove();
+    const snaps=pulseSnaps(w,away,home),active=snaps.FINAL?'FINAL':snaps.Q3?'Q3':snaps.HALF?'HALF':snaps.Q1?'Q1':'PRE',evidence=left.innerHTML;
+    left.innerHTML=`<details class="rc10-left-section rc10-confidence-section" open><summary>WIN PROBABILITY</summary><div class="rc10-left-body"><div class="rc10-confidence-box" data-w="${w}" data-away="${away}" data-home="${home}">${confidenceSvg(w,away,home)}</div></div></details><details class="rc10-left-section rc10-checkpoint-section" open><summary>GAME CHECKPOINT</summary><div class="rc10-left-body"><div class="rc10-checkpoint-row">${checkpointButtons(w,away,home,active)}</div></div></details><details class="rc10-left-section rc10-evidence-section" open><summary>ROSTER + LIVE EVIDENCE</summary><div class="rc10-left-body"><div class="rc10-evidence-existing">${evidence}</div><div class="rc10-personnel-mount" data-away="${away}" data-home="${home}"><div class="rc10-confidence-note">Loading current roster…</div></div></div></details>`;
+    return wrap.innerHTML;
+  };
+
+  const baseSelect=window.modelPulseSelectCheckpoint;
+  window.modelPulseSelectCheckpoint=function(btn,label){baseSelect?.(btn,label);const card=btn.closest('.model-match-card');if(!card)return;card.querySelectorAll('.rc10-checkpoint-row .rc4-checkpoint-btn').forEach(x=>x.classList.toggle('active',x.textContent.trim()===label));};
+
+  function side(pos){const x=String(pos||'').toUpperCase();if(['QB','RB','FB','WR','TE','OT','T','G','OG','C','OL'].includes(x))return'off';if(['DE','DT','NT','DL','LB','ILB','OLB','CB','S','DB','FS','SS'].includes(x))return'def';return'other'}
+  async function roster(ab){if(ROSTER10[ab])return ROSTER10[ab];const id=typeof ESPN_ID!=='undefined'?ESPN_ID[ab]:null;if(!id)return[];try{const r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${id}/roster`,{cache:'no-store'}),j=await r.json(),out=[];const walk=o=>{if(Array.isArray(o))o.forEach(walk);else if(o&&typeof o==='object'){if((o.fullName||o.displayName)&&o.position)out.push({name:o.fullName||o.displayName,num:o.jersey||o.jerseyNumber||'',pos:o.position?.abbreviation||o.position?.name||''});else Object.values(o).forEach(walk)}};walk(j.athletes||j);return ROSTER10[ab]=[...new Map(out.map(x=>[x.name,x])).values()]}catch(_){return[]}}
+  function rosterGroup(rows,s){const ord=s==='off'?['QB','RB','FB','WR','TE','OT','T','G','OG','C','OL']:['DE','DT','NT','DL','OLB','ILB','LB','CB','FS','SS','S','DB'];return rows.filter(x=>side(x.pos)===s).sort((a,b)=>(ord.indexOf(a.pos)<0?99:ord.indexOf(a.pos))-(ord.indexOf(b.pos)<0?99:ord.indexOf(b.pos))).slice(0,24).map(x=>`<div class="rc10-roster-row"><span class="num">#${esc(x.num||'—')}</span><span>${esc(x.name)}</span><span class="pos">${esc(x.pos)}</span><span class="rank">PREV WK —</span></div>`).join('')||'<div class="rc10-confidence-note">Roster group unavailable.</div>'}
+  async function fillRoster(mount){if(!mount||mount.dataset.loaded)return;mount.dataset.loaded='1';const a=mount.dataset.away,h=mount.dataset.home,[A,H]=await Promise.all([roster(a),roster(h)]);const block=(ab,r)=>`<div class="rc10-roster-team"><div class="rc10-roster-head"><img src="${modelTeamLogoUrl(ab)}"><b>${ab}</b></div><div class="rc10-roster-group-title">OFFENSE</div>${rosterGroup(r,'off')}<div class="rc10-roster-group-title">DEFENSE</div>${rosterGroup(r,'def')}</div>`;mount.innerHTML=`<div class="rc10-roster-grid">${block(a,A)}${block(h,H)}</div><div class="rc10-confidence-note">PREV WK is reserved for the frozen position rank entering the matchup. RC10 leaves it blank until the player-position grading/ranking ingest is populated rather than inventing rankings from generic box-score totals.</div>`}
+
+  function refreshGraph(card){const box=card.querySelector('.rc10-confidence-box');if(!box)return;box.innerHTML=confidenceSvg(Number(box.dataset.w),box.dataset.away,box.dataset.home)}
+  function enhanceCard(card){if(!card?.classList.contains('open'))return;card.querySelectorAll('.rc10-personnel-mount').forEach(fillRoster);refreshGraph(card)}
+  function enhanceAll(){document.querySelectorAll('.model-match-card.open').forEach(enhanceCard)}
+  const oldToggle=window.modelToggleMatchCard;window.modelToggleMatchCard=function(el){oldToggle?.(el);setTimeout(enhanceAll,180)};
+  const oldLoad=window.predLoadWeek;window.predLoadWeek=async function(silent=false){const r=await oldLoad?.(silent);setTimeout(()=>{enhanceAll();refreshScoreCenters()},220);return r};
+
+  function situationText(c){const sit=c?.situation||{},dd=sit.downDistanceText||sit.shortDownDistanceText||'',posId=String(sit.possession||''),poss=(c?.competitors||[]).find(x=>String(x.id||x.team?.id||'')===posId)?.team?.abbreviation||'';return {dd,poss,last:sit.lastPlay?.text||''}}
+  function updateCenter(card,st){const center=card.querySelector('.model-match-center');if(!center)return;const {away,home}=st,score=`${away} ${st.awayScore}  ·  ${home} ${st.homeScore}`,sit=st.situation||{};if(st.completed){center.innerHTML=`<div class="rc10-score-main">${esc(score)}</div><div class="rc10-score-sub">FINAL</div>`}else if(st.isLive){center.innerHTML=`<div class="rc10-score-main">${esc(score)}</div><div class="rc10-score-sub">${sit.poss?`<span class="rc10-possession">${esc(sit.poss)} ball</span>${sit.dd?' · ':''}`:''}${esc(sit.dd||st.label||'LIVE')}</div>`}else{center.innerHTML=`<div class="model-match-teamline"><button class="model-team-name-link" style="--team-color:${modelTeamColor(away)}" onclick="event.stopPropagation();modelSelectTeam('${away}','health')">${away}</button><span class="model-match-at">@</span><button class="model-team-name-link" style="--team-color:${modelTeamColor(home)}" onclick="event.stopPropagation();modelSelectTeam('${home}','health')">${home}</button></div><div class="model-match-sub">${esc(st.label||'PREGAME')}</div>`}}
+  async function refreshScoreCenters(){const w=Number(document.getElementById('predWeekSel')?.value||window.MODEL_FORECAST_WEEK||5);try{const r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=2026`,{cache:'no-store'}),j=await r.json();for(const ev of (j.events||[])){const c=ev.competitions?.[0],H=c?.competitors?.find(x=>x.homeAway==='home'),A=c?.competitors?.find(x=>x.homeAway==='away');if(!H||!A)continue;const name=String(ev.status?.type?.name||''),isLive=!ev.status?.type?.completed&&(name.includes('IN_PROGRESS')||Number(ev.status?.period)>0),st={away:A.team.abbreviation,home:H.team.abbreviation,awayScore:Number(A.score||0),homeScore:Number(H.score||0),completed:!!ev.status?.type?.completed,isLive,kickoff:new Date(ev.date).getTime(),label:ev.status?.type?.shortDetail||ev.status?.type?.detail||name,situation:situationText(c)};LIVE10[key(w,st.away,st.home)]=st;for(const card of document.querySelectorAll('.model-match-card'))if(card.dataset.away===st.away&&card.dataset.home===st.home&&Number(card.dataset.week)===w){updateCenter(card,st);if(card.classList.contains('open'))refreshGraph(card)}}}catch(_){ }}
+
+  // Keep the local history durable across reloads on the same site/origin and redraw from it.
+  window.addEventListener('pageshow',()=>setTimeout(()=>{enhanceAll();refreshScoreCenters()},250));
+  setInterval(()=>{enhanceAll();refreshScoreCenters()},60000);
+
+  // RC10 guide correction: PRE/Q1/HALF/Q3/FINAL only; START is no longer a user-facing checkpoint.
+  const oldGuide=window.renderModelGuide;window.renderModelGuide=function(){oldGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc10-guide]'))return;el.querySelectorAll('[data-rc9-guide] .model-guide-copy').forEach(x=>{x.innerHTML=x.innerHTML.replace(/START, Q1, HALF, Q3 and FINAL/g,'Q1, HALF, Q3 and FINAL').replace(/START, Q1, HALF, Q3 and FINAL remain/g,'Q1, HALF, Q3 and FINAL remain')});el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc10-guide><summary>RC10 · CONFIDENCE HISTORY & LIVE MATCHUP LAYOUT</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Confidence history</b><div class="model-guide-copy">Both teams are plotted on the same fixed win-probability graph. The x-axis uses daily midnight checkpoints, the official noon-Pacific weekly checkpoint, PRE -10, Q1, HALF, Q3 and FINAL. Sixty-second live samples fill the in-game space without expanding the chart indefinitely.</div></div><div class="model-guide-row"><b>Persistence</b><div class="model-guide-copy">Captured points are written to local browser storage immediately and remain available on reload on the same site/device. True cross-device and public historical synchronization still needs a shared data store; static GitHub Pages cannot securely write a common live history by itself.</div></div><div class="model-guide-row"><b>Checkpoint UI</b><div class="model-guide-copy">The user-facing game checkpoints are PRE, Q1, HALF, Q3 and FINAL. Last-minute roster/inactive changes are incorporated by the PRE refresh and the live 60-second tracker instead of a separate START checkpoint.</div></div><div class="model-guide-row"><b>Matchup evidence order</b><div class="model-guide-copy">The left pane is ordered Win Probability → Game Checkpoint → Roster + Live Evidence. Each section is collapsible. The center strip between team logos shows live score and possession/down-distance when supplied by the live feed.</div></div></div></details>`)};
+
+  try{document.title='Fantasy HQ '+APP}catch(_){ }
+  setTimeout(()=>{enhanceAll();refreshScoreCenters()},900);
+})();
+</script>
+
 </body>
 </html>
