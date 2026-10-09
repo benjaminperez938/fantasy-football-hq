@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Fantasy HQ V2.0-RC16</title>
+<title>Fantasy HQ V2.0-RC17</title>
 <meta name="theme-color" content="#0aa860">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -6338,7 +6338,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   window.renderModelGuide=function(){oldGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc5-guide]'))return;el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc5-guide><summary>V2.0-RC6 · MATCHUP PULSE & CHECKPOINT ANALYSIS</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Pregame and checkpoint lifecycle</b><div class="model-guide-copy"><b>Pregame re-analysis refreshes from available public/news data while the page is open; game checkpoints are captured at START, Q1, HALF, Q3 and FINAL. The original PRE forecast is never rewritten after kickoff.</b></div></div><div class="model-guide-row"><b>FINAL versus Postgame Review</b><div class="model-guide-copy">FINAL is the quick game-end snapshot from the live provider. The right-side Postgame Review is refreshed again after final so the analysis can use a more settled box score and compare the frozen pregame script with what actually happened. Provider stat corrections can still occur later, so the app preserves the timestamp of every snapshot rather than silently rewriting history.</div></div><div class="model-guide-row"><b>Daily pregame pulse</b><div class="model-guide-copy">While Fantasy HQ is open, the matchup layer rechecks public schedule/news context at the daily rollover and again near kickoff. The latest PRE report may evolve before the game, but it becomes immutable once kickoff is detected.</div></div><div class="model-guide-row"><b>Evidence left, interpretation right</b><div class="model-guide-copy">The left pane holds Team Health, checkpoint statistics, key-player production and key plays. The right pane explains what those numbers mean for the frozen pregame thesis and the postgame audit; it avoids repeating the raw player/play list as a second stat dump.</div></div><div class="model-guide-row"><b>Game checkpoints</b><div class="model-guide-copy">The app watches game status during active games and captures START (about one minute into play), end of Q1, halftime, end of Q3 and FINAL. Live box-score statistics are preliminary and may later be corrected by the provider.</div></div><div class="model-guide-row"><b>No AI query every minute</b><div class="model-guide-copy">Lightweight public-data checks detect status changes. Deeper written analysis is regenerated only when evidence changes at a scheduled/checkpoint event, not every polling cycle.</div></div><div class="model-guide-row"><b>Browser limitation</b><div class="model-guide-copy">A standalone HTML file cannot wake itself while the browser is closed. RC6 captures scheduled checkpoints while Fantasy HQ is open. A future small backend/service can run the same schedule unattended and cache snapshots for every user.</div></div></div></details>`)};
 
   /* Visible version separation: app V2.0-RC5, predictor V1.3.2. */
-  try{document.title='Fantasy HQ V2.0-RC16';document.querySelectorAll('#panel-predictor [style*="font-size:26px"] span').forEach(x=>{if(/V\d/.test(x.textContent))x.textContent=PREDICTOR_VERSION})}catch(_){ }
+  try{document.title='Fantasy HQ V2.0-RC17';document.querySelectorAll('#panel-predictor [style*="font-size:26px"] span').forEach(x=>{if(/V\d/.test(x.textContent))x.textContent=PREDICTOR_VERSION})}catch(_){ }
 
   /* Kick off the pulse if the matchup tab is already visible. */
   setTimeout(()=>{try{document.querySelectorAll('.model-match-card').forEach(identifyCard);const p=document.getElementById('pred-match');if(p&&p.style.display!=='none')modelStartMatchAutoRefresh()}catch(_){}},1200);
@@ -6487,7 +6487,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   const baseGuide=window.renderModelGuide;window.renderModelGuide=function(){baseGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc6-guide]'))return;el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc6-guide><summary>LEAGUE BOARD · SCORE, MOVE & MEDIA DELTA</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Score (0–100)</b><div class="model-guide-copy">The League Board Score is the stored normalized Performance composite for that checkpoint. It is <b>not</b> a win probability. Rank tells you ordering; Score tells you spacing. A 72.1 team is 7.1 normalized points above a 65.0 team, while 65 vs 64 is only a one-point separation and should be treated as much closer.</div></div><div class="model-guide-row"><b>MOVE</b><div class="model-guide-copy">Change in Context rank from the preseason/Week-0 baseline. Green means the team has risen, red means it has fallen. The stronger RC6 row tint is visual emphasis only; it does not change the math.</div></div><div class="model-guide-row"><b>ΔMEDIA</b><div class="model-guide-copy">Media rank minus our Context rank. Positive means our model rates the team higher; negative means media rates it higher. Hover or keyboard-focus the value for the football reason behind the disagreement. Tennessee is a useful example: the model sees a poor offense but a much better defensive profile than a #32 public ranking implies.</div></div><div class="model-guide-row"><b>REC / PD/G</b><div class="model-guide-copy">REC is win-loss record at the frozen checkpoint. PD/G is scoring differential per game (PF minus PA); positive means the team scores more than it allows on average.</div></div></div></details><details class="model-collapse" open data-rc6-glossary><summary>FOOTBALL + FANTASY LANGUAGE / ABBREVIATIONS</summary><div class="model-collapse-body"><div class="model-guide-key"><b>CTX</b><span>Context rank: broader team-strength view after current performance plus verified football context.</span></div><div class="model-guide-key"><b>PERF</b><span>Performance rank: current-season statistical production only.</span></div><div class="model-guide-key"><b>PF / PA / PD</b><span>Points For / Points Against / Point Differential. PF/G, PA/G and PD/G are per-game versions.</span></div><div class="model-guide-key"><b>OFF / DEF</b><span>Overall offense / overall defense rank.</span></div><div class="model-guide-key"><b>Pass O / Run O / OL</b><span>Passing offense / rushing offense / offensive-line or protection grade.</span></div><div class="model-guide-key"><b>Pass D / Run D / Rush</b><span>Pass defense / run defense / pass-rush grade.</span></div><div class="model-guide-key"><b>PPG</b><span>Points per game.</span></div><div class="model-guide-key"><b>EPA/play</b><span>Expected Points Added per play; an efficiency measure describing how much each play changes expected scoring.</span></div><div class="model-guide-key"><b>Y/P · YPC · YPA</b><span>Yards per play · yards per carry · yards per pass attempt.</span></div><div class="model-guide-key"><b>C/ATT</b><span>Pass completions / pass attempts.</span></div><div class="model-guide-key"><b>CAR · REC · TGT · YDS · AVG · LONG</b><span>Carries · receptions · targets · yards · average yards · longest gain.</span></div><div class="model-guide-key"><b>TD · INT · FUM</b><span>Touchdown · interception · fumble.</span></div><div class="model-guide-key"><b>SCK · TFL · PD</b><span>Sack · tackle for loss · pass defended. Context determines whether PD means pass defended or point differential.</span></div><div class="model-guide-key"><b>3D / RZ</b><span>Third down / red zone. 3D% is conversion rate; RZ TD% is red-zone trips ending in touchdowns.</span></div><div class="model-guide-key"><b>TO</b><span>Turnover(s). Giveaways are bad for an offense; takeaways are good for a defense.</span></div><div class="model-guide-key"><b>PPR / Half PPR / Standard</b><span>Fantasy scoring: 1 point per reception / 0.5 per reception / no reception bonus.</span></div><div class="model-guide-key"><b>ADP</b><span>Average Draft Position.</span></div><div class="model-guide-key"><b>FLEX / D/ST</b><span>Fantasy lineup spot generally usable by RB/WR/TE · team Defense/Special Teams.</span></div><div class="model-guide-key"><b>IR / PUP</b><span>Injured Reserve / Physically Unable to Perform list.</span></div><div class="model-guide-key"><b>Q / D / OUT</b><span>Questionable / Doubtful / Out injury designations.</span></div><div class="model-guide-key"><b>Snap share / route participation / target share</b><span>Share of team offensive snaps / pass plays on which a player ran a route / team pass targets going to that player.</span></div><div class="model-guide-key"><b>Air yards / YAC</b><span>Distance a pass travels before the catch / yards after catch.</span></div><div class="model-guide-key"><b>Pressure / blitz</b><span>QB disruption by the rush / sending extra rushers beyond a standard front.</span></div><div class="model-guide-key"><b>Man / zone</b><span>Coverage families where defenders primarily match receivers or defend areas of the field.</span></div><div class="model-guide-key"><b>11 / 12 / 21 personnel</b><span>RB-TE counts: 11 = 1 RB, 1 TE; 12 = 1 RB, 2 TE; 21 = 2 RB, 1 TE. The remaining eligible skill spots are receivers.</span></div><div class="model-guide-key"><b>RPO / play action</b><span>Run-pass option / a pass concept using a run fake to influence defenders.</span></div><div class="model-guide-key"><b>Explosive play</b><span>A chunk gain; the app's exact threshold is shown where that metric is used.</span></div></div></details>`)};
 
   /* Repaint after the RC6 overrides are installed. */
-  try{document.title='Fantasy HQ V2.0-RC16'}catch(_){ }
+  try{document.title='Fantasy HQ V2.0-RC17'}catch(_){ }
   setTimeout(()=>{try{renderModelLeagueBoard();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();if(document.getElementById('pred-external')?.style.display!=='none')renderModelExternal();if(document.getElementById('pred-guide')?.style.display!=='none')renderModelGuide()}catch(e){console.warn('RC6 repaint',e)}},250);
 })();
 </script>
@@ -6716,7 +6716,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 
   function cleanupAll7(){document.querySelectorAll('.rc6-board-note,.rc6-wed-snapshot').forEach(n=>n.remove());cleanMetaNotes7(document);conversationalize7(document);cleanHealth7()}
   const healthRoot=document.getElementById('modelHealthBody');if(healthRoot&&typeof MutationObserver!=='undefined'){new MutationObserver(()=>{healthRoot.querySelectorAll('.rc6-wed-snapshot').forEach(n=>n.remove())}).observe(healthRoot,{childList:true,subtree:true})}
-  try{document.title='Fantasy HQ V2.0-RC16'}catch(_){ }
+  try{document.title='Fantasy HQ V2.0-RC17'}catch(_){ }
   setTimeout(()=>{try{renderModelLeagueBoard();cleanupAll7();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();if(document.getElementById('pred-external')?.style.display!=='none')renderModelExternal();if(document.getElementById('pred-guide')?.style.display!=='none')renderModelGuide();if(document.getElementById('pred-match')?.style.display!=='none')polishMatchups7()}catch(e){console.warn('RC7 repaint',e)}},350);
 })();
 </script>
@@ -6783,7 +6783,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 
   // Keep process notes in the Guide rather than duplicating them around football content.
   function cleanup8(){document.querySelectorAll('.rc6-board-note,.rc6-wed-snapshot').forEach(n=>n.remove())}
-  try{document.title='Fantasy HQ V2.0-RC16'}catch(_){ }
+  try{document.title='Fantasy HQ V2.0-RC17'}catch(_){ }
   setTimeout(()=>{try{refreshSeasonThrough4();window.renderModelLeagueBoard?.();cleanup8();if(document.getElementById('pred-health')?.style.display!=='none')window.renderModelHealth?.();if(document.getElementById('pred-guide')?.style.display!=='none')window.renderModelGuide?.()}catch(e){console.warn('RC8 ingest repaint',e)}},500);
 })();
 </script>
@@ -6941,7 +6941,7 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
   setInterval(clockTick9,60000);
 
   /* Default Matchups to the derived active forecast week once, but keep manual browsing intact. */
-  setTimeout(()=>{try{const sel=document.getElementById('predWeekSel');if(sel&&Number(sel.value||4)<=4&&MODEL_FORECAST_WEEK>=5){sel.value=String(MODEL_FORECAST_WEEK);if(document.getElementById('pred-match')?.style.display!=='none')predLoadWeek(true)}renderModelLeagueBoard();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();document.title='Fantasy HQ V2.0-RC16'}catch(e){console.warn('RC9 init',e)}},700);
+  setTimeout(()=>{try{const sel=document.getElementById('predWeekSel');if(sel&&Number(sel.value||4)<=4&&MODEL_FORECAST_WEEK>=5){sel.value=String(MODEL_FORECAST_WEEK);if(document.getElementById('pred-match')?.style.display!=='none')predLoadWeek(true)}renderModelLeagueBoard();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();document.title='Fantasy HQ V2.0-RC17'}catch(e){console.warn('RC9 init',e)}},700);
 
   const oldGuide=window.renderModelGuide;window.renderModelGuide=function(){oldGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc9-guide]'))return;el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc9-guide><summary>RC9 · CLOCK, LIVE CONFIDENCE & PERSONNEL</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Calendar state</b><div class="model-guide-copy">Fantasy HQ derives the active forecast week in <b>America/Los_Angeles</b>. Results/current records and the official forecast week are separate from the latest validated CTX/Performance/unit checkpoint, so a completed game cannot silently rewrite historical rankings.</div></div><div class="model-guide-row"><b>Automatic refresh while open</b><div class="model-guide-copy">At midnight Pacific and at the noon-Pacific weekly checkpoint, the open page rechecks completed games, records, scoring averages and news. Ten minutes before each game it records a final pregame confidence point. During live games a lightweight 60-second pulse records the live confidence curve; START, Q1, HALF, Q3 and FINAL remain the major labeled checkpoints.</div></div><div class="model-guide-row"><b>Live confidence</b><div class="model-guide-copy">The live curve begins from the frozen pregame probability, then uses actual score/time plus currently available box-score evidence such as yards per play, turnovers, first downs and sack signals. This live evidence lens is experimental and remains separate from the frozen pregame calibration.</div></div><div class="model-guide-row"><b>Hot Off The Press</b><div class="model-guide-copy">Notifications are capped at ten words. Opening the News article shows the current statistics, the confidence swing and a paragraph explanation of whether the original game script is holding, weakening or flipping.</div></div><div class="model-guide-row"><b>Personnel</b><div class="model-guide-copy">Open Matchups can load current roster number/name/position for both teams. Individual position ranks and task-specific grades are intentionally blank until a source supports them; the app does not infer an offensive-lineman or coverage grade from a basic box score.</div></div><div class="model-guide-row"><b>Static-page limit</b><div class="model-guide-copy">These timed jobs run while Fantasy HQ is open. A static GitHub HTML page cannot wake itself while closed; unattended capture still requires the scheduled workflow or a future backend/GitHub Action.</div></div></div></details>`)};
 })();
@@ -7099,7 +7099,7 @@ function laParts(d){
   // RC10 guide correction: PRE/Q1/HALF/Q3/FINAL only; START is no longer a user-facing checkpoint.
   const oldGuide=window.renderModelGuide;window.renderModelGuide=function(){oldGuide?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc10-guide]'))return;el.querySelectorAll('[data-rc9-guide] .model-guide-copy').forEach(x=>{x.innerHTML=x.innerHTML.replace(/START, Q1, HALF, Q3 and FINAL/g,'Q1, HALF, Q3 and FINAL').replace(/START, Q1, HALF, Q3 and FINAL remain/g,'Q1, HALF, Q3 and FINAL remain')});el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc10-guide><summary>RC10 · CONFIDENCE HISTORY & LIVE MATCHUP LAYOUT</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Confidence history</b><div class="model-guide-copy">Both teams are plotted on the same fixed win-probability graph. The x-axis uses daily midnight checkpoints, the official noon-Pacific weekly checkpoint, PRE -10, Q1, HALF, Q3 and FINAL. Sixty-second live samples fill the in-game space without expanding the chart indefinitely.</div></div><div class="model-guide-row"><b>Persistence</b><div class="model-guide-copy">Captured points are written to local browser storage immediately and remain available on reload on the same site/device. True cross-device and public historical synchronization still needs a shared data store; static GitHub Pages cannot securely write a common live history by itself.</div></div><div class="model-guide-row"><b>Checkpoint UI</b><div class="model-guide-copy">The user-facing game checkpoints are PRE, Q1, HALF, Q3 and FINAL. Last-minute roster/inactive changes are incorporated by the PRE refresh and the live 60-second tracker instead of a separate START checkpoint.</div></div><div class="model-guide-row"><b>Matchup evidence order</b><div class="model-guide-copy">The left pane is ordered Win Probability → Game Checkpoint → Roster + Live Evidence. Each section is collapsible. The center strip between team logos shows live score and possession/down-distance when supplied by the live feed.</div></div></div></details>`)};
 
-  try{document.title='Fantasy HQ V2.0-RC16'}catch(_){ }
+  try{document.title='Fantasy HQ V2.0-RC17'}catch(_){ }
   setTimeout(()=>{enhanceAll();refreshScoreCenters()},900);
 })();
 </script>
@@ -7138,7 +7138,7 @@ function laParts(d){
 @media(max-width:700px){.rc11-roster-row{grid-template-columns:35px minmax(105px,1fr) 42px minmax(78px,auto)}.rc11-card{min-height:330px}.rc11-board-head button{font-size:11px!important}.rc11-conf-svg{min-width:900px}}
 </style>
 <script id="modelV2RC11Patch">
-/* Fantasy HQ V2.0-RC16. NFL Predictor remains V1.3.2; this patch completes the data/checkpoint and presentation pipeline without changing the published forecast formula version. */
+/* Fantasy HQ V2.0-RC17. NFL Predictor remains V1.3.2; this patch completes the data/checkpoint and presentation pipeline without changing the published forecast formula version. */
 (function(){
 'use strict';
 const APP='V2.0-RC15', TZ='America/Los_Angeles', CK='fhq_weekly_checkpoint_rc11_', HIST='fhq_confidence_history_rc9', ART='fhq_hot_articles_rc9';
@@ -7366,14 +7366,15 @@ window.modelOpenPlayerGraphModal=function(){const season=document.getElementById
 const guide11=window.renderModelGuide;window.renderModelGuide=function(){guide11?.();const el=document.getElementById('modelGuideBody');if(!el||el.querySelector('[data-rc11-guide]'))return;el.insertAdjacentHTML('beforeend',`<details class="model-collapse" open data-rc11-guide><summary>RC11 · COMPLETE WEEKLY / LIVE DATA PIPELINE</summary><div class="model-collapse-body"><div class="model-guide-row"><b>Official statistical checkpoint</b><div class="model-guide-copy">At or after the noon-Pacific publication gate before a new NFL week, Fantasy HQ can build the prior-week frozen checkpoint from completed ESPN game summaries. Eight cumulative efficiency units are ranked: overall offense, pass offense, run offense, protection, overall defense, pass defense, run defense and pass rush. Performance is the mean of those eight percentile-style unit scores; Context is 88% current Performance plus the existing 12% 2025 prior. The saved checkpoint is immutable unless explicitly rebuilt.</div></div><div class="model-guide-row"><b>W1 / W2 / W3 / W4 / W8 / W12</b><div class="model-guide-copy">These vertical model checkpoints are restored on the Team Health graph. They are evaluation milestones for how quickly current-season evidence becomes useful for identifying the eventual playoff/Super-Bowl-quality breadbasket; they are not extra game predictions.</div></div><div class="model-guide-row"><b>Unified Team Health graph</b><div class="model-guide-copy">Context, Performance and the frozen baseline use the left rank axis. Opponent-specific matchup win probability uses the right percentage axis on the same weekly timeline. The compact graph always includes the next matchup projection.</div></div><div class="model-guide-row"><b>Live history</b><div class="model-guide-copy">Both teams' win probabilities are captured together. The graph has fixed daily midnight/noon-Publication/PRE/Q1/HALF/Q3/FINAL anchors; 60-second live samples fill the space between them. FINAL history is retained locally rather than cleared.</div></div><div class="model-guide-row"><b>Shared devices</b><div class="model-guide-copy">Local history works immediately. RC11 also contains an optional shared-store adapter, but automatic phone/laptop/public synchronization requires one real backend project and access rules. Until that one-time setup exists, Export/Import History is the safe cross-device fallback.</div></div><div class="model-guide-row"><b>Personnel evidence</b><div class="model-guide-copy">Fantasy positions can show cumulative PPR positional rank through the previous week when the player log exists. OL/defensive players show the corresponding frozen unit rank until individual task-grade data exists. Live player box-score lines are displayed when ESPN supplies them; unsupported technique grades are not invented.</div></div><div class="model-guide-row"><b>Player Compare</b><div class="model-guide-copy">Standard, Half-PPR and PPR projection and actual are displayed together. Projected nodes remain after the game, so the distance to the actual node is the preserved projection error. Player cards now have clean, splash and foil visual tiers, a flip side and a replaceable art slot for the verified licensed-photo catalog.</div></div></div></details>`)};
 async function refreshCheckpointIfNeeded(){const target=Number(window.MODEL_CALENDAR_STATE?.completedWeek||MODEL_CURRENT_WEEK||0),have=checkpointWeek();if(target>=4&&target>have){const cp=await buildCheckpoint(target);if(cp){renderModelLeagueBoard();renderModelHealth();if(document.getElementById('pred-match')?.style.display!=='none')predLoadWeek(true)}}}
 window.addEventListener('pageshow',()=>setTimeout(()=>{refreshCheckpointIfNeeded();enhanceMatch11()},450));setInterval(()=>{refreshCheckpointIfNeeded();livePulse();enhanceMatch11()},60000);
-try{document.title='Fantasy HQ V2.0-RC16'}catch(_){ }
+try{document.title='Fantasy HQ V2.0-RC17'}catch(_){ }
 setTimeout(async()=>{try{await refreshCheckpointIfNeeded();renderModelLeagueBoard();modelPopulateTeamSelect();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();if(document.getElementById('pred-external')?.style.display!=='none')renderModelPlayerCompare();if(document.getElementById('pred-guide')?.style.display!=='none')renderModelGuide();await livePulse();await enhanceMatch11()}catch(e){console.warn('RC11 init',e)}},1000);
 })();
 </script>
 
-/* RC15 title lock: legacy RC6-RC10 timers may still attempt to rename the browser tab. */
+<script id="rc16TitleLock">
+/* RC17 title lock: legacy RC6-RC10 timers may still attempt to rename the browser tab. */
 (function(){
-  const wanted='Fantasy HQ V2.0-RC16';
+  const wanted='Fantasy HQ V2.0-RC17';
   const apply=()=>{if(document.title!==wanted)document.title=wanted};
   apply();
   window.addEventListener('pageshow',apply);
@@ -7382,254 +7383,324 @@ setTimeout(async()=>{try{await refreshCheckpointIfNeeded();renderModelLeagueBoar
   if(titleEl&&typeof MutationObserver!=='undefined')new MutationObserver(apply).observe(titleEl,{childList:true,characterData:true,subtree:true});
   setTimeout(apply,250);setTimeout(apply,800);setTimeout(apply,1600);
 })();
+</script>
 
-<style id="modelV2RC16Styles">
-/* ===== Fantasy HQ V2.0-RC16 · checkpoint sync + roster readability ===== */
+<style id="modelV2RC17Styles">
+/* ===== Fantasy HQ V2.0-RC17 · full-width probability + evidence / checkpoint / pulse reading flow ===== */
 #pred-match .model-match-detail-shell{
-  grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr)!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,.92fr) 92px minmax(0,1.08fr)!important;
+  grid-template-areas:
+    "graph graph graph"
+    "evidence checkpoint pulse"!important;
+  gap:12px!important;
   align-items:start!important;
 }
-#pred-match .rc16-evidence-wide{
-  grid-column:1 / -1!important;
+#pred-match .model-match-data-pane{display:none!important}
+#pred-match .rc17-confidence-wide{
+  grid-area:graph!important;
   width:100%!important;
-  margin-top:0!important;
+  margin:0!important;
 }
-#pred-match .rc16-evidence-wide .rc10-left-body{padding:11px 12px!important}
+#pred-match .rc17-confidence-wide .rc10-left-body{padding:12px 14px 10px!important}
+#pred-match .rc17-confidence-wide .rc11-confidence-box{width:100%!important;max-width:none!important}
+#pred-match .rc17-confidence-wide .rc11-conf-wrap{width:100%!important;overflow-x:auto!important}
+#pred-match .rc17-confidence-wide .rc11-conf-svg{width:100%!important;min-width:980px!important;max-width:none!important}
+#pred-match .rc17-confidence-wide .rc11-conf-actions{display:none!important}
+#pred-match .rc17-confidence-wide .rc11-conf-note{display:none!important}
+
+#pred-match .rc16-evidence-wide{
+  grid-area:evidence!important;
+  grid-column:auto!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+}
+#pred-match .rc16-evidence-wide .rc10-left-body{padding:11px!important}
 #pred-match .rc16-evidence-wide .rc10-roster-grid{
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  gap:14px!important;
+  grid-template-columns:1fr!important;
+  gap:12px!important;
 }
 #pred-match .rc16-evidence-wide .rc10-roster-team{padding:11px!important}
-#pred-match .rc16-evidence-wide .rc10-roster-head{
-  font-size:14px!important;
-  gap:8px!important;
-  margin-bottom:9px!important;
-}
+#pred-match .rc16-evidence-wide .rc10-roster-head{font-size:14px!important;gap:8px!important;margin-bottom:9px!important}
 #pred-match .rc16-evidence-wide .rc10-roster-head img{width:30px!important;height:30px!important}
-#pred-match .rc16-evidence-wide .rc10-roster-group-title{
-  font-size:11px!important;
-  margin:11px 0 5px!important;
-}
+#pred-match .rc16-evidence-wide .rc10-roster-group-title{font-size:11px!important;margin:11px 0 5px!important}
 #pred-match .rc16-evidence-wide .rc11-roster-row{
-  grid-template-columns:38px minmax(145px,1fr) 44px minmax(88px,auto)!important;
-  gap:9px!important;
-  padding:7px 3px!important;
-  font-size:12.5px!important;
-  line-height:1.28!important;
+  grid-template-columns:38px minmax(150px,1fr) 46px minmax(92px,auto)!important;
+  gap:9px!important;padding:7px 3px!important;font-size:12.5px!important;line-height:1.3!important
 }
 #pred-match .rc16-evidence-wide .rc11-roster-row .num,
 #pred-match .rc16-evidence-wide .rc11-roster-row .pos,
 #pred-match .rc16-evidence-wide .rc11-roster-row .rk{font-size:11.5px!important}
-#pred-match .rc16-evidence-wide .rc11-roster-row .evidence{
-  font-size:11px!important;
-  line-height:1.42!important;
-  padding:2px 0 4px!important;
-}
+#pred-match .rc16-evidence-wide .rc11-roster-row .evidence{font-size:11px!important;line-height:1.45!important;padding:2px 0 4px!important}
 #pred-match .rc16-evidence-wide .rc11-liability{font-size:11.5px!important;line-height:1.5!important}
+#pred-match .rc16-evidence-wide .rc11-conf-note{display:none!important}
 
-/* Keep implementation/process prose in Guide rather than the game card. */
-#pred-match .model-report-deck,
-#pred-match .rc16-evidence-wide .rc11-conf-note,
-#pred-match .rc11-confidence-box + .rc11-conf-actions + .rc11-conf-note{display:none!important}
+#pred-match .rc17-checkpoint-rail{
+  grid-area:checkpoint!important;
+  align-self:start!important;
+  position:sticky!important;
+  top:8px!important;
+  border:1px solid var(--border)!important;
+  background:var(--card)!important;
+  border-radius:10px!important;
+  overflow:hidden!important;
+  min-width:0!important;
+}
+#pred-match .rc17-checkpoint-rail>summary{
+  list-style:none!important;pointer-events:none!important;
+  cursor:default!important;
+  padding:10px 5px 8px!important;
+  text-align:center!important;
+  font:900 9px 'Courier New',monospace!important;
+  letter-spacing:.08em!important;
+  color:var(--muted)!important;
+  border-bottom:1px solid var(--border)!important;
+}
+#pred-match .rc17-checkpoint-rail>summary::-webkit-details-marker{display:none!important}
+#pred-match .rc17-checkpoint-rail .rc10-left-body{padding:8px!important}
+#pred-match .rc17-checkpoint-rail .rc10-checkpoint-row{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:7px!important;
+  overflow:visible!important;
+}
+#pred-match .rc17-checkpoint-rail .rc4-checkpoint-btn{
+  width:100%!important;
+  min-width:0!important;
+  min-height:46px!important;
+  padding:7px 3px!important;
+  border-radius:7px!important;
+  font-size:11px!important;
+  font-weight:950!important;
+}
+#pred-match .rc17-checkpoint-rail .rc4-checkpoint-btn.active{
+  min-height:54px!important;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.2),0 4px 12px rgba(0,0,0,.10)!important;
+}
+#pred-match .rc17-flow-label{
+  display:block;font:900 8px 'Courier New',monospace;letter-spacing:.05em;color:var(--muted);
+  text-align:center;padding:7px 2px 3px
+}
+#pred-match .rc17-flow-label span{display:block;font-size:13px;color:var(--text);margin-top:2px}
 
-/* Checkpoint report is deliberately stable while asynchronous legacy requests finish off-screen. */
-#pred-match .rc16-pulse-report{min-height:220px}
-#pred-match .rc16-pulse-report .model-report-kicker{display:flex;align-items:center;gap:7px}
-#pred-match .rc16-checkpoint-chip{
+#pred-match .model-match-report-pane{
+  grid-area:pulse!important;
+  min-width:0!important;
+  width:100%!important;
+}
+#pred-match .rc17-pulse-report{min-height:300px!important}
+#pred-match .rc17-pulse-report .model-report-kicker{display:flex!important;align-items:center!important;gap:7px!important;flex-wrap:wrap!important}
+#pred-match .rc17-checkpoint-chip{
   display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;
   padding:3px 7px;font:900 9px 'Courier New',monospace;letter-spacing:.05em;background:var(--dark2)
 }
-#pred-match .rc16-pulse-report .rc4-report-prose p{margin-bottom:15px!important}
-#pred-match .rc16-pulse-report .rc4-live-read{margin-top:0!important;padding-top:0!important;border-top:0!important}
-#pred-match .rc16-pulse-report .model-report-title{line-height:1.12}
-#pred-match .rc16-pulse-report .model-report-metric strong{font-size:16px}
+#pred-match .rc17-pulse-report .model-report-title{line-height:1.12!important}
+#pred-match .rc17-pulse-report .model-report-metrics{margin-bottom:13px!important}
+#pred-match .rc17-pulse-report .model-report-metric strong{font-size:16px!important}
+#pred-match .rc17-analysis-section{padding:0 0 14px;margin:0 0 14px;border-bottom:1px solid var(--border)}
+#pred-match .rc17-analysis-section:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
+#pred-match .rc17-analysis-section h4{
+  margin:0 0 6px!important;font-size:12px!important;line-height:1.2!important;font-weight:950!important;
+  letter-spacing:.045em!important;text-transform:uppercase!important;color:var(--text)!important
+}
+#pred-match .rc17-analysis-section p{font-size:13px!important;line-height:1.62!important;margin:0 0 8px!important}
+#pred-match .rc17-analysis-section p:last-child{margin-bottom:0!important}
+#pred-match .rc17-prob-shift{font-weight:900}
+#pred-match .rc17-script-tag{
+  display:inline-flex;align-items:center;padding:2px 6px;border:1px solid var(--border);border-radius:999px;
+  font:900 9px 'Courier New',monospace;letter-spacing:.045em;background:var(--dark2);vertical-align:1px
+}
+#pred-match .model-report-deck{display:none!important}
 
-@media(max-width:900px){
-  #pred-match .model-match-detail-shell{grid-template-columns:1fr!important}
-  #pred-match .rc16-evidence-wide{grid-column:1!important}
-  #pred-match .rc16-evidence-wide .rc10-roster-grid{grid-template-columns:1fr!important}
+@media(max-width:980px){
+  #pred-match .model-match-detail-shell{
+    grid-template-columns:minmax(0,1fr) 82px minmax(0,1fr)!important;
+    gap:9px!important;
+  }
+}
+@media(max-width:820px){
+  #pred-match .model-match-detail-shell{
+    grid-template-columns:1fr!important;
+    grid-template-areas:"graph" "checkpoint" "evidence" "pulse"!important;
+  }
+  #pred-match .rc17-checkpoint-rail{position:relative!important;top:auto!important}
+  #pred-match .rc17-checkpoint-rail>summary{display:none!important}
+  #pred-match .rc17-checkpoint-rail .rc10-checkpoint-row{display:grid!important;grid-template-columns:repeat(5,minmax(58px,1fr))!important;overflow-x:auto!important}
+  #pred-match .rc17-checkpoint-rail .rc4-checkpoint-btn{min-height:40px!important}
+  #pred-match .rc17-checkpoint-rail .rc4-checkpoint-btn.active{min-height:44px!important}
+  #pred-match .rc17-flow-label{display:none!important}
 }
 @media(max-width:620px){
-  #pred-match .rc16-evidence-wide .rc11-roster-row{
-    grid-template-columns:34px minmax(110px,1fr) 40px!important;
-    font-size:12px!important;
-  }
-  #pred-match .rc16-evidence-wide .rc11-roster-row .rk{
-    grid-column:2 / -1!important;text-align:left!important;font-size:10.5px!important;margin-top:-2px
-  }
+  #pred-match .rc16-evidence-wide .rc11-roster-row{grid-template-columns:34px minmax(110px,1fr) 40px!important;font-size:12px!important}
+  #pred-match .rc16-evidence-wide .rc11-roster-row .rk{grid-column:2 / -1!important;text-align:left!important;font-size:10.5px!important;margin-top:-2px}
   #pred-match .rc16-evidence-wide .rc11-roster-row .evidence{grid-column:2 / -1!important}
+  #pred-match .rc17-analysis-section p{font-size:12.5px!important}
 }
 </style>
-<script id="modelV2RC16Patch">
+<script id="modelV2RC17Patch">
 (function(){
 'use strict';
-const APP='V2.0-RC16', PULSE_STORE='fhq_matchup_pulse_v2rc5';
-const esc16=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const num16=v=>{if(v==null)return null;const m=String(v).replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):null};
-const pct16=v=>Number.isFinite(Number(v))?`${(Number(v)*100).toFixed(0)}%`:'—';
-const fmt16=iso=>{try{return new Date(iso).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})}catch(_){return''}};
-function pulseStore16(){try{return JSON.parse(localStorage.getItem(PULSE_STORE)||'{}')}catch(_){return{}}}
-function snaps16(w,a,h){return pulseStore16()?.[`${Number(w)}:${a}:${h}`]?.snapshots||{}}
-function snapRow16(s,label){return s?.stats?.rows?.find(r=>r.label===label)||null}
-function preForecast16(w,a,h,s){
-  const stored=s?.PRE?.forecast||null;
-  let live=null;try{live=window.modelForecastForGame?.(a,h,Number(w))||null}catch(_){ }
-  const f=stored||live||{};
-  const pHome=Number.isFinite(Number(f.pHome))?Number(f.pHome):null;
-  const pick=f.pick||(pHome==null?h:(pHome>=.5?h:a));
-  const confidence=Number.isFinite(Number(f.confidence))?Number(f.confidence):Number.isFinite(pHome)?Math.max(pHome,1-pHome):.5;
-  return {...f,pick,confidence};
+const APP='V2.0-RC17', PULSE_STORE='fhq_matchup_pulse_v2rc5', HIST_STORE='fhq_confidence_history_rc9';
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>{if(v==null)return null;const m=String(v).replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):null};
+const pct01=v=>Number.isFinite(Number(v))?`${Math.round(Number(v)*100)}%`:'—';
+const pct100=v=>Number.isFinite(Number(v))?`${Math.round(Number(v))}%`:'—';
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(_){return d}};
+function snaps(w,a,h){return load(PULSE_STORE,{})?.[`${Number(w)}:${a}:${h}`]?.snapshots||{}}
+function history(w,a,h){return load(HIST_STORE,{})?.[`${Number(w)}:${a}:${h}`]||[]}
+function row(s,label){return s?.stats?.rows?.find(r=>r.label===label)||null}
+function rate(v){const m=String(v??'').match(/(\d+)\s*[-\/]\s*(\d+)/);if(!m||!Number(m[2]))return null;return Number(m[1])/Number(m[2])}
+function sacks(v){const m=String(v??'').match(/(\d+)/);return m?Number(m[1]):null}
+function clockSeconds(v){const m=String(v??'').match(/(\d+):(\d+)/);return m?Number(m[1])*60+Number(m[2]):null}
+function fmtClock(s){if(!s)return'';if(s.label==='HALF')return'halftime';if(s.label==='FINAL')return'final';const q=s.period?`Q${s.period}`:s.label||'';return [q,s.clock].filter(Boolean).join(' ')}
+function preForecast(w,a,h,s){
+  const stored=s?.PRE?.forecast||null;let current=null;try{current=window.modelForecastForGame?.(a,h,Number(w))||null}catch(_){ }
+  const f=stored||current||{};let pHome=Number(f.pHome);
+  if(!Number.isFinite(pHome)){const c=Number(f.confidence);if(Number.isFinite(c))pHome=f.pick===h?c:1-c}
+  if(!Number.isFinite(pHome))pHome=.5;
+  const pick=f.pick||(pHome>=.5?h:a),confidence=Number.isFinite(Number(f.confidence))?Number(f.confidence):Math.max(pHome,1-pHome);
+  return {...f,pHome,pick,confidence};
 }
-function unitPressure16(a,h,w,pick){
-  const opp=pick===a?h:a;
-  try{
-    const rows=window.modelMatchupUnitForecastAtWeek?.(pick,opp,Number(w))||[];
-    if(!rows.length)return null;
-    const best=rows.slice().sort((x,y)=>Number(y.diff||0)-Number(x.diff||0))[0];
-    const risk=rows.slice().sort((x,y)=>Number(x.diff||0)-Number(y.diff||0))[0];
-    return {best,risk};
-  }catch(_){return null}
+function checkpointHomeProb(w,a,h,label,snap,pre){
+  if(!snap||label==='PRE')return pre.pHome;
+  const target=new Date(snap.capturedAt||0).getTime(),arr=history(w,a,h).filter(x=>String(x.label||'').toUpperCase()===String(label).toUpperCase());
+  let pt=null;if(arr.length){pt=arr.slice().sort((x,y)=>Math.abs(Number(x.t)-target)-Math.abs(Number(y.t)-target))[0]}
+  if(pt&&Number.isFinite(Number(pt.p)))return Number(pt.p)/100;
+  const lp=Number(snap.livePct);if(Number.isFinite(lp))return snap.livePick===h?lp:1-lp;
+  return pre.pHome;
 }
-function stateLabel16(pre,snap){
-  if(!snap||snap.label==='PRE')return'PREGAME';
-  const lp=snap.livePick||pre.pick,lc=Number(snap.livePct||.5),pc=Number(pre.confidence||.5);
-  if(lp!==pre.pick)return'FLIPPED';
-  if(lc>=pc+.06)return'CONFIRMING';
-  if(lc<=pc-.06)return'WEAKENING';
+function teamSnapshot(ab,w){try{return window.modelPregameTeamSnapshot?.(ab,Number(w))||null}catch(_){return null}}
+function unitRows(team,opp,w){try{return window.modelMatchupUnitForecastAtWeek?.(team,opp,Number(w))||[]}catch(_){return[]}}
+function topUnitEdges(a,h,w){
+  const all=[...unitRows(a,h,w).map(x=>({team:a,opp:h,...x})),...unitRows(h,a,w).map(x=>({team:h,opp:a,...x}))];
+  return all.sort((x,y)=>Math.abs(Number(y.diff||0))-Math.abs(Number(x.diff||0)));
+}
+function metricPack(s,a,h){
+  const get=label=>{const r=row(s,label);return r?{rawA:r.away,rawH:r.home,a:num(r.away),h:num(r.home)}:null};
+  const ypp=get('Yards / play'),total=get('Total yards'),pass=get('Passing yards'),rush=get('Rushing yards'),turn=get('Turnovers'),third=row(s,'Third down'),red=row(s,'Red zone'),sk=row(s,'Sacks / yards lost'),pos=row(s,'Possession');
+  return {ypp,total,pass,rush,turn,third:third?{rawA:third.away,rawH:third.home,a:rate(third.away),h:rate(third.home)}:null,red:red?{rawA:red.away,rawH:red.home,a:rate(red.away),h:rate(red.home)}:null,sk:sk?{rawA:sk.away,rawH:sk.home,a:sacks(sk.away),h:sacks(sk.home)}:null,pos:pos?{rawA:pos.away,rawH:pos.home,a:clockSeconds(pos.away),h:clockSeconds(pos.home)}:null,a,h};
+}
+function underlyingRead(m){
+  let score=0,weight=0;
+  if(m.ypp&&m.ypp.a!=null&&m.ypp.h!=null){score+=(m.ypp.h-m.ypp.a)*1.35;weight+=1.6}
+  if(m.turn&&m.turn.a!=null&&m.turn.h!=null){score+=(m.turn.a-m.turn.h)*1.25;weight+=1.25}
+  if(m.third&&m.third.a!=null&&m.third.h!=null){score+=(m.third.h-m.third.a)*2.2;weight+=.85}
+  if(m.sk&&m.sk.a!=null&&m.sk.h!=null){score+=(m.sk.a-m.sk.h)*.55;weight+=.55}
+  if(m.total&&m.total.a!=null&&m.total.h!=null){score+=(m.total.h-m.total.a)/180;weight+=.45}
+  if(Math.abs(score)<.55)return {team:null,strength:'mixed',score};
+  return {team:score>0?m.h:m.a,strength:Math.abs(score)>2.1?'strong':'moderate',score};
+}
+function scriptState(pre,snap,homeP,a,h,m){
+  if(!snap)return'PREGAME';const livePick=homeP>=.5?h:a,under=underlyingRead(m);
+  if(livePick!==pre.pick)return'FLIPPED';
+  const prePickP=pre.pick===h?pre.pHome:1-pre.pHome,livePickP=pre.pick===h?homeP:1-homeP;
+  if(under.team===pre.pick&&livePickP>=prePickP+.04)return'CONFIRMED';
+  if(under.team&&under.team!==pre.pick)return'UNDER PRESSURE';
+  if(livePickP<=prePickP-.05)return'WEAKENING';
   return'HOLDING';
 }
-function evidence16(s,a,h){
-  if(!s?.stats?.rows?.length)return 'Detailed checkpoint statistics were not captured for this point, so the read stays anchored to score, time and the frozen pregame matchup.';
-  const ypp=snapRow16(s,'Yards / play'),ty=snapRow16(s,'Total yards'),pa=snapRow16(s,'Passing yards'),ru=snapRow16(s,'Rushing yards'),to=snapRow16(s,'Turnovers'),td=snapRow16(s,'Third down'),sk=snapRow16(s,'Sacks / yards lost');
+function probabilityCopy(pre,homeP,a,h){
+  const preA=1-pre.pHome,preH=pre.pHome,liveA=1-homeP,liveH=homeP;
+  const dA=(liveA-preA)*100,dH=(liveH-preH)*100;
+  return `${a} moved from ${pct01(preA)} to <b>${pct01(liveA)}</b> (${dA>=0?'+':''}${dA.toFixed(0)} pts), while ${h} moved from ${pct01(preH)} to <b>${pct01(liveH)}</b> (${dH>=0?'+':''}${dH.toFixed(0)} pts).`;
+}
+function metricMeaning(m,s,a,h){
+  const out=[];
+  if(m.ypp&&m.ypp.a!=null&&m.ypp.h!=null){const d=m.ypp.a-m.ypp.h,t=d>0?a:h,mag=Math.abs(d);out.push(`${t} is ahead ${mag.toFixed(1)} yards per play (${m.ypp.rawA} to ${m.ypp.rawH}). ${mag>=1?'That is a meaningful efficiency gap: the scoreboard is being backed by drive-to-drive production, not only field position.':mag>=.5?'That is a developing efficiency edge, but still small enough for one explosive drive to erase.':'The per-play efficiency is close, so the current score is carrying more information than the yardage profile.'}`)}
+  else if(m.total&&m.total.a!=null&&m.total.h!=null){const d=m.total.a-m.total.h,t=d>0?a:h;out.push(`${t} has the total-yard edge ${m.total.rawA}-${m.total.rawH}. Without yards-per-play, treat that mainly as a volume signal rather than proof of better efficiency.`)}
+  if(m.turn&&m.turn.a!=null&&m.turn.h!=null&&m.turn.a!==m.turn.h){const good=m.turn.a<m.turn.h?a:h,bad=good===a?h:a,d=Math.abs(m.turn.a-m.turn.h);out.push(`${good} has the turnover edge by ${d}. ${d>=2?'That is large enough to distort score and win probability beyond the underlying unit performance, so it should not be mistaken for a stable efficiency trend.':'One turnover can explain a possession-sized swing; the stronger confirmation is whether efficiency and third downs point the same way.'}`)}
+  if(m.third&&m.third.a!=null&&m.third.h!=null){const d=(m.third.a-m.third.h)*100,t=d>0?a:h;out.push(`${t} is converting third downs better (${m.third.rawA} vs ${m.third.rawH}). Third-down separation matters because it tells us which offense is sustaining drives rather than living on isolated gains.`)}
+  if(m.sk&&m.sk.a!=null&&m.sk.h!=null&&m.sk.a!==m.sk.h){const protectedTeam=m.sk.a<m.sk.h?a:h,stressed=protectedTeam===a?h:a;out.push(`${stressed} has taken more sacks (${m.sk.rawA} vs ${m.sk.rawH}). That is the clearest live check on the protection-versus-pass-rush matchup because repeated pressure can lower passing efficiency even before turnovers appear.`)}
+  if(m.rush&&m.rush.a!=null&&m.rush.h!=null&&Math.abs(m.rush.a-m.rush.h)>=30){const t=m.rush.a>m.rush.h?a:h;out.push(`${t} owns the rushing-volume edge (${m.rush.rawA} to ${m.rush.rawH}). If ${t} is also leading, that supports a control script; if ${t} is trailing, the run production has not translated into enough scoring value yet.`)}
+  if(m.red&&m.red.a!=null&&m.red.h!=null&&m.red.a!==m.red.h){const t=m.red.a>m.red.h?a:h;out.push(`${t} has been better in the red zone (${m.red.rawA} vs ${m.red.rawH}), which is the finishing layer: it explains why similar yardage can produce a very different scoreline.`)}
+  if(m.pos&&m.pos.a!=null&&m.pos.h!=null&&Math.abs(m.pos.a-m.pos.h)>=180){const t=m.pos.a>m.pos.h?a:h;out.push(`${t} has controlled possession (${m.pos.rawA} to ${m.pos.rawH}). Possession is useful as a workload/drive-volume signal, but it only strengthens the script if efficiency is also favorable.`)}
+  return out;
+}
+function unitCheck(team,opp,w,m,a,h){
+  const rows=unitRows(team,opp,w).slice().sort((x,y)=>Number(y.diff||0)-Number(x.diff||0)),best=rows[0],risk=rows.slice().sort((x,y)=>Number(x.diff||0)-Number(y.diff||0))[0];
+  const actual=(u)=>{if(!u)return'';const lab=String(u.label||'');if(/run/i.test(lab)&&m.rush)return `${team} has ${team===a?m.rush.rawA:m.rush.rawH} rushing yards`;if(/pass game/i.test(lab)&&m.pass)return `${team} has ${team===a?m.pass.rawA:m.pass.rawH} passing yards`;if(/protection/i.test(lab)&&m.sk)return `${team} has allowed ${team===a?m.sk.rawA:m.sk.rawH} sacks/yards lost`;if(/secondary/i.test(lab)&&m.pass)return `${opp} has ${opp===a?m.pass.rawA:m.pass.rawH} passing yards`;return''};
   const bits=[];
-  if(ypp)bits.push(`yards per play: ${a} ${ypp.away}, ${h} ${ypp.home}`);
-  else if(ty)bits.push(`total yards: ${a} ${ty.away}, ${h} ${ty.home}`);
-  if(pa)bits.push(`passing: ${a} ${pa.away}, ${h} ${pa.home}`);
-  if(ru)bits.push(`rushing: ${a} ${ru.away}, ${h} ${ru.home}`);
-  if(to)bits.push(`turnovers: ${a} ${to.away}, ${h} ${to.home}`);
-  if(td)bits.push(`third down: ${a} ${td.away}, ${h} ${td.home}`);
-  if(sk)bits.push(`sacks/yards lost: ${a} ${sk.away}, ${h} ${sk.home}`);
-  return bits.length?`The checkpoint evidence shows ${bits.slice(0,5).join('; ')}.`:'The score/time state is available, but the detailed team-stat split is still sparse at this checkpoint.';
+  if(best)bits.push(`<b>${esc(team)} advantage — ${esc(best.label)}:</b> ${esc(best.detail)} (${esc(String(best.read||'').toLowerCase())}). ${actual(best)?`At this checkpoint, ${esc(actual(best))}.`:''}`);
+  if(risk&&Number(risk.diff)<0)bits.push(`<b>${esc(team)} risk — ${esc(risk.label)}:</b> ${esc(risk.detail)} (${esc(String(risk.read||'').toLowerCase())}). ${actual(risk)?`Live evidence: ${esc(actual(risk))}.`:''}`);
+  return bits;
 }
-function alignment16(s,a,h,pre){
-  if(!s||s.label==='PRE')return'';
-  const ypp=snapRow16(s,'Yards / play'),to=snapRow16(s,'Turnovers'),ru=snapRow16(s,'Rushing yards');
-  const notes=[];
-  if(ypp){const av=num16(ypp.away),hv=num16(ypp.home);if(av!=null&&hv!=null&&Math.abs(av-hv)>=.7)notes.push(`${av>hv?a:h} owns the cleaner per-play efficiency by ${Math.abs(av-hv).toFixed(1)} yards per play`)}
-  if(to){const av=num16(to.away),hv=num16(to.home);if(av!=null&&hv!=null&&av!==hv)notes.push(`${av<hv?a:h} has the turnover advantage ${Math.min(av,hv)}-${Math.max(av,hv)}`)}
-  if(ru){const av=num16(ru.away),hv=num16(ru.home);if(av!=null&&hv!=null&&Math.abs(av-hv)>=35)notes.push(`${av>hv?a:h} has a ${Math.abs(av-hv).toFixed(0)}-yard rushing edge`)}
-  if(!notes.length)return `No single box-score category has separated enough yet to call the original matchup thesis confirmed or broken on its own.`;
-  return `${notes.join('; ')}. Those are the strongest current clues about whether the frozen pregame script is actually showing up on the field.`;
+function playerScoringCopy(s,a,h){
+  if(!s)return'';const al=s.stats?.awayLeaders||[],hl=s.stats?.homeLeaders||[],plays=s.stats?.plays||[];
+  const scoring=plays.filter(x=>/touchdown|field goal|extra point|two-point|2-point|safety|yd pass|yd run|yd rush/i.test(String(x))).slice(-4),leads=[];
+  if(al.length)leads.push(`${a}: ${al.slice(0,2).join(' | ')}`);if(hl.length)leads.push(`${h}: ${hl.slice(0,2).join(' | ')}`);
+  let out='';if(leads.length)out+=`The main player-production lines preserved at this checkpoint are ${leads.join(' · ')}.`;
+  if(scoring.length)out+=`${out?' ':''}The scoring/high-leverage log includes: ${scoring.join(' | ')}.`;
+  else if(plays.length)out+=`${out?' ':''}The latest high-leverage plays are: ${plays.slice(-3).join(' | ')}.`;
+  return out;
 }
-function liveStatsHtml16(s,a,h){
-  if(!s||s.label==='PRE')return'';
-  const rows=s.stats?.rows||[];
-  const table=rows.length?`<table class="rc4-live-table"><thead><tr><th>${esc16(a)}</th><th>GAME STAT</th><th>${esc16(h)}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc16(r.away)}</td><td class="metric">${esc16(r.label)}</td><td>${esc16(r.home)}</td></tr>`).join('')}</tbody></table>`:`<div class="model-v2-historical-note">Detailed team statistics are not available for this checkpoint.</div>`;
-  const al=s.stats?.awayLeaders||[],hl=s.stats?.homeLeaders||[],plays=s.stats?.plays||[];
-  const leaders=(al.length||hl.length)?`<div class="rc5-player-lines"><b>KEY PLAYER PRODUCTION</b>${al.map(x=>`<div class="rc5-player-line"><span class="teamtag">${esc16(a)}</span>${esc16(x)}</div>`).join('')}${hl.map(x=>`<div class="rc5-player-line"><span class="teamtag">${esc16(h)}</span>${esc16(x)}</div>`).join('')}</div>`:'';
-  const key=plays.length?`<div class="rc5-key-plays"><b>KEY PLAYS</b>${plays.slice(-6).map(x=>`<div class="rc5-play-line">${esc16(x)}</div>`).join('')}</div>`:'';
-  return `<div class="rc4-live-stat-title">${esc16(s.label)} SNAPSHOT · ${esc16(a)} ${Number(s.awayScore||0)}-${esc16(h)} ${Number(s.homeScore||0)}${s.capturedAt?` · ${esc16(fmt16(s.capturedAt))}`:''}</div>${table}${leaders}${key}`;
+function nextInflection(pre,snap,homeP,a,h,m){
+  if(!snap)return'';const under=underlyingRead(m),leader=Number(snap.awayScore)>Number(snap.homeScore)?a:Number(snap.homeScore)>Number(snap.awayScore)?h:null,livePick=homeP>=.5?h:a;
+  if(leader&&under.team&&leader!==under.team)return `${leader} has the scoreboard edge, but the underlying efficiency/possession profile currently leans ${under.team}. That makes the lead more fragile than the score alone suggests; the next clean drive matters more than simply protecting the current margin.`;
+  if(leader&&under.team===leader&&leader!==pre.pick)return `${leader}'s upset path is becoming more sustainable because the lead is being supported by the underlying game profile, not only the scoreboard. ${pre.pick} needs a real efficiency or protection reversal—not merely one favorable bounce—to restore the pregame script.`;
+  if(livePick===pre.pick&&under.team===pre.pick)return `${pre.pick} is getting both probability and underlying evidence support. The next threat to that script is a turnover, explosive scoring play or protection breakdown that changes field position faster than the efficiency trend can respond.`;
+  if(livePick===pre.pick&&under.team&&under.team!==pre.pick)return `${pre.pick} still owns the live probability edge, but ${under.team} is winning more of the repeatable box-score indicators. That is the warning state: the favorite needs the next few possessions to improve efficiency, protection or third-down sustainability.`;
+  return `The game is still in a mixed state. The next inflection is most likely to come from third-down sustainability, protection pressure, a turnover, or an explosive scoring play rather than raw yardage alone.`;
 }
-function renderStats16(card,label){
-  const box=card?.querySelector('.rc4-checkpoint-stats');if(!box)return;
-  const a=card.dataset.away,h=card.dataset.home,w=Number(card.dataset.week),s=snaps16(w,a,h),snap=s[label];
-  if(label==='PRE'||!snap){
-    try{box.innerHTML=w<=Number(window.MODEL_CURRENT_WEEK||0)?window.modelPregameStatsTable(a,h,w):window.model2026StatsTable(a,h)}catch(_){box.innerHTML='<div class="model-v2-historical-note">Pregame team statistics are unavailable.</div>'}
-  }else box.innerHTML=liveStatsHtml16(snap,a,h);
+function pregameNarrative(pre,s,a,h,w){
+  const A=teamSnapshot(a,w),H=teamSnapshot(h,w),edges=topUnitEdges(a,h,w),pick=pre.pick,opp=pick===a?h:a,pRows=unitRows(pick,opp,w).slice().sort((x,y)=>Number(y.diff||0)-Number(x.diff||0)),oRows=unitRows(opp,pick,w).slice().sort((x,y)=>Number(y.diff||0)-Number(x.diff||0)),best=pRows[0],risk=pRows.slice().sort((x,y)=>Number(x.diff||0)-Number(y.diff||0))[0],counter=oRows[0],news=[...(s?.PRE?.awayNews||[]),...(s?.PRE?.homeNews||[])].slice(0,3);
+  const context=[];if(A&&H){context.push(`${a} enters with Context ${Number.isFinite(Number(A.ctx))?'#'+A.ctx:'—'} and Performance ${Number.isFinite(Number(A.perf))?'#'+A.perf:'—'}; ${h} is Context ${Number.isFinite(Number(H.ctx))?'#'+H.ctx:'—'} and Performance ${Number.isFinite(Number(H.perf))?'#'+H.perf:'—'}.`)}
+  let interaction=`The ${pick} lean is matchup-specific rather than a simple team-rank comparison.`;
+  if(best)interaction+=` The cleanest ${pick} edge is ${best.label.toLowerCase()} (${best.detail}, ${String(best.read||'').toLowerCase()}).`;
+  if(risk&&Number(risk.diff)<0)interaction+=` The main structural warning is ${risk.label.toLowerCase()} (${risk.detail}).`;
+  if(counter&&counter.team!==pick)interaction+=` ${opp}'s best upset lever is ${counter.label.toLowerCase()} (${counter.detail}).`;
+  const top=edges.slice(0,3).map(x=>`${x.team} ${String(x.label).toLowerCase()} (${x.detail})`).join('; ');
+  return `<div class="rc17-analysis-section"><h4>Pregame thesis</h4><p>${context.map(esc).join(' ')} ${esc(interaction)}</p>${top?`<p><b>Largest unit interactions:</b> ${esc(top)}.</p>`:''}</div>
+    <div class="rc17-analysis-section"><h4>Expected game script</h4><p>${esc(pick)} is most likely to validate the pregame probability by keeping its best unit advantage on schedule—winning early downs, avoiding obvious passing situations and turning its favorable matchup into repeatable drive efficiency. ${esc(opp)}'s upset path is to attack the favorite's weakest unit interaction, force third-and-long or protection stress, and create short-field scoring chances.</p></div>
+    <div class="rc17-analysis-section"><h4>Probability + score lens</h4><p>${esc(pick)} is the frozen pregame pick at <b>${esc(pct01(pre.confidence))}</b>${pre.reliability?.label?` with <b>${esc(pre.reliability.label)}</b> reliability`:''}${pre.score?`. Frozen score lens: <b>${esc(a)} ${esc(pre.score.away)}–${esc(h)} ${esc(pre.score.home)}</b>`:''}. This PRE value is the baseline that later checkpoints are graded against; live evidence can move the game probability without rewriting it.</p></div>
+    ${news.length?`<div class="rc17-analysis-section"><h4>Availability / roster context at freeze</h4><p>${esc(news.map(x=>x.headline).join(' · '))}</p></div>`:''}`;
 }
-function reportHtml16(card,label){
-  const a=card.dataset.away,h=card.dataset.home,w=Number(card.dataset.week),s=snaps16(w,a,h),pre=preForecast16(w,a,h,s),snap=label==='PRE'?null:s[label],state=stateLabel16(pre,snap),pressure=unitPressure16(a,h,w,pre.pick),rel=pre.reliability?.label||'—',scoreLens=pre.score?`${a} ${pre.score.away}–${h} ${pre.score.home}`:'—';
-  const livePick=snap?.livePick||pre.pick,livePct=snap?pct16(snap.livePct):pct16(pre.confidence),score=snap?`${a} ${Number(snap.awayScore||0)}–${h} ${Number(snap.homeScore||0)}`:scoreLens;
-  let title,body='';
-  if(!snap){
-    title=`${a} @ ${h}: ${pre.pick} ${pct16(pre.confidence)} pregame lean`;
-    const best=pressure?.best,risk=pressure?.risk;
-    body=`<p><b>Pregame read.</b> ${pre.pick} enters as the model lean at ${pct16(pre.confidence)} with ${esc16(rel)} reliability${pre.score?`, with a score lens of ${esc16(scoreLens)}`:''}. This is the reference point for every later checkpoint.</p>`;
-    if(best)body+=`<p><b>Primary matchup pressure.</b> ${esc16(pre.pick)}'s clearest measured edge is ${esc16(String(best.label||'').toLowerCase())}${best.detail?` — ${esc16(best.detail)}`:''}. ${risk&&Number(risk.diff)<0?`The strongest counter-pressure is ${esc16(String(risk.label||'').toLowerCase())}${risk.detail?` — ${esc16(risk.detail)}`:''}.`:''}</p>`;
-    body+=`<p><b>What to watch.</b> Protection, explosive passing, rushing efficiency, turnovers and third-down success are the fastest signals for whether that pregame edge is holding once the game begins.</p>`;
-  }else{
-    title=`${a} @ ${h}: ${livePick} ${livePct} at ${label}`;
-    const delta=(Number(snap.livePct||.5)-Number(pre.confidence||.5))*100;
-    const shift=snap.livePick===pre.pick?`${delta>=0?'+':''}${delta.toFixed(0)} points of confidence versus PRE`:`the live lean has crossed to ${snap.livePick}`;
-    body=`<p class="rc4-live-read"><b>Checkpoint read.</b> At ${esc16(label)}, the score is ${esc16(score)}. The live lean is ${esc16(livePick)} at ${esc16(livePct)}. The pregame call was ${esc16(pre.pick)} at ${esc16(pct16(pre.confidence))}; ${esc16(shift)}. The game script is <b>${esc16(state.toLowerCase())}</b>.</p>`;
-    body+=`<p><b>What is driving it.</b> ${esc16(evidence16(snap,a,h))} ${esc16(alignment16(snap,a,h,pre))}</p>`;
-    if(pressure?.best)body+=`<p><b>Matchup pressure.</b> The pregame edge to keep testing is ${esc16(String(pressure.best.label||'').toLowerCase())}${pressure.best.detail?` (${esc16(pressure.best.detail)})`:''}. ${pressure.risk&&Number(pressure.risk.diff)<0?`The counter-path remains ${esc16(String(pressure.risk.label||'').toLowerCase())}${pressure.risk.detail?` (${esc16(pressure.risk.detail)})`:''}.`:''}</p>`;
-    if(label==='FINAL'){
-      const winner=Number(snap.awayScore)>Number(snap.homeScore)?a:h,held=winner===pre.pick;
-      body+=`<p><b>Final audit.</b> ${esc16(winner)} won ${esc16(score)}. The frozen winner call ${held?'held':'missed'}, so the useful review is whether the decisive edge came from a repeatable unit advantage or from high-variance events such as turnovers, explosive plays or late-possession execution.</p>`;
-    }
-  }
-  return `<div class="rc16-pulse-report"><div class="model-report-head"><div class="model-report-kicker">MATCHUP PULSE · ${esc16(APP)} <span class="rc16-checkpoint-chip">${esc16(label)}</span></div><div class="model-report-title">${esc16(title)}</div></div><div class="model-report-metrics"><div class="model-report-metric"><b>PRE PICK</b><strong>${esc16(pre.pick||'—')}</strong></div><div class="model-report-metric"><b>${snap?'CHECKPOINT':'CALIBRATED'}</b><strong>${esc16(snap?livePct:pct16(pre.confidence))}</strong></div><div class="model-report-metric"><b>${snap?'SCRIPT':'RELIABILITY'}</b><strong>${esc16(snap?state:rel)}</strong></div><div class="model-report-metric"><b>${snap?'SCORE':'SCORE LENS'}</b><strong>${esc16(score)}</strong></div></div><div class="rc4-report-prose">${body}</div></div>`;
+function liveNarrative(pre,snap,homeP,a,h,w,label){
+  const m=metricPack(snap,a,h),under=underlyingRead(m),state=scriptState(pre,snap,homeP,a,h,m),meaning=metricMeaning(m,snap,a,h),score=`${a} ${Number(snap.awayScore||0)}–${h} ${Number(snap.homeScore||0)}`,clock=fmtClock(snap),pcheck=probabilityCopy(pre,homeP,a,h),pick=pre.pick,opp=pick===a?h:a,unit=[...unitCheck(pick,opp,w,m,a,h),...unitCheck(opp,pick,w,m,a,h).slice(0,1)],player=playerScoringCopy(snap,a,h),next=nextInflection(pre,snap,homeP,a,h,m);
+  const scoreboardLeader=Number(snap.awayScore)>Number(snap.homeScore)?a:Number(snap.homeScore)>Number(snap.awayScore)?h:'neither team';
+  const alignment=under.team?`${under.team} has the ${under.strength} underlying box-score lean at this checkpoint.`:'The repeatable box-score indicators are still mixed.';
+  const final=label==='FINAL';
+  let finalAudit='';if(final){const winner=Number(snap.awayScore)>Number(snap.homeScore)?a:h,correct=winner===pre.pick;finalAudit=`<div class="rc17-analysis-section"><h4>Final audit</h4><p>${esc(winner)} won ${esc(score)}. The frozen ${esc(pre.pick)} winner call <b>${correct?'held':'missed'}</b>. The audit should weight repeatable efficiency, protection and down-to-down success more heavily than isolated turnovers or one-off explosive plays when deciding what the next weekly model update should learn.</p></div>`}
+  return `<div class="rc17-analysis-section"><h4>Score + game probability</h4><p>At <b>${esc(clock||label)}</b>, the score is <b>${esc(score)}</b>; ${esc(scoreboardLeader)} has the scoreboard edge. ${pcheck} The current script state is <span class="rc17-script-tag">${esc(state)}</span>. ${esc(alignment)}</p></div>
+    <div class="rc17-analysis-section"><h4>What the left-side values mean</h4>${meaning.length?meaning.map(x=>`<p>${esc(x)}</p>`).join(''):`<p>The checkpoint has not preserved enough team-stat separation yet to call a stable efficiency trend. For now, score/time and the frozen matchup thesis should carry more weight than a sparse early box score.</p>`}</div>
+    <div class="rc17-analysis-section"><h4>Pregame unit thesis vs what is happening</h4>${unit.length?unit.map(x=>`<p>${x}</p>`).join(''):`<p>The frozen unit interaction sheet is not available for this matchup, so this checkpoint is being read from score, probability and preserved game evidence only.</p>`}</div>
+    <div class="rc17-analysis-section"><h4>Players, scorers + high-leverage events</h4><p>${player?esc(player):'The preserved checkpoint does not yet contain a reliable player/scoring-event line. No scorer is inferred when the feed did not capture one.'}</p></div>
+    <div class="rc17-analysis-section"><h4>Trend forming / next inflection</h4><p>${esc(next)}</p></div>${finalAudit}`;
 }
-function installReportGuard16(card){
-  const pane=card?.querySelector('.model-match-report-pane');if(!pane||pane.dataset.rc16guard)return;
-  pane.dataset.rc16guard='1';
-  const obs=new MutationObserver(()=>{
-    const r=pane.querySelector('.rc4-report-content');
-    if(!r)return;
-    if(!r.querySelector('.rc16-pulse-report'))setTimeout(()=>renderReport16(card,card.dataset.activeCheckpoint||'PRE',false),0);
-  });
-  obs.observe(pane,{childList:true,subtree:true});
+function reportHtml(card,label){
+  const a=card.dataset.away,h=card.dataset.home,w=Number(card.dataset.week),s=snaps(w,a,h),pre=preForecast(w,a,h,s),snap=label==='PRE'?null:s[label]||null,homeP=checkpointHomeProb(w,a,h,label,snap,pre),state=snap?scriptState(pre,snap,homeP,a,h,metricPack(snap,a,h)):'PREGAME';
+  const awayP=1-homeP,score=snap?`${a} ${Number(snap.awayScore||0)}–${h} ${Number(snap.homeScore||0)}`:pre.score?`${a} ${pre.score.away}–${h} ${pre.score.home}`:'—';
+  const title=snap?`${a} @ ${h} · ${label} game-state interpretation`:`${a} @ ${h} · frozen pregame matchup thesis`;
+  const body=snap?liveNarrative(pre,snap,homeP,a,h,w,label):pregameNarrative(pre,s,a,h,w);
+  return `<div class="rc16-pulse-report rc17-pulse-report"><div class="model-report-head"><div class="model-report-kicker">MATCHUP PULSE · ${esc(APP)} <span class="rc17-checkpoint-chip">${esc(label)}</span></div><div class="model-report-title">${esc(title)}</div></div><div class="model-report-metrics">${snap?`<div class="model-report-metric"><b>${esc(a)} WIN</b><strong>${esc(pct01(awayP))}</strong></div><div class="model-report-metric"><b>${esc(h)} WIN</b><strong>${esc(pct01(homeP))}</strong></div><div class="model-report-metric"><b>SCRIPT</b><strong>${esc(state)}</strong></div><div class="model-report-metric"><b>SCORE</b><strong>${esc(score)}</strong></div>`:`<div class="model-report-metric"><b>MODEL PICK</b><strong>${esc(pre.pick||'—')}</strong></div><div class="model-report-metric"><b>CALIBRATED</b><strong>${esc(pct01(pre.confidence))}</strong></div><div class="model-report-metric"><b>RELIABILITY</b><strong>${esc(pre.reliability?.label||'—')}</strong></div><div class="model-report-metric"><b>SCORE LENS</b><strong>${esc(score)}</strong></div>`}</div><div class="rc4-report-prose">${body}</div></div>`;
 }
-function renderReport16(card,label,replace=true){
-  if(!card)return;
-  const pane=card.querySelector('.model-match-report-pane');if(!pane)return;
-  let report=pane.querySelector('.rc4-report-content');
-  if(!report){report=document.createElement('div');report.className='rc4-report-content';pane.appendChild(report)}
-  else if(replace){const fresh=document.createElement('div');fresh.className='rc4-report-content';report.replaceWith(fresh);report=fresh}
-  report.innerHTML=reportHtml16(card,label);
-  installReportGuard16(card);
+function renderStats(card,label){
+  const box=card?.querySelector('.rc4-checkpoint-stats');if(!box)return;const a=card.dataset.away,h=card.dataset.home,w=Number(card.dataset.week),s=snaps(w,a,h),snap=s[label];
+  if(label==='PRE'||!snap){try{box.innerHTML=w<=Number(typeof MODEL_CURRENT_WEEK!=='undefined'?MODEL_CURRENT_WEEK:0)?window.modelPregameStatsTable(a,h,w):window.model2026StatsTable(a,h)}catch(_){box.innerHTML='<div class="model-v2-historical-note">Pregame team statistics are unavailable.</div>'};return}
+  const rows=snap.stats?.rows||[],table=rows.length?`<table class="rc4-live-table"><thead><tr><th>${esc(a)}</th><th>GAME STAT</th><th>${esc(h)}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.away)}</td><td class="metric">${esc(r.label)}</td><td>${esc(r.home)}</td></tr>`).join('')}</tbody></table>`:`<div class="model-v2-historical-note">Detailed team statistics are not available for this checkpoint.</div>`;
+  const al=snap.stats?.awayLeaders||[],hl=snap.stats?.homeLeaders||[],plays=snap.stats?.plays||[],leaders=(al.length||hl.length)?`<div class="rc5-player-lines"><b>KEY PLAYER PRODUCTION</b>${al.map(x=>`<div class="rc5-player-line"><span class="teamtag">${esc(a)}</span>${esc(x)}</div>`).join('')}${hl.map(x=>`<div class="rc5-player-line"><span class="teamtag">${esc(h)}</span>${esc(x)}</div>`).join('')}</div>`:'',key=plays.length?`<div class="rc5-key-plays"><b>KEY / SCORING PLAYS</b>${plays.slice(-6).map(x=>`<div class="rc5-play-line">${esc(x)}</div>`).join('')}</div>`:'';
+  box.innerHTML=`<div class="rc4-live-stat-title">${esc(label)} SNAPSHOT · ${esc(a)} ${Number(snap.awayScore||0)}-${esc(h)} ${Number(snap.homeScore||0)}${fmtClock(snap)?` · ${esc(fmtClock(snap))}`:''}</div>${table}${leaders}${key}`;
 }
-function active16(card){
-  if(card.dataset.activeCheckpoint)return card.dataset.activeCheckpoint;
-  const s=snaps16(Number(card.dataset.week),card.dataset.away,card.dataset.home);
-  return s.FINAL?'FINAL':s.Q3?'Q3':s.HALF?'HALF':s.Q1?'Q1':'PRE';
+function ensureLayout(card){
+  if(!card?.classList.contains('open'))return;const shell=card.querySelector('.model-match-detail-shell');if(!shell)return;
+  const left=shell.querySelector('.model-match-data-pane'),confidence=shell.querySelector('.rc10-confidence-section'),checkpoint=shell.querySelector('.rc10-checkpoint-section'),evidence=shell.querySelector('.rc10-evidence-section'),report=shell.querySelector('.model-match-report-pane');
+  if(confidence){confidence.classList.add('rc17-confidence-wide');if(confidence.parentElement!==shell)shell.prepend(confidence)}
+  if(checkpoint){checkpoint.classList.add('rc17-checkpoint-rail');checkpoint.open=true;if(checkpoint.parentElement!==shell)shell.insertBefore(checkpoint,report||null);const sum=checkpoint.querySelector(':scope>summary');if(sum)sum.textContent='CHECKPOINT';const body=checkpoint.querySelector('.rc10-left-body');if(body&&!body.querySelector('.rc17-flow-label'))body.insertAdjacentHTML('afterbegin','<div class="rc17-flow-label">EVIDENCE<span>↔</span>PULSE</div>')}
+  if(evidence){evidence.classList.add('rc16-evidence-wide');if(evidence.parentElement!==shell)shell.insertBefore(evidence,checkpoint||report||null)}
+  if(left)left.style.display='none';
+  if(report)report.style.minWidth='0';
 }
-function moveEvidence16(card){
-  const shell=card?.querySelector('.model-match-detail-shell'),left=shell?.querySelector('.model-match-data-pane');if(!shell||!left)return;
-  const evidence=left.querySelector(':scope > .rc10-evidence-section');
-  if(evidence){evidence.classList.add('rc16-evidence-wide');shell.appendChild(evidence)}
-}
-function cleanMeta16(card){
-  card?.querySelectorAll('.model-report-deck').forEach(x=>x.remove());
-  card?.querySelectorAll('.rc16-evidence-wide .rc11-conf-note').forEach(x=>x.remove());
-  card?.querySelectorAll('.rc11-confidence-box + .rc11-conf-actions + .rc11-conf-note').forEach(x=>x.remove());
-}
-function stabilizeCard16(card){
-  if(!card?.classList.contains('open'))return;
-  moveEvidence16(card);
-  const label=active16(card);card.dataset.activeCheckpoint=label;
-  card.querySelectorAll('.rc10-checkpoint-row .rc4-checkpoint-btn').forEach(x=>x.classList.toggle('active',x.textContent.trim()===label));
-  renderStats16(card,label);
-  renderReport16(card,label,true);
-  cleanMeta16(card);
-}
-function stabilizeAll16(){document.querySelectorAll('.model-match-card.open').forEach(stabilizeCard16)}
-window.modelPulseSelectCheckpoint=function(btn,label){
-  const card=btn?.closest('.model-match-card');if(!card)return;
-  card.dataset.activeCheckpoint=label;
-  card.querySelectorAll('.rc10-checkpoint-row .rc4-checkpoint-btn').forEach(x=>x.classList.toggle('active',x.textContent.trim()===label));
-  renderStats16(card,label);
-  renderReport16(card,label,true);
-  cleanMeta16(card);
-};
-const toggle15=window.modelToggleMatchCard;
-window.modelToggleMatchCard=function(el){
-  let r;try{r=toggle15?.(el)}catch(e){console.warn('RC16 legacy toggle',e)}
-  const card=el?.closest('.model-match-card');setTimeout(()=>stabilizeCard16(card),0);setTimeout(()=>stabilizeCard16(card),250);return r;
-};
-const load15=window.predLoadWeek;
-window.predLoadWeek=function(silent=false){
-  let p;try{p=Promise.resolve(load15?.(silent))}catch(e){p=Promise.resolve()}
-  [80,300,900,1800].forEach(ms=>setTimeout(stabilizeAll16,ms));
-  return Promise.race([p,new Promise(res=>setTimeout(res,2200))]).then(x=>{stabilizeAll16();return x});
-};
-const list=document.getElementById('predMatchList');
-if(list&&typeof MutationObserver!=='undefined'){
-  let t=null;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(stabilizeAll16,40)}).observe(list,{childList:true,subtree:true});
-}
-try{document.title='Fantasy HQ V2.0-RC16'}catch(_){ }
-setTimeout(stabilizeAll16,150);setTimeout(stabilizeAll16,700);setTimeout(stabilizeAll16,1600);
+function activeLabel(card){if(card.dataset.activeCheckpoint)return card.dataset.activeCheckpoint;const s=snaps(Number(card.dataset.week),card.dataset.away,card.dataset.home);return s.FINAL?'FINAL':s.Q3?'Q3':s.HALF?'HALF':s.Q1?'Q1':'PRE'}
+function installGuard(card){const pane=card?.querySelector('.model-match-report-pane');if(!pane||pane.dataset.rc17guard)return;pane.dataset.rc17guard='1';let busy=false;new MutationObserver(()=>{if(busy)return;const r=pane.querySelector('.rc4-report-content');if(r&&!r.querySelector('.rc17-pulse-report')){busy=true;setTimeout(()=>{renderReport(card,activeLabel(card));busy=false},0)}}).observe(pane,{childList:true,subtree:true})}
+function renderReport(card,label){const pane=card?.querySelector('.model-match-report-pane');if(!pane)return;let r=pane.querySelector('.rc4-report-content');if(!r){r=document.createElement('div');r.className='rc4-report-content';pane.appendChild(r)}r.innerHTML=reportHtml(card,label);installGuard(card)}
+function stabilize(card){if(!card?.classList.contains('open'))return;ensureLayout(card);const label=activeLabel(card);card.dataset.activeCheckpoint=label;card.querySelectorAll('.rc10-checkpoint-row .rc4-checkpoint-btn').forEach(x=>x.classList.toggle('active',x.textContent.trim()===label));renderStats(card,label);renderReport(card,label)}
+function stabilizeAll(){document.querySelectorAll('.model-match-card.open').forEach(stabilize)}
+window.modelPulseSelectCheckpoint=function(btn,label){const card=btn?.closest('.model-match-card');if(!card)return;card.dataset.activeCheckpoint=label;card.querySelectorAll('.rc10-checkpoint-row .rc4-checkpoint-btn').forEach(x=>x.classList.toggle('active',x.textContent.trim()===label));renderStats(card,label);renderReport(card,label)};
+const oldToggle=window.modelToggleMatchCard;window.modelToggleMatchCard=function(el){let r;try{r=oldToggle?.(el)}catch(e){console.warn('RC17 legacy toggle',e)}const card=el?.closest('.model-match-card');[0,180,650,1400].forEach(ms=>setTimeout(()=>stabilize(card),ms));return r};
+const oldLoad=window.predLoadWeek;window.predLoadWeek=function(silent=false){let p;try{p=Promise.resolve(oldLoad?.(silent))}catch(_){p=Promise.resolve()}[80,300,900,1800].forEach(ms=>setTimeout(stabilizeAll,ms));return Promise.race([p,new Promise(res=>setTimeout(res,2200))]).then(x=>{stabilizeAll();return x})};
+const list=document.getElementById('predMatchList');if(list&&typeof MutationObserver!=='undefined'){let t=null;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(()=>{document.querySelectorAll('.model-match-card.open').forEach(c=>{ensureLayout(c);const label=activeLabel(c);const r=c.querySelector('.rc4-report-content');if(!r?.querySelector('.rc17-pulse-report'))renderReport(c,label)})},45)}).observe(list,{childList:true,subtree:true})}
+try{document.title='Fantasy HQ V2.0-RC17'}catch(_){ }
+setTimeout(stabilizeAll,120);setTimeout(stabilizeAll,650);setTimeout(stabilizeAll,1500);
 })();
 </script>
 
