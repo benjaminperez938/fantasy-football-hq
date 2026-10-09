@@ -7307,5 +7307,82 @@ setTimeout(async()=>{const w=Number(document.getElementById('predWeekSel')?.valu
 })();
 </script>
 
+
+<style id="modelV2RC13Styles">
+/* RC13: strict single-y-per-x rendering for each team's win-probability series. */
+.rc13-conf-wrap{overflow-x:auto;overscroll-behavior-inline:contain;padding:2px 0 5px}
+.rc13-conf-svg{display:block;width:100%;min-width:980px;height:auto}
+.rc13-conf-loading{padding:28px 12px;text-align:center;color:var(--muted);font-size:12px;font-weight:750}
+@media(max-width:700px){.rc13-conf-svg{min-width:940px}}
+</style>
+<script id="modelV2RC13Patch">
+(function(){
+'use strict';
+const APP='V2.0-RC13', TZ='America/Los_Angeles', HIST='fhq_confidence_history_rc9';
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(_){return d}};
+const gameKey=(w,a,h)=>`${Number(w)}:${a}:${h}`;
+function hist(w,a,h){return load(HIST,{})[gameKey(w,a,h)]||[]}
+function laParts(ms){const ps=new Intl.DateTimeFormat('en-US',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date(ms)).reduce((o,p)=>(o[p.type]=p.value,o),{});return {date:`${ps.year}-${ps.month}-${ps.day}`,weekday:ps.weekday,h:Number(ps.hour)%24,m:Number(ps.minute)}}
+function pseudoDate(s){const [y,m,d]=s.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
+function fmtDate(d){return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`}
+function laMs(date,h=0,m=0){const [Y,M,D]=date.split('-').map(Number),want=Date.UTC(Y,M-1,D,h,m);let guess=want;for(let i=0;i<2;i++){const p=laParts(guess),[y,mo,da]=p.date.split('-').map(Number),got=Date.UTC(y,mo-1,da,p.h,p.m);guess+=want-got}return guess}
+const weekFirst={};
+async function cacheWeek(w){w=Number(w);if(!w)return;try{const r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=2026`,{cache:'no-store'}),j=await r.json();let first=Infinity;for(const ev of (j.events||[])){const c=ev.competitions?.[0],H=c?.competitors?.find(x=>x.homeAway==='home'),A=c?.competitors?.find(x=>x.homeAway==='away'),kick=Date.parse(ev.date);if(!H||!A||!Number.isFinite(kick))continue;first=Math.min(first,kick);const a=A.team?.abbreviation,h=H.team?.abbreviation;if(!a||!h)continue;try{MODEL_MATCHUP_CACHE[`${a}-${w}`]={opp:h,site:'@',date:ev.date,eventId:ev.id};MODEL_MATCHUP_CACHE[`${h}-${w}`]={opp:a,site:'vs',date:ev.date,eventId:ev.id}}catch(_){}}if(Number.isFinite(first))weekFirst[w]=first}catch(_){}}
+function kickoff(w,a,h){let g=null;try{g=MODEL_MATCHUP_CACHE?.[`${a}-${w}`]||MODEL_MATCHUP_CACHE?.[`${h}-${w}`]}catch(_){ }const ms=g?.date?Date.parse(g.date):NaN;return Number.isFinite(ms)?ms:null}
+function slots(w,kick){const kp=laParts(kick),kd=pseudoDate(kp.date),dow=kd.getUTCDay(),mon=new Date(kd.getTime()-((dow+6)%7)*86400000),out=[];for(let d=new Date(mon);d<=kd;d=new Date(d.getTime()+86400000)){const ds=fmtDate(d),wd=['SUN','MON','TUE','WED','THU','FRI','SAT'][d.getUTCDay()];out.push({id:ds+'-mid',t:laMs(ds),label:wd+' 12A',kind:'pre'})}let first=weekFirst[w];if(!Number.isFinite(first)){try{const ds=[];for(const k of Object.keys(MODEL_MATCHUP_CACHE||{})){if(!k.endsWith('-'+w))continue;const t=Date.parse(MODEL_MATCHUP_CACHE[k]?.date||'');if(Number.isFinite(t))ds.push(t)}if(ds.length)first=Math.min(...ds)}catch(_){}}if(Number.isFinite(first)){const fd=pseudoDate(laParts(first).date),prev=new Date(fd.getTime()-86400000),date=fmtDate(prev),wd=['SUN','MON','TUE','WED','THU','FRI','SAT'][prev.getUTCDay()];out.push({id:'freeze',t:laMs(date,12),label:wd+' 12P',kind:'pre',freeze:true})}out.push({id:'pre10',t:kick-10*60000,label:'PRE -10',kind:'pre',pre:true});out.sort((a,b)=>a.t-b.t);out.push({id:'q1',label:'Q1',kind:'game',g:.25},{id:'half',label:'HALF',kind:'game',g:.5},{id:'q3',label:'Q3',kind:'game',g:.75},{id:'final',label:'FINAL',kind:'game',g:1});return out}
+function gameProgress(q,kick){const lab=String(q.label||'').toUpperCase(),per=Number(q.period||q.meta?.period||0),clock=String(q.clock||q.meta?.clock||'');
+  // Prefer actual game clock whenever it exists. This prevents a whole quarter of
+  // live samples from snapping onto the Q1/HALF/Q3 guide line.
+  if(per>=1){const m=clock.match(/(\d+):(\d+)/);if(m){const left=Number(m[1])+Number(m[2])/60;let elapsed=(Math.max(1,per)-1)*15+(15-left);if(per>4)elapsed=60;return clamp(elapsed/60,0,1)}}
+  if(lab.includes('FINAL'))return 1;
+  if(lab.includes('Q3'))return .75;
+  if(lab.includes('HALF'))return .5;
+  if(lab==='Q1'||lab.includes(' Q1'))return .25;
+  return null;
+}
+function prepare(raw,kick,xPre,xGame){const rows=(raw||[]).filter(q=>Number.isFinite(Number(q?.p))&&Number.isFinite(Number(q?.t))&&!/^START$/i.test(String(q.label||''))).sort((a,b)=>a.t-b.t),cand=[];
+  for(const q0 of rows){const q={...q0},lab=String(q.label||'').toUpperCase(),per=Number(q.period||q.meta?.period||0);
+    if(q.t<kick){cand.push({...q,x:xPre(q.t),priority:/(PRE|FREEZE|MIDNIGHT|12P|CURRENT)/.test(lab)?3:1});continue}
+    // Old RC9/RC10 CURRENT READ points captured after kickoff had no game clock.
+    if(per===0&&!/(PRE|Q1|HALF|Q3|FINAL|LIVE)/.test(lab))continue;
+    const g=gameProgress(q,kick);
+    if(g==null)continue;
+    cand.push({...q,g,x:xGame(g),priority:/(PRE|Q1|HALF|Q3|FINAL)/.test(lab)?4:2});
+  }
+  // A plotted series must be a function: one y-value for every x-value. Collapse
+  // duplicate x coordinates. Major checkpoints win over ordinary live samples;
+  // ties keep the newest observation.
+  const byX=new Map();
+  for(const q of cand){const key=Math.round(q.x*10)/10,old=byX.get(key);if(!old||q.priority>old.priority||(q.priority===old.priority&&q.t>old.t))byX.set(key,q)}
+  const pts=[...byX.values()].sort((a,b)=>a.x-b.x||a.t-b.t);
+  // Final guard against sub-pixel duplicates from floating point rounding.
+  const out=[];for(const q of pts){const prev=out.at(-1);if(prev&&Math.abs(q.x-prev.x)<0.35){if(q.priority>prev.priority||(q.priority===prev.priority&&q.t>prev.t))out[out.length-1]=q}else out.push(q)}return out
+}
+function chart(w,a,h,kick){if(!Number.isFinite(kick))return '<div class="rc13-conf-loading">Loading official kickoff timeline…</div>';const ss=slots(w,kick),W=1120,H=350,L=58,R=34,T=34,B=86,plot=W-L-R,step=plot/Math.max(1,ss.length-1),sx=i=>L+i*step,slotX=Object.fromEntries(ss.map((s,i)=>[s.id,sx(i)])),pre=ss.filter(s=>s.kind==='pre'),preLast=pre.length-1,preStart=sx(0),preEnd=sx(preLast),finalX=slotX.final,y=p=>T+(100-p)/100*(H-T-B);
+  function xPre(t){if(t<=pre[0].t)return preStart;if(t>=pre[preLast].t)return preEnd;for(let i=0;i<preLast;i++){const A=pre[i],B=pre[i+1];if(t>=A.t&&t<=B.t){const f=(t-A.t)/Math.max(1,B.t-A.t);return sx(i)+f*(sx(i+1)-sx(i))}}return preEnd}
+  function xGame(g){const A=[[0,preEnd],[.25,slotX.q1],[.5,slotX.half],[.75,slotX.q3],[1,finalX]];for(let i=0;i<A.length-1;i++){if(g>=A[i][0]&&g<=A[i+1][0]){const f=(g-A[i][0])/(A[i+1][0]-A[i][0]);return A[i][1]+f*(A[i+1][1]-A[i][1])}}return finalX}
+  let s='';for(const p of [0,25,50,75,100]){const yy=y(p);s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--border)" ${p===50?'stroke-width="1.5"':'stroke-dasharray="4 6"'}/><text x="${L-9}" y="${yy+5}" text-anchor="end" font-size="13" font-weight="900" fill="var(--muted)">${p}%</text>`}
+  ss.forEach((sl,i)=>{const xx=sx(i),parts=sl.label.split(' ');s+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B+7}" stroke="var(--border)" opacity="${sl.freeze?.68:.34}" ${sl.freeze?'stroke-dasharray="3 4"':''}/><text x="${xx}" y="${H-48}" text-anchor="middle" font-size="12" font-weight="900" fill="var(--text)"><tspan x="${xx}">${esc(parts[0])}</tspan>${parts.length>1?`<tspan x="${xx}" dy="14">${esc(parts.slice(1).join(' '))}</tspan>`:''}</text>`});
+  const pts=prepare(hist(w,a,h),kick,xPre,xGame),homePath=pts.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(Number(q.p)).toFixed(2)}`).join(' '),awayPath=pts.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(100-Number(q.p)).toFixed(2)}`).join(' ');
+  if(homePath)s+=`<path d="${homePath}" fill="none" stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(awayPath)s+=`<path d="${awayPath}" fill="none" stroke="var(--orange)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  pts.forEach((q,i)=>{const lab=String(q.label||'').toUpperCase(),major=/(PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P|CURRENT)/.test(lab),latest=i===pts.length-1,show=major||latest,r=show?5.5:2.2,hp=Number(q.p),ap=100-hp,hy=y(hp),ay=y(ap);s+=`<circle cx="${q.x}" cy="${hy}" r="${r}" fill="${show?'var(--card)':'var(--blue)'}" stroke="var(--blue)" stroke-width="2"><title>${esc(h)} ${hp.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'—')}</title></circle><circle cx="${q.x}" cy="${ay}" r="${r}" fill="${show?'var(--card)':'var(--orange)'}" stroke="var(--orange)" stroke-width="2"><title>${esc(a)} ${ap.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'—')}</title></circle>`;if(show){const hY=hy<50?hy+20:hy-11,aY=ay>H-B-16?ay-11:ay+19;s+=`<text x="${q.x}" y="${hY}" text-anchor="middle" font-size="12" font-weight="950" fill="var(--blue)">${hp.toFixed(0)}%</text><text x="${q.x}" y="${aY}" text-anchor="middle" font-size="12" font-weight="950" fill="var(--orange)">${ap.toFixed(0)}%</text>`}});
+  if(pts.length){const last=pts.at(-1),hp=Number(last.p),ap=100-hp,lx=Math.min(W-R-3,last.x+10);s+=`<text x="${lx}" y="${y(hp)-2}" font-size="12" font-weight="950" fill="var(--blue)">${esc(h)}</text><text x="${lx}" y="${y(ap)-2}" font-size="12" font-weight="950" fill="var(--orange)">${esc(a)}</text>`}else{s+=`<text x="${(L+W-R)/2}" y="${(T+H-B)/2}" text-anchor="middle" font-size="13" font-weight="800" fill="var(--muted)">Timeline ready · captured analyses will fill this graph</text>`}
+  return `<div class="rc13-conf-wrap"><svg class="rc13-conf-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(a)} and ${esc(h)} win probability history">${s}</svg></div>`
+}
+async function paint(box){if(!box||box.dataset.rc13painting==='1')return;box.dataset.rc13painting='1';try{const w=Number(box.dataset.w),a=box.dataset.away,h=box.dataset.home;if(!w||!a||!h)return;let k=kickoff(w,a,h);if(!Number.isFinite(k)){box.innerHTML='<div class="rc13-conf-loading">Loading official kickoff timeline…</div>';await cacheWeek(w);k=kickoff(w,a,h)}box.innerHTML=chart(w,a,h,k)}finally{delete box.dataset.rc13painting}}
+async function repaint(){for(const b of document.querySelectorAll('.rc11-confidence-box'))await paint(b)}
+const prevDetail=window.modelMatchDetailHtml;window.modelMatchDetailHtml=function(a,h,w,pred){const raw=prevDetail?prevDetail(a,h,w,pred):'',wrap=document.createElement('div');wrap.innerHTML=raw;const box=wrap.querySelector('.rc11-confidence-box');if(box){box.dataset.w=w;box.dataset.away=a;box.dataset.home=h;box.innerHTML=chart(w,a,h,kickoff(w,a,h))}return wrap.innerHTML};
+const prevLoad=window.predLoadWeek;window.predLoadWeek=async function(silent=false){const w=Number(document.getElementById('predWeekSel')?.value||window.MODEL_FORECAST_WEEK||5);await cacheWeek(w);const r=await prevLoad?.(silent);setTimeout(repaint,320);return r};
+const prevToggle=window.modelToggleMatchCard;window.modelToggleMatchCard=function(el){prevToggle?.(el);setTimeout(repaint,340)};
+const mo=new MutationObserver(ms=>{for(const m of ms){for(const n of m.addedNodes){if(n instanceof Element&&(n.matches?.('.rc11-confidence-box')||n.querySelector?.('.rc11-confidence-box'))){setTimeout(repaint,60);return}}}});mo.observe(document.body,{childList:true,subtree:true});
+setInterval(repaint,61000);
+try{document.title='Fantasy HQ '+APP}catch(_){ }
+setTimeout(async()=>{const w=Number(document.getElementById('predWeekSel')?.value||window.MODEL_FORECAST_WEEK||5);await cacheWeek(w);await repaint()},650);
+})();
+</script>
+
 </body>
 </html>
