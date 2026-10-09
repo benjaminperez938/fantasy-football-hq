@@ -1348,6 +1348,12 @@
   }
 </style>
 
+
+<style id="rc14GraphFix">
+.rc11-conf-svg{min-width:1040px!important}
+.rc11-confidence-box{overflow:hidden}
+.rc11-conf-wrap{overflow-x:auto;overscroll-behavior-inline:contain;padding:4px 0 7px}
+</style>
 </head>
 <body>
 
@@ -7133,10 +7139,10 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
 @media(max-width:700px){.rc11-roster-row{grid-template-columns:35px minmax(105px,1fr) 42px minmax(78px,auto)}.rc11-card{min-height:330px}.rc11-board-head button{font-size:11px!important}.rc11-conf-svg{min-width:900px}}
 </style>
 <script id="modelV2RC11Patch">
-/* Fantasy HQ V2.0-RC11. NFL Predictor remains V1.3.2; this patch completes the data/checkpoint and presentation pipeline without changing the published forecast formula version. */
+/* Fantasy HQ V2.0-RC14. NFL Predictor remains V1.3.2; this patch completes the data/checkpoint and presentation pipeline without changing the published forecast formula version. */
 (function(){
 'use strict';
-const APP='V2.0-RC11', TZ='America/Los_Angeles', CK='fhq_weekly_checkpoint_rc11_', HIST='fhq_confidence_history_rc9', ART='fhq_hot_articles_rc9';
+const APP='V2.0-RC14', TZ='America/Los_Angeles', CK='fhq_weekly_checkpoint_rc11_', HIST='fhq_confidence_history_rc9', ART='fhq_hot_articles_rc9';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const TEAM_CONF={ARI:'NFC',ATL:'NFC',BAL:'AFC',BUF:'AFC',CAR:'NFC',CHI:'NFC',CIN:'AFC',CLE:'AFC',DAL:'NFC',DEN:'AFC',DET:'NFC',GB:'NFC',HOU:'AFC',IND:'AFC',JAX:'AFC',KC:'AFC',LAC:'AFC',LAR:'NFC',LV:'AFC',MIA:'AFC',MIN:'NFC',NE:'AFC',NO:'NFC',NYG:'NFC',NYJ:'AFC',PHI:'NFC',PIT:'AFC',SEA:'NFC',SF:'NFC',TB:'NFC',TEN:'AFC',WAS:'NFC'};
@@ -7206,7 +7212,91 @@ function pseudoDate(s){const [y,m,d]=s.split('-').map(Number);return new Date(Da
 function laMs(date,h=0,m=0){const [Y,M,D]=date.split('-').map(Number),want=Date.UTC(Y,M-1,D,h,m);let guess=want;for(let i=0;i<2;i++){const p=laParts(guess),[y,mo,da]=p.date.split('-').map(Number),got=Date.UTC(y,mo-1,da,p.h,p.m);guess+=want-got}return guess}
 function axisSlots(w,kickoff){const kp=laParts(kickoff),kd=pseudoDate(kp.date),dow=kd.getUTCDay(),mon=new Date(kd.getTime()-((dow+6)%7)*86400000),slots=[];for(let d=new Date(mon);d<=kd;d=new Date(d.getTime()+86400000)){const ds=fmtDate(d),wd=['SUN','MON','TUE','WED','THU','FRI','SAT'][d.getUTCDay()];slots.push({id:ds+'-mid',t:laMs(ds,0,0),label:wd+' 12A',kind:'daily'})}const first=FIRST_GAME[w],freezeDate=first?fmtDate(new Date(pseudoDate(first).getTime()-86400000)):null;if(freezeDate){const f={id:'freeze',t:laMs(freezeDate,12,0),label:['SUN','MON','TUE','WED','THU','FRI','SAT'][pseudoDate(freezeDate).getUTCDay()]+' 12P',kind:'freeze'};slots.push(f)}slots.sort((a,b)=>a.t-b.t);slots.push({id:'pre',t:kickoff-10*60000,label:'PRE -10',kind:'pre'},{id:'q1',label:'Q1',kind:'game',g:.25},{id:'half',label:'HALF',kind:'game',g:.5},{id:'q3',label:'Q3',kind:'game',g:.75},{id:'final',label:'FINAL',kind:'game',g:1});return slots}
 function pointProgress(q,kickoff){const lab=String(q.label||'').toUpperCase();if(lab.includes('FINAL'))return 1;if(lab.includes('Q3'))return .75;if(lab.includes('HALF'))return .5;if(lab==='Q1'||lab.includes(' Q1'))return .25;const per=Number(q.period||q.meta?.period||0),clock=String(q.clock||q.meta?.clock||'');if(per>=1){const m=clock.match(/(\d+):(\d+)/),left=m?Number(m[1])+Number(m[2])/60:15;return clamp(((per-1)*15+(15-left))/60,0,1)}if(q.t>=kickoff)return clamp((q.t-kickoff)/(3.2*3600000),0,1);return null}
-function confidenceSvg11(w,a,h,kickoff){const arr=hist(w,a,h).filter(q=>!/^START$/i.test(q.label||'')),slots=axisSlots(w,kickoff),preSlots=slots.filter(s=>s.kind!=='game'),gameSlots=slots.filter(s=>s.kind==='game'),W=1240,H=330,L=56,R=54,T=34,B=76,plot=W-L-R,preWidth=plot*.55,gameWidth=plot-preWidth,xPre=t=>{const min=preSlots[0]?.t||kickoff-3*86400000,max=kickoff-10*60000;return L+clamp((t-min)/(max-min),0,1)*preWidth},xGame=g=>L+preWidth+clamp(g,0,1)*gameWidth,y=p=>T+(100-p)/100*(H-T-B);let s='';[25,50,75].forEach(p=>{s+=`<line x1="${L}" y1="${y(p)}" x2="${W-R}" y2="${y(p)}" stroke="var(--border)" stroke-dasharray="4 6"/><text x="${L-9}" y="${y(p)+5}" text-anchor="end" font-size="12" font-weight="800" fill="var(--muted)">${p}%</text>`});s+=`<line x1="${L}" y1="${y(50)}" x2="${W-R}" y2="${y(50)}" stroke="var(--text)" opacity=".18"/>`;slots.forEach(sl=>{const xx=sl.kind==='game'?xGame(sl.g):xPre(sl.t);s+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B+8}" stroke="var(--border)" stroke-width="1" opacity=".42"/><text x="${xx}" y="${H-39}" text-anchor="middle" font-size="11" font-weight="900" fill="var(--text)">${sl.label}</text>`});const pts=arr.map(q=>{const g=pointProgress(q,kickoff),x=g==null?xPre(q.t):xGame(g);return {...q,x}}).sort((q,z)=>q.t-z.t),homeD=pts.map((q,i)=>`${i?'L':'M'} ${q.x} ${y(q.p)}`).join(' '),awayD=pts.map((q,i)=>`${i?'L':'M'} ${q.x} ${y(100-q.p)}`).join(' ');if(homeD)s+=`<path d="${homeD}" fill="none" stroke="var(--blue)" stroke-width="3.5"/>`;if(awayD)s+=`<path d="${awayD}" fill="none" stroke="var(--orange)" stroke-width="3.5"/>`;pts.forEach((q,i)=>{const major=/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P|CURRENT/i.test(q.label||'')||i===pts.length-1,r=major?5.5:2.4,hy=y(q.p),ay=y(100-q.p);s+=`<circle cx="${q.x}" cy="${hy}" r="${r}" fill="${major?'var(--card)':'var(--blue)'}" stroke="var(--blue)" stroke-width="2"><title>${h} ${q.p.toFixed(1)}% · ${q.label||'LIVE'} · ${q.rel||'—'}</title></circle><circle cx="${q.x}" cy="${ay}" r="${r}" fill="${major?'var(--card)':'var(--orange)'}" stroke="var(--orange)" stroke-width="2"><title>${a} ${(100-q.p).toFixed(1)}% · ${q.label||'LIVE'} · ${q.rel||'—'}</title></circle>`;if(major){s+=`<text x="${q.x}" y="${hy-10}" text-anchor="middle" font-size="11" font-weight="950" fill="var(--blue)">${q.p.toFixed(0)}%</text><text x="${q.x}" y="${ay+18}" text-anchor="middle" font-size="11" font-weight="950" fill="var(--orange)">${(100-q.p).toFixed(0)}%</text>`}});s+=`<text x="${L}" y="18" font-size="13" font-weight="950" fill="var(--orange)">${a}</text><text x="${L+58}" y="18" font-size="13" font-weight="950" fill="var(--blue)">${h}</text>`;if(!pts.length)s+=`<text x="${(L+W-R)/2}" y="${(T+H-B)/2}" text-anchor="middle" font-size="13" fill="var(--muted)">No captured analysis yet · the graph will fill as checkpoints complete</text>`;return `<div class="rc11-conf-wrap"><svg class="rc11-conf-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${a} and ${h} win probability history">${s}</svg></div>`}
+function confidencePointProgress11(q,kickoff){
+  const lab=String(q?.label||'').toUpperCase(),per=Number(q?.period||q?.meta?.period||0),clock=String(q?.clock||q?.meta?.clock||'');
+  // Actual NFL game clock is authoritative for live samples.
+  if(per>=1){
+    const m=clock.match(/(\d+):(\d+)/);
+    if(m){
+      const left=Number(m[1])+Number(m[2])/60;
+      let elapsed=(Math.max(1,Math.min(per,4))-1)*15+(15-left);
+      if(/FINAL/.test(lab)) elapsed=60;
+      return clamp(elapsed/60,0,1);
+    }
+  }
+  // Checkpoint labels are only fallbacks when the feed did not preserve a clock.
+  if(/FINAL/.test(lab))return 1;
+  if(/Q3/.test(lab))return .75;
+  if(/HALF/.test(lab))return .5;
+  if(lab==='Q1'||/\bQ1\b/.test(lab))return .25;
+  return null;
+}
+function confidenceSvg11(w,a,h,kickoff){
+  if(!Number.isFinite(Number(kickoff)))return '<div class="rc11-conf-note" style="padding:18px 6px;font-size:12px;font-weight:800">Loading official kickoff timeline…</div>';
+  kickoff=Number(kickoff);
+  const raw=hist(w,a,h).filter(q=>Number.isFinite(Number(q?.p))&&Number.isFinite(Number(q?.t))&&!/^START$/i.test(String(q?.label||''))).sort((x,z)=>Number(x.t)-Number(z.t));
+  const slots=axisSlots(w,kickoff),preSlots=slots.filter(s=>s.kind!=='game'),W=1240,H=350,L=64,R=42,T=34,B=82,plot=W-L-R,preWidth=plot*.56,gameWidth=plot-preWidth;
+  const preMin=preSlots[0]?.t??kickoff-4*86400000,preMax=kickoff-10*60000;
+  const xPre=t=>L+clamp((Number(t)-preMin)/Math.max(1,preMax-preMin),0,1)*preWidth;
+  const xGame=g=>L+preWidth+clamp(Number(g)||0,0,1)*gameWidth;
+  const y=p=>T+(100-Number(p))/100*(H-T-B);
+  let s='';
+  [0,25,50,75,100].forEach(p=>{const yy=y(p);s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--border)" ${p===50?'stroke-width="1.5"':'stroke-dasharray="4 6"'}/><text x="${L-10}" y="${yy+5}" text-anchor="end" font-size="13" font-weight="900" fill="var(--muted)">${p}%</text>`});
+  slots.forEach(sl=>{const xx=sl.kind==='game'?xGame(sl.g):xPre(sl.t);const parts=String(sl.label).split(' ');s+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B+7}" stroke="var(--border)" opacity="${sl.kind==='freeze'?.7:.34}" ${sl.kind==='freeze'?'stroke-dasharray="3 4"':''}/><text x="${xx}" y="${H-47}" text-anchor="middle" font-size="12" font-weight="900" fill="var(--text)"><tspan x="${xx}">${esc(parts[0])}</tspan>${parts.length>1?`<tspan x="${xx}" dy="14">${esc(parts.slice(1).join(' '))}</tspan>`:''}</text>`});
+
+  // Build candidate points from the stored history. The final rendered series is
+  // x-sorted and deduplicated, so each team has exactly one y-value at any x.
+  const cand=[];
+  for(const q0 of raw){
+    const q={...q0},lab=String(q.label||'').toUpperCase(),t=Number(q.t),per=Number(q.period||q.meta?.period||0);
+    let x=null,progress=null;
+    if(t<kickoff){
+      x=xPre(t);
+    }else{
+      progress=confidencePointProgress11(q,kickoff);
+      // Legacy CURRENT READ samples captured after kickoff without game state are invalid.
+      if(progress==null){
+        if(per===0)continue;
+        continue;
+      }
+      x=xGame(progress);
+    }
+    const checkpoint=/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P/.test(lab);
+    cand.push({...q,x,progress,priority:checkpoint?3:1});
+  }
+  // Use a tenth of an SVG unit as the uniqueness bucket. A later observation at
+  // the same x replaces the earlier one; an official checkpoint gets label priority.
+  const unique=new Map();
+  for(const q of cand){
+    const key=Math.round(q.x*10)/10,old=unique.get(key);
+    if(!old){unique.set(key,q);continue}
+    if(q.priority>old.priority){unique.set(key,{...q,p:q.p});continue}
+    if(q.priority===old.priority&&Number(q.t)>=Number(old.t))unique.set(key,q);
+    else if(q.priority<old.priority&&Number(q.t)>Number(old.t))unique.set(key,{...old,p:q.p,t:q.t,rel:q.rel||old.rel});
+  }
+  const pts=[...unique.values()].sort((x,z)=>x.x-z.x||Number(x.t)-Number(z.t));
+  // Last guard: never allow a rendered path command to move backward on x.
+  const clean=[];
+  for(const q of pts){
+    const prev=clean.at(-1);
+    if(prev&&q.x<=prev.x+.05){
+      if(Number(q.t)>=Number(prev.t))clean[clean.length-1]={...q,x:prev.x};
+    }else clean.push(q);
+  }
+
+  const homeD=clean.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(q.p).toFixed(2)}`).join(' ');
+  const awayD=clean.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(100-Number(q.p)).toFixed(2)}`).join(' ');
+  if(homeD)s+=`<path d="${homeD}" fill="none" stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(awayD)s+=`<path d="${awayD}" fill="none" stroke="var(--orange)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  clean.forEach((q,i)=>{
+    const lab=String(q.label||'').toUpperCase(),major=/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P/.test(lab),latest=i===clean.length-1,show=major||latest,r=show?5.5:2.2,hp=Number(q.p),ap=100-hp,hy=y(hp),ay=y(ap);
+    s+=`<circle cx="${q.x}" cy="${hy}" r="${r}" fill="${show?'var(--card)':'var(--blue)'}" stroke="var(--blue)" stroke-width="2"><title>${esc(h)} ${hp.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'—')}</title></circle><circle cx="${q.x}" cy="${ay}" r="${r}" fill="${show?'var(--card)':'var(--orange)'}" stroke="var(--orange)" stroke-width="2"><title>${esc(a)} ${ap.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'—')}</title></circle>`;
+    if(show){const hY=hy<52?hy+20:hy-11,aY=ay>H-B-16?ay-11:ay+19;s+=`<text x="${q.x}" y="${hY}" text-anchor="middle" font-size="12" font-weight="950" fill="var(--blue)">${hp.toFixed(0)}%</text><text x="${q.x}" y="${aY}" text-anchor="middle" font-size="12" font-weight="950" fill="var(--orange)">${ap.toFixed(0)}%</text>`}
+  });
+  if(clean.length){const q=clean.at(-1),hp=Number(q.p),ap=100-hp,lx=Math.min(W-R-4,q.x+11);s+=`<text x="${lx}" y="${y(hp)-2}" font-size="12" font-weight="950" fill="var(--blue)">${esc(h)}</text><text x="${lx}" y="${y(ap)-2}" font-size="12" font-weight="950" fill="var(--orange)">${esc(a)}</text>`}
+  else s+=`<text x="${(L+W-R)/2}" y="${(T+H-B)/2}" text-anchor="middle" font-size="13" font-weight="800" fill="var(--muted)">Timeline ready · captured analyses will fill this graph</text>`;
+  return `<div class="rc11-conf-wrap"><svg class="rc11-conf-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(a)} and ${esc(h)} win probability history">${s}</svg></div>`
+}
 function ensureInitial(w,a,h){const ar=hist(w,a,h);if(ar.length)return;const p=modelGameForecast(a,h,w);if(p)savePoint(w,a,h,p.pHome*100,'CURRENT READ',p.reliability?.label||'—',{v:11,period:0,clock:'',away:a,home:h})}
 function exportHistory(){const blob=new Blob([JSON.stringify({version:11,confidence:load(HIST,{}),articles:load(ART,[])},null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='Fantasy_HQ_live_history.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}window.fhqExportHistory11=exportHistory;
 window.fhqImportHistory11=async function(input){const f=input.files?.[0];if(!f)return;try{const j=JSON.parse(await f.text());if(j.confidence)save(HIST,j.confidence);if(j.articles)save(ART,j.articles);document.querySelectorAll('.rc11-confidence-box').forEach(refreshConfBox);alert('Fantasy HQ history imported on this device.')}catch(_){alert('Could not import that history file.')}input.value=''};
@@ -7240,8 +7330,8 @@ function rosterHTML(ab,rows,w,evidence){const ord=['QB','RB','FB','WR','TE','OT'
 async function fillPersonnel(mount){if(!mount||mount.dataset.rc11loading)return;mount.dataset.rc11loading='1';const a=mount.dataset.away,h=mount.dataset.home,w=Number(mount.dataset.week),[A,H,sum]=await Promise.all([roster(a),roster(h),summaryForGame(w,a,h)]),ea=sum?playerEvidence(sum,a):{},eh=sum?playerEvidence(sum,h):{},block=(ab,r,e)=>`<div class="rc10-roster-team"><div class="rc10-roster-head"><img src="${modelTeamLogoUrl(ab)}"><b>${ab}</b></div><div class="rc10-roster-group-title">OFFENSE</div>${rosterHTML(ab,r.filter(x=>side(x.pos)==='off'),w,e)}<div class="rc10-roster-group-title">DEFENSE</div>${rosterHTML(ab,r.filter(x=>side(x.pos)==='def'),w,e)}</div>`;let liabilities='';if(sum){const lv=liveEvidence(sum,a,h).liabilities;if(lv.length)liabilities=`<div class="rc11-liability"><b>LIVE LIABILITY WATCH</b><br>${esc(lv.join(' · '))}</div>`}mount.innerHTML=`<div class="rc10-roster-grid">${block(a,A,ea)}${block(h,H,eh)}</div>${liabilities}<div class="rc11-conf-note">Fantasy-position ranks use 2026 PPR production through the previous completed week when Fantasy HQ has the player log. OL/defensive rows show the entering unit rank until a verified individual task-grade feed exists. Live evidence is the actual ESPN box-score line available at this snapshot; unsupported OL/coverage grades are not invented.</div>`;delete mount.dataset.rc11loading}
 
 /* Matchup detail order/graph. */
-const detail10=window.modelMatchDetailHtml;window.modelMatchDetailHtml=function(a,h,w,pred){ensureInitial(w,a,h);const raw=detail10?detail10(a,h,w,pred):'',wrap=document.createElement('div');wrap.innerHTML=raw;const old=wrap.querySelector('.rc10-confidence-box'),card=wrap.querySelector('.model-match-detail-shell');if(old){old.className='rc11-confidence-box';old.dataset.w=w;old.dataset.away=a;old.dataset.home=h;old.innerHTML=confidenceSvg11(w,a,h,new Date(pred?.date||MODEL_MATCHUP_CACHE?.[`${a}-${w}`]?.date||MODEL_MATCHUP_CACHE?.[`${h}-${w}`]?.date||Date.now()+86400000).getTime());old.insertAdjacentHTML('afterend',`<div class="rc11-conf-actions"><button type="button" onclick="fhqExportHistory11()">Export history</button><label>Import history<input type="file" accept="application/json" style="display:none" onchange="fhqImportHistory11(this)"></label></div><div class="rc11-conf-note">Captured locally on this device now; optional shared-store sync is supported when a backend is configured. FINAL history is never cleared automatically.</div>`)}const mount=wrap.querySelector('.rc10-personnel-mount');if(mount){mount.dataset.week=w;mount.dataset.away=a;mount.dataset.home=h;mount.removeAttribute('data-loaded');mount.removeAttribute('data-rc11loading')}return wrap.innerHTML};
-function refreshConfBox(box){if(!box)return;const w=Number(box.dataset.w),a=box.dataset.away,h=box.dataset.home,g=MODEL_MATCHUP_CACHE?.[`${a}-${w}`]||MODEL_MATCHUP_CACHE?.[`${h}-${w}`],kick=g?.date?new Date(g.date).getTime():Date.now()+86400000;box.innerHTML=confidenceSvg11(w,a,h,kick)}
+const detail10=window.modelMatchDetailHtml;window.modelMatchDetailHtml=function(a,h,w,pred){ensureInitial(w,a,h);const raw=detail10?detail10(a,h,w,pred):'',wrap=document.createElement('div');wrap.innerHTML=raw;const old=wrap.querySelector('.rc10-confidence-box'),card=wrap.querySelector('.model-match-detail-shell');if(old){old.className='rc11-confidence-box';old.dataset.w=w;old.dataset.away=a;old.dataset.home=h;{const g=MODEL_MATCHUP_CACHE?.[`${a}-${w}`]||MODEL_MATCHUP_CACHE?.[`${h}-${w}`],k=g?.date?Date.parse(g.date):NaN;old.innerHTML=confidenceSvg11(w,a,h,k);if(!Number.isFinite(k))setTimeout(()=>{Promise.resolve(modelFetchUpcomingGame?.(a,w)).then(()=>document.querySelectorAll('.rc11-confidence-box').forEach(refreshConfBox))},0)}old.insertAdjacentHTML('afterend',`<div class="rc11-conf-actions"><button type="button" onclick="fhqExportHistory11()">Export history</button><label>Import history<input type="file" accept="application/json" style="display:none" onchange="fhqImportHistory11(this)"></label></div><div class="rc11-conf-note">Captured locally on this device now; optional shared-store sync is supported when a backend is configured. FINAL history is never cleared automatically.</div>`)}const mount=wrap.querySelector('.rc10-personnel-mount');if(mount){mount.dataset.week=w;mount.dataset.away=a;mount.dataset.home=h;mount.removeAttribute('data-loaded');mount.removeAttribute('data-rc11loading')}return wrap.innerHTML};
+async function refreshConfBox(box){if(!box)return;const w=Number(box.dataset.w),a=box.dataset.away,h=box.dataset.home;let g=MODEL_MATCHUP_CACHE?.[`${a}-${w}`]||MODEL_MATCHUP_CACHE?.[`${h}-${w}`],kick=g?.date?Date.parse(g.date):NaN;if(!Number.isFinite(kick)){box.innerHTML=confidenceSvg11(w,a,h,NaN);try{await modelFetchUpcomingGame(a,w)}catch(_){}g=MODEL_MATCHUP_CACHE?.[`${a}-${w}`]||MODEL_MATCHUP_CACHE?.[`${h}-${w}`];kick=g?.date?Date.parse(g.date):NaN}box.innerHTML=confidenceSvg11(w,a,h,kick)}
 async function enhanceMatch11(){for(const card of document.querySelectorAll('.model-match-card.open')){const b=card.querySelector('.rc11-confidence-box');if(b){await pullShared11(gameKey(Number(b.dataset.w),b.dataset.away,b.dataset.home));refreshConfBox(b)}for(const m of card.querySelectorAll('.rc10-personnel-mount'))fillPersonnel(m)}}function refreshAllConfidence11(){document.querySelectorAll('.rc11-confidence-box').forEach(refreshConfBox);document.querySelectorAll('.model-match-card.open .rc10-personnel-mount').forEach(m=>{m.removeAttribute('data-rc11loading');fillPersonnel(m)})}
 const toggle11=window.modelToggleMatchCard;window.modelToggleMatchCard=function(el){toggle11?.(el);setTimeout(enhanceMatch11,220)};const load11=window.predLoadWeek;window.predLoadWeek=async function(silent=false){const r=await load11?.(silent);setTimeout(enhanceMatch11,250);return r};
 
@@ -7264,123 +7354,6 @@ async function refreshCheckpointIfNeeded(){const target=Number(window.MODEL_CALE
 window.addEventListener('pageshow',()=>setTimeout(()=>{refreshCheckpointIfNeeded();enhanceMatch11()},450));setInterval(()=>{refreshCheckpointIfNeeded();livePulse();enhanceMatch11()},60000);
 try{document.title='Fantasy HQ '+APP}catch(_){ }
 setTimeout(async()=>{try{await refreshCheckpointIfNeeded();renderModelLeagueBoard();modelPopulateTeamSelect();if(document.getElementById('pred-health')?.style.display!=='none')renderModelHealth();if(document.getElementById('pred-external')?.style.display!=='none')renderModelPlayerCompare();if(document.getElementById('pred-guide')?.style.display!=='none')renderModelGuide();await livePulse();await enhanceMatch11()}catch(e){console.warn('RC11 init',e)}},1000);
-})();
-</script>
-
-
-<style id="modelV2RC12Styles">
-.rc11-confidence-box .rc12-conf-wrap{overflow-x:auto;overscroll-behavior-inline:contain;padding:2px 0 7px}
-.rc11-confidence-box .rc12-conf-svg{display:block;width:100%;min-width:820px;height:auto}
-.rc11-confidence-box .rc12-loading{min-height:210px;display:grid;place-items:center;color:var(--muted);font-size:12px;font-weight:750;border:1px dashed var(--border);background:var(--card)}
-@media(max-width:700px){.rc11-confidence-box .rc12-conf-svg{min-width:760px}}
-</style>
-<script id="modelV2RC12Patch">
-/* Fantasy HQ V2.0-RC12. NFL Predictor remains V1.3.2. This patch repairs the live confidence timeline without changing forecast math. */
-(function(){
-'use strict';
-const RC12_APP='V2.0-RC12',RC12_HIST='fhq_confidence_history_rc9',RC12_TZ='America/Los_Angeles';
-const weekFirst12={};
-const clamp12=(x,a,b)=>Math.max(a,Math.min(b,x));
-const esc12=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function load12(k,d){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(_){return d}}
-function key12(w,a,h){return `${Number(w)}:${a}:${h}`}
-function hist12(w,a,h){return load12(RC12_HIST,{})[key12(w,a,h)]||[]}
-function laParts12(ms){const ps=new Intl.DateTimeFormat('en-US',{timeZone:RC12_TZ,year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date(ms)).reduce((o,p)=>(o[p.type]=p.value,o),{});return {date:`${ps.year}-${ps.month}-${ps.day}`,weekday:ps.weekday,h:Number(ps.hour)%24,m:Number(ps.minute)}}
-function pseudo12(s){const [y,m,d]=s.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
-function fmt12(d){return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`}
-function laMs12(date,h=0,m=0){const [Y,M,D]=date.split('-').map(Number),want=Date.UTC(Y,M-1,D,h,m);let guess=want;for(let i=0;i<3;i++){const p=laParts12(guess),[y,mo,da]=p.date.split('-').map(Number),got=Date.UTC(y,mo-1,da,p.h,p.m);guess+=want-got}return guess}
-async function cacheWeek12(w){w=Number(w);if(!w)return null;try{const r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=2026`,{cache:'no-store'}),j=await r.json();let first=Infinity;for(const ev of (j.events||[])){const c=ev.competitions?.[0],H=c?.competitors?.find(x=>x.homeAway==='home'),A=c?.competitors?.find(x=>x.homeAway==='away'),kick=Date.parse(ev.date);if(!H||!A||!Number.isFinite(kick))continue;first=Math.min(first,kick);const a=A.team?.abbreviation,h=H.team?.abbreviation;if(!a||!h)continue;if(typeof MODEL_MATCHUP_CACHE!=='undefined'){MODEL_MATCHUP_CACHE[`${a}-${w}`]={opp:h,site:'@',date:ev.date,eventId:ev.id};MODEL_MATCHUP_CACHE[`${h}-${w}`]={opp:a,site:'vs',date:ev.date,eventId:ev.id}}}if(Number.isFinite(first))weekFirst12[w]=first;return j}catch(_){return null}}
-function kickoff12(w,a,h){let g=null;try{g=MODEL_MATCHUP_CACHE?.[`${a}-${w}`]||MODEL_MATCHUP_CACHE?.[`${h}-${w}`]}catch(_){ }const ms=g?.date?Date.parse(g.date):NaN;return Number.isFinite(ms)?ms:null}
-function axisSlots12(w,kickoff){const kp=laParts12(kickoff),kd=pseudo12(kp.date),dow=kd.getUTCDay(),mon=new Date(kd.getTime()-((dow+6)%7)*86400000),slots=[];for(let d=new Date(mon);d<=kd;d=new Date(d.getTime()+86400000)){const ds=fmt12(d),wd=['SUN','MON','TUE','WED','THU','FRI','SAT'][d.getUTCDay()];slots.push({id:ds+'-mid',t:laMs12(ds,0,0),label:wd+' 12A',kind:'pre'})}let first=weekFirst12[w];if(!Number.isFinite(first)){try{const dates=[];for(const k of Object.keys(MODEL_MATCHUP_CACHE||{})){if(!k.endsWith('-'+w))continue;const ms=Date.parse(MODEL_MATCHUP_CACHE[k]?.date||'');if(Number.isFinite(ms))dates.push(ms)}if(dates.length)first=Math.min(...dates)}catch(_){ }}if(Number.isFinite(first)){const fd=pseudo12(laParts12(first).date),prev=new Date(fd.getTime()-86400000),freezeDate=fmt12(prev),wd=['SUN','MON','TUE','WED','THU','FRI','SAT'][prev.getUTCDay()];slots.push({id:'freeze',t:laMs12(freezeDate,12,0),label:wd+' 12P',kind:'pre',freeze:true})}slots.push({id:'pre10',t:kickoff-10*60000,label:'PRE -10',kind:'pre',pre:true});slots.sort((a,b)=>a.t-b.t);slots.push({id:'q1',label:'Q1',kind:'game',g:.25},{id:'half',label:'HALF',kind:'game',g:.5},{id:'q3',label:'Q3',kind:'game',g:.75},{id:'final',label:'FINAL',kind:'game',g:1});return slots}
-function progress12(q,kickoff){const lab=String(q.label||'').toUpperCase();if(lab.includes('FINAL'))return 1;if(lab.includes('Q3'))return .75;if(lab.includes('HALF'))return .5;if(lab==='Q1'||lab.includes(' Q1'))return .25;const per=Number(q.period||q.meta?.period||0),clock=String(q.clock||q.meta?.clock||'');if(per>=1){const m=clock.match(/(\d+):(\d+)/),left=m?Number(m[1])+Number(m[2])/60:15;return clamp12(((per-1)*15+(15-left))/60,0,1)}if(Number(q.t)>=kickoff&&/LIVE/i.test(lab))return clamp12((Number(q.t)-kickoff)/(3.5*3600000),0,1);return null}
-function cleanPoints12(arr,kickoff){const sorted=(arr||[]).filter(q=>Number.isFinite(Number(q?.p))&&Number.isFinite(Number(q?.t))&&!/^START$/i.test(String(q.label||''))).sort((a,b)=>a.t-b.t),out=[],liveBuckets=new Map();for(const q of sorted){const lab=String(q.label||'').toUpperCase(),per=Number(q.period||q.meta?.period||0);if(q.t>=kickoff&&per===0&&!/(PRE|Q1|HALF|Q3|FINAL|LIVE)/.test(lab))continue;if(/LIVE/.test(lab)&&q.t>=kickoff){const bucket=Math.floor((q.t-kickoff)/60000);liveBuckets.set(bucket,q);continue}out.push(q)}for(const q of liveBuckets.values())out.push(q);return out.sort((a,b)=>a.t-b.t)}
-function chart12(w,a,h,kickoff){if(!Number.isFinite(kickoff))return '<div class="rc12-loading">Loading official kickoff timeline…</div>';const slots=axisSlots12(w,kickoff),W=1080,H=330,L=52,R=30,T=30,B=76,plotW=W-L-R,step=plotW/Math.max(1,slots.length-1),sx=i=>L+i*step,slotX=Object.fromEntries(slots.map((s,i)=>[s.id,sx(i)])),pre=slots.filter(s=>s.kind==='pre'),preLast=pre.length-1,preStartX=sx(0),preEndX=sx(preLast),gameStartX=preEndX,finalX=slotX.final,y=p=>T+(100-p)/100*(H-T-B);function xPreTime(t){if(t<=pre[0].t)return preStartX;if(t>=pre[preLast].t)return preEndX;for(let i=0;i<preLast;i++){const a0=pre[i],b0=pre[i+1];if(t>=a0.t&&t<=b0.t){const f=(t-a0.t)/Math.max(1,b0.t-a0.t);return sx(i)+f*(sx(i+1)-sx(i))}}return preEndX}function xGame(g){if(g<=0)return gameStartX;const anchors=[[0,gameStartX],[.25,slotX.q1],[.5,slotX.half],[.75,slotX.q3],[1,slotX.final]];for(let i=0;i<anchors.length-1;i++){const A=anchors[i],B=anchors[i+1];if(g>=A[0]&&g<=B[0]){const f=(g-A[0])/(B[0]-A[0]);return A[1]+f*(B[1]-A[1])}}return finalX}let s='';[0,25,50,75,100].forEach(p=>{const yy=y(p);s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--border)" ${p===50?'stroke-width="1.5"':'stroke-dasharray="4 6"'}/><text x="${L-8}" y="${yy+4}" text-anchor="end" font-size="12" font-weight="850" fill="var(--muted)">${p}%</text>`});slots.forEach((sl,i)=>{const xx=sx(i),parts=sl.label.split(' ');s+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B+7}" stroke="var(--border)" opacity="${sl.freeze?.65:.34}" ${sl.freeze?'stroke-dasharray="3 4"':''}/><text x="${xx}" y="${H-43}" text-anchor="middle" font-size="11" font-weight="900" fill="var(--text)"><tspan x="${xx}">${esc12(parts[0])}</tspan>${parts.length>1?`<tspan x="${xx}" dy="13">${esc12(parts.slice(1).join(' '))}</tspan>`:''}</text>`});const arr=cleanPoints12(hist12(w,a,h),kickoff),pts=arr.map(q=>{const g=progress12(q,kickoff),x=g==null?xPreTime(q.t):xGame(g);return {...q,x,g}}),homeD=pts.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(1)} ${y(Number(q.p)).toFixed(1)}`).join(' '),awayD=pts.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(1)} ${y(100-Number(q.p)).toFixed(1)}`).join(' ');if(homeD)s+=`<path d="${homeD}" fill="none" stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;if(awayD)s+=`<path d="${awayD}" fill="none" stroke="var(--orange)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;pts.forEach((q,i)=>{const lab=String(q.label||'').toUpperCase(),major=/(PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P|CURRENT)/.test(lab),latest=i===pts.length-1,show=major||latest,r=show?5.5:2.2,hp=Number(q.p),ap=100-hp,hy=y(hp),ay=y(ap);s+=`<circle cx="${q.x}" cy="${hy}" r="${r}" fill="${show?'var(--card)':'var(--blue)'}" stroke="var(--blue)" stroke-width="2"><title>${esc12(h)} ${hp.toFixed(1)}% · ${esc12(q.label||'LIVE')} · ${esc12(q.rel||'—')}</title></circle><circle cx="${q.x}" cy="${ay}" r="${r}" fill="${show?'var(--card)':'var(--orange)'}" stroke="var(--orange)" stroke-width="2"><title>${esc12(a)} ${ap.toFixed(1)}% · ${esc12(q.label||'LIVE')} · ${esc12(q.rel||'—')}</title></circle>`;if(show){const topH=hy<48?hy+19:hy-10,topA=ay>H-B-14?ay-10:ay+18;s+=`<text x="${q.x}" y="${topH}" text-anchor="middle" font-size="12" font-weight="950" fill="var(--blue)">${hp.toFixed(0)}%</text><text x="${q.x}" y="${topA}" text-anchor="middle" font-size="12" font-weight="950" fill="var(--orange)">${ap.toFixed(0)}%</text>`}});if(pts.length){const last=pts.at(-1),hy=y(Number(last.p)),ay=y(100-Number(last.p)),lx=Math.min(W-R-2,last.x+9);s+=`<text x="${lx}" y="${hy-2}" font-size="11" font-weight="950" fill="var(--blue)">${esc12(h)}</text><text x="${lx}" y="${ay-2}" font-size="11" font-weight="950" fill="var(--orange)">${esc12(a)}</text>`}else{s+=`<text x="${(L+W-R)/2}" y="${(T+H-B)/2}" text-anchor="middle" font-size="13" font-weight="750" fill="var(--muted)">Timeline ready · points appear only after an analysis is actually captured</text>`}return `<div class="rc12-conf-wrap"><svg class="rc12-conf-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc12(a)} and ${esc12(h)} win probability history">${s}</svg></div>`}
-async function paint12(box){if(!box||box.dataset.rc12painting==='1')return;box.dataset.rc12painting='1';try{const w=Number(box.dataset.w),a=box.dataset.away,h=box.dataset.home;if(!w||!a||!h)return;let kick=kickoff12(w,a,h);if(!Number.isFinite(kick)){box.innerHTML='<div class="rc12-loading">Loading official kickoff timeline…</div>';await cacheWeek12(w);kick=kickoff12(w,a,h)}box.innerHTML=chart12(w,a,h,kick)}finally{delete box.dataset.rc12painting}}
-async function repaintOpen12(){const boxes=[...document.querySelectorAll('.rc11-confidence-box')];for(const b of boxes)await paint12(b)}
-const detailPrev12=window.modelMatchDetailHtml;window.modelMatchDetailHtml=function(a,h,w,pred){const raw=detailPrev12?detailPrev12(a,h,w,pred):'',wrap=document.createElement('div');wrap.innerHTML=raw;const box=wrap.querySelector('.rc11-confidence-box');if(box){box.dataset.w=w;box.dataset.away=a;box.dataset.home=h;const kick=kickoff12(w,a,h);box.innerHTML=chart12(w,a,h,kick)}return wrap.innerHTML};
-const loadPrev12=window.predLoadWeek;window.predLoadWeek=async function(silent=false){const w=Number(document.getElementById('predWeekSel')?.value||window.MODEL_FORECAST_WEEK||5);await cacheWeek12(w);const r=await loadPrev12?.(silent);setTimeout(repaintOpen12,300);return r};
-const togglePrev12=window.modelToggleMatchCard;window.modelToggleMatchCard=function(el){togglePrev12?.(el);setTimeout(repaintOpen12,320)};
-const mo12=new MutationObserver(ms=>{let needs=false;for(const m of ms){const t=m.target;if(t instanceof Element&&(t.matches?.('.rc11-confidence-box')||t.closest?.('.rc11-confidence-box'))){const b=t.matches?.('.rc11-confidence-box')?t:t.closest('.rc11-confidence-box');if(b&&!b.querySelector('.rc12-conf-svg')&&!b.querySelector('.rc12-loading')){needs=true;break}}for(const n of m.addedNodes){if(n instanceof Element&&(n.matches?.('.rc11-confidence-box')||n.querySelector?.('.rc11-confidence-box'))){needs=true;break}}if(needs)break}if(needs)setTimeout(repaintOpen12,40)});mo12.observe(document.body,{childList:true,subtree:true});
-setInterval(repaintOpen12,61000);
-try{document.title='Fantasy HQ '+RC12_APP}catch(_){ }
-setTimeout(async()=>{const w=Number(document.getElementById('predWeekSel')?.value||window.MODEL_FORECAST_WEEK||5);await cacheWeek12(w);await repaintOpen12()},500);
-})();
-</script>
-
-
-<style id="modelV2RC13Styles">
-/* RC13: strict single-y-per-x rendering for each team's win-probability series. */
-.rc13-conf-wrap{overflow-x:auto;overscroll-behavior-inline:contain;padding:2px 0 5px}
-.rc13-conf-svg{display:block;width:100%;min-width:980px;height:auto}
-.rc13-conf-loading{padding:28px 12px;text-align:center;color:var(--muted);font-size:12px;font-weight:750}
-@media(max-width:700px){.rc13-conf-svg{min-width:940px}}
-</style>
-<script id="modelV2RC13Patch">
-(function(){
-'use strict';
-const APP='V2.0-RC13', TZ='America/Los_Angeles', HIST='fhq_confidence_history_rc9';
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(_){return d}};
-const gameKey=(w,a,h)=>`${Number(w)}:${a}:${h}`;
-function hist(w,a,h){return load(HIST,{})[gameKey(w,a,h)]||[]}
-function laParts(ms){const ps=new Intl.DateTimeFormat('en-US',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',weekday:'short',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(new Date(ms)).reduce((o,p)=>(o[p.type]=p.value,o),{});return {date:`${ps.year}-${ps.month}-${ps.day}`,weekday:ps.weekday,h:Number(ps.hour)%24,m:Number(ps.minute)}}
-function pseudoDate(s){const [y,m,d]=s.split('-').map(Number);return new Date(Date.UTC(y,m-1,d))}
-function fmtDate(d){return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`}
-function laMs(date,h=0,m=0){const [Y,M,D]=date.split('-').map(Number),want=Date.UTC(Y,M-1,D,h,m);let guess=want;for(let i=0;i<2;i++){const p=laParts(guess),[y,mo,da]=p.date.split('-').map(Number),got=Date.UTC(y,mo-1,da,p.h,p.m);guess+=want-got}return guess}
-const weekFirst={};
-async function cacheWeek(w){w=Number(w);if(!w)return;try{const r=await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=${w}&dates=2026`,{cache:'no-store'}),j=await r.json();let first=Infinity;for(const ev of (j.events||[])){const c=ev.competitions?.[0],H=c?.competitors?.find(x=>x.homeAway==='home'),A=c?.competitors?.find(x=>x.homeAway==='away'),kick=Date.parse(ev.date);if(!H||!A||!Number.isFinite(kick))continue;first=Math.min(first,kick);const a=A.team?.abbreviation,h=H.team?.abbreviation;if(!a||!h)continue;try{MODEL_MATCHUP_CACHE[`${a}-${w}`]={opp:h,site:'@',date:ev.date,eventId:ev.id};MODEL_MATCHUP_CACHE[`${h}-${w}`]={opp:a,site:'vs',date:ev.date,eventId:ev.id}}catch(_){}}if(Number.isFinite(first))weekFirst[w]=first}catch(_){}}
-function kickoff(w,a,h){let g=null;try{g=MODEL_MATCHUP_CACHE?.[`${a}-${w}`]||MODEL_MATCHUP_CACHE?.[`${h}-${w}`]}catch(_){ }const ms=g?.date?Date.parse(g.date):NaN;return Number.isFinite(ms)?ms:null}
-function slots(w,kick){const kp=laParts(kick),kd=pseudoDate(kp.date),dow=kd.getUTCDay(),mon=new Date(kd.getTime()-((dow+6)%7)*86400000),out=[];for(let d=new Date(mon);d<=kd;d=new Date(d.getTime()+86400000)){const ds=fmtDate(d),wd=['SUN','MON','TUE','WED','THU','FRI','SAT'][d.getUTCDay()];out.push({id:ds+'-mid',t:laMs(ds),label:wd+' 12A',kind:'pre'})}let first=weekFirst[w];if(!Number.isFinite(first)){try{const ds=[];for(const k of Object.keys(MODEL_MATCHUP_CACHE||{})){if(!k.endsWith('-'+w))continue;const t=Date.parse(MODEL_MATCHUP_CACHE[k]?.date||'');if(Number.isFinite(t))ds.push(t)}if(ds.length)first=Math.min(...ds)}catch(_){}}if(Number.isFinite(first)){const fd=pseudoDate(laParts(first).date),prev=new Date(fd.getTime()-86400000),date=fmtDate(prev),wd=['SUN','MON','TUE','WED','THU','FRI','SAT'][prev.getUTCDay()];out.push({id:'freeze',t:laMs(date,12),label:wd+' 12P',kind:'pre',freeze:true})}out.push({id:'pre10',t:kick-10*60000,label:'PRE -10',kind:'pre',pre:true});out.sort((a,b)=>a.t-b.t);out.push({id:'q1',label:'Q1',kind:'game',g:.25},{id:'half',label:'HALF',kind:'game',g:.5},{id:'q3',label:'Q3',kind:'game',g:.75},{id:'final',label:'FINAL',kind:'game',g:1});return out}
-function gameProgress(q,kick){const lab=String(q.label||'').toUpperCase(),per=Number(q.period||q.meta?.period||0),clock=String(q.clock||q.meta?.clock||'');
-  // Prefer actual game clock whenever it exists. This prevents a whole quarter of
-  // live samples from snapping onto the Q1/HALF/Q3 guide line.
-  if(per>=1){const m=clock.match(/(\d+):(\d+)/);if(m){const left=Number(m[1])+Number(m[2])/60;let elapsed=(Math.max(1,per)-1)*15+(15-left);if(per>4)elapsed=60;return clamp(elapsed/60,0,1)}}
-  if(lab.includes('FINAL'))return 1;
-  if(lab.includes('Q3'))return .75;
-  if(lab.includes('HALF'))return .5;
-  if(lab==='Q1'||lab.includes(' Q1'))return .25;
-  return null;
-}
-function prepare(raw,kick,xPre,xGame){const rows=(raw||[]).filter(q=>Number.isFinite(Number(q?.p))&&Number.isFinite(Number(q?.t))&&!/^START$/i.test(String(q.label||''))).sort((a,b)=>a.t-b.t),cand=[];
-  for(const q0 of rows){const q={...q0},lab=String(q.label||'').toUpperCase(),per=Number(q.period||q.meta?.period||0);
-    if(q.t<kick){cand.push({...q,x:xPre(q.t),priority:/(PRE|FREEZE|MIDNIGHT|12P|CURRENT)/.test(lab)?3:1});continue}
-    // Old RC9/RC10 CURRENT READ points captured after kickoff had no game clock.
-    if(per===0&&!/(PRE|Q1|HALF|Q3|FINAL|LIVE)/.test(lab))continue;
-    const g=gameProgress(q,kick);
-    if(g==null)continue;
-    cand.push({...q,g,x:xGame(g),priority:/(PRE|Q1|HALF|Q3|FINAL)/.test(lab)?4:2});
-  }
-  // A plotted series must be a function: one y-value for every x-value. Collapse
-  // duplicate x coordinates. Major checkpoints win over ordinary live samples;
-  // ties keep the newest observation.
-  const byX=new Map();
-  for(const q of cand){const key=Math.round(q.x*10)/10,old=byX.get(key);if(!old||q.priority>old.priority||(q.priority===old.priority&&q.t>old.t))byX.set(key,q)}
-  const pts=[...byX.values()].sort((a,b)=>a.x-b.x||a.t-b.t);
-  // Final guard against sub-pixel duplicates from floating point rounding.
-  const out=[];for(const q of pts){const prev=out.at(-1);if(prev&&Math.abs(q.x-prev.x)<0.35){if(q.priority>prev.priority||(q.priority===prev.priority&&q.t>prev.t))out[out.length-1]=q}else out.push(q)}return out
-}
-function chart(w,a,h,kick){if(!Number.isFinite(kick))return '<div class="rc13-conf-loading">Loading official kickoff timeline…</div>';const ss=slots(w,kick),W=1120,H=350,L=58,R=34,T=34,B=86,plot=W-L-R,step=plot/Math.max(1,ss.length-1),sx=i=>L+i*step,slotX=Object.fromEntries(ss.map((s,i)=>[s.id,sx(i)])),pre=ss.filter(s=>s.kind==='pre'),preLast=pre.length-1,preStart=sx(0),preEnd=sx(preLast),finalX=slotX.final,y=p=>T+(100-p)/100*(H-T-B);
-  function xPre(t){if(t<=pre[0].t)return preStart;if(t>=pre[preLast].t)return preEnd;for(let i=0;i<preLast;i++){const A=pre[i],B=pre[i+1];if(t>=A.t&&t<=B.t){const f=(t-A.t)/Math.max(1,B.t-A.t);return sx(i)+f*(sx(i+1)-sx(i))}}return preEnd}
-  function xGame(g){const A=[[0,preEnd],[.25,slotX.q1],[.5,slotX.half],[.75,slotX.q3],[1,finalX]];for(let i=0;i<A.length-1;i++){if(g>=A[i][0]&&g<=A[i+1][0]){const f=(g-A[i][0])/(A[i+1][0]-A[i][0]);return A[i][1]+f*(A[i+1][1]-A[i][1])}}return finalX}
-  let s='';for(const p of [0,25,50,75,100]){const yy=y(p);s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--border)" ${p===50?'stroke-width="1.5"':'stroke-dasharray="4 6"'}/><text x="${L-9}" y="${yy+5}" text-anchor="end" font-size="13" font-weight="900" fill="var(--muted)">${p}%</text>`}
-  ss.forEach((sl,i)=>{const xx=sx(i),parts=sl.label.split(' ');s+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B+7}" stroke="var(--border)" opacity="${sl.freeze?.68:.34}" ${sl.freeze?'stroke-dasharray="3 4"':''}/><text x="${xx}" y="${H-48}" text-anchor="middle" font-size="12" font-weight="900" fill="var(--text)"><tspan x="${xx}">${esc(parts[0])}</tspan>${parts.length>1?`<tspan x="${xx}" dy="14">${esc(parts.slice(1).join(' '))}</tspan>`:''}</text>`});
-  const pts=prepare(hist(w,a,h),kick,xPre,xGame),homePath=pts.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(Number(q.p)).toFixed(2)}`).join(' '),awayPath=pts.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(100-Number(q.p)).toFixed(2)}`).join(' ');
-  if(homePath)s+=`<path d="${homePath}" fill="none" stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-  if(awayPath)s+=`<path d="${awayPath}" fill="none" stroke="var(--orange)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
-  pts.forEach((q,i)=>{const lab=String(q.label||'').toUpperCase(),major=/(PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P|CURRENT)/.test(lab),latest=i===pts.length-1,show=major||latest,r=show?5.5:2.2,hp=Number(q.p),ap=100-hp,hy=y(hp),ay=y(ap);s+=`<circle cx="${q.x}" cy="${hy}" r="${r}" fill="${show?'var(--card)':'var(--blue)'}" stroke="var(--blue)" stroke-width="2"><title>${esc(h)} ${hp.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'—')}</title></circle><circle cx="${q.x}" cy="${ay}" r="${r}" fill="${show?'var(--card)':'var(--orange)'}" stroke="var(--orange)" stroke-width="2"><title>${esc(a)} ${ap.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'—')}</title></circle>`;if(show){const hY=hy<50?hy+20:hy-11,aY=ay>H-B-16?ay-11:ay+19;s+=`<text x="${q.x}" y="${hY}" text-anchor="middle" font-size="12" font-weight="950" fill="var(--blue)">${hp.toFixed(0)}%</text><text x="${q.x}" y="${aY}" text-anchor="middle" font-size="12" font-weight="950" fill="var(--orange)">${ap.toFixed(0)}%</text>`}});
-  if(pts.length){const last=pts.at(-1),hp=Number(last.p),ap=100-hp,lx=Math.min(W-R-3,last.x+10);s+=`<text x="${lx}" y="${y(hp)-2}" font-size="12" font-weight="950" fill="var(--blue)">${esc(h)}</text><text x="${lx}" y="${y(ap)-2}" font-size="12" font-weight="950" fill="var(--orange)">${esc(a)}</text>`}else{s+=`<text x="${(L+W-R)/2}" y="${(T+H-B)/2}" text-anchor="middle" font-size="13" font-weight="800" fill="var(--muted)">Timeline ready · captured analyses will fill this graph</text>`}
-  return `<div class="rc13-conf-wrap"><svg class="rc13-conf-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(a)} and ${esc(h)} win probability history">${s}</svg></div>`
-}
-async function paint(box){if(!box||box.dataset.rc13painting==='1')return;box.dataset.rc13painting='1';try{const w=Number(box.dataset.w),a=box.dataset.away,h=box.dataset.home;if(!w||!a||!h)return;let k=kickoff(w,a,h);if(!Number.isFinite(k)){box.innerHTML='<div class="rc13-conf-loading">Loading official kickoff timeline…</div>';await cacheWeek(w);k=kickoff(w,a,h)}box.innerHTML=chart(w,a,h,k)}finally{delete box.dataset.rc13painting}}
-async function repaint(){for(const b of document.querySelectorAll('.rc11-confidence-box'))await paint(b)}
-const prevDetail=window.modelMatchDetailHtml;window.modelMatchDetailHtml=function(a,h,w,pred){const raw=prevDetail?prevDetail(a,h,w,pred):'',wrap=document.createElement('div');wrap.innerHTML=raw;const box=wrap.querySelector('.rc11-confidence-box');if(box){box.dataset.w=w;box.dataset.away=a;box.dataset.home=h;box.innerHTML=chart(w,a,h,kickoff(w,a,h))}return wrap.innerHTML};
-const prevLoad=window.predLoadWeek;window.predLoadWeek=async function(silent=false){const w=Number(document.getElementById('predWeekSel')?.value||window.MODEL_FORECAST_WEEK||5);await cacheWeek(w);const r=await prevLoad?.(silent);setTimeout(repaint,320);return r};
-const prevToggle=window.modelToggleMatchCard;window.modelToggleMatchCard=function(el){prevToggle?.(el);setTimeout(repaint,340)};
-const mo=new MutationObserver(ms=>{for(const m of ms){for(const n of m.addedNodes){if(n instanceof Element&&(n.matches?.('.rc11-confidence-box')||n.querySelector?.('.rc11-confidence-box'))){setTimeout(repaint,60);return}}}});mo.observe(document.body,{childList:true,subtree:true});
-setInterval(repaint,61000);
-try{document.title='Fantasy HQ '+APP}catch(_){ }
-setTimeout(async()=>{const w=Number(document.getElementById('predWeekSel')?.value||window.MODEL_FORECAST_WEEK||5);await cacheWeek(w);await repaint()},650);
 })();
 </script>
 
