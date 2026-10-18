@@ -7286,15 +7286,15 @@ function confidenceSvg11(w,a,h,kickoff,responsiveWidth=0){
   kickoff=Number(kickoff);
   const raw=hist(w,a,h).filter(q=>Number.isFinite(Number(q?.p))&&Number.isFinite(Number(q?.t))&&!/^START$/i.test(String(q?.label||''))).sort((x,z)=>Number(x.t)-Number(z.t));
   const history=[...raw,...checkpointOverlay11(raw)];
-  const slots=axisSlots(w,kickoff),preSlots=slots.filter(s=>s.kind!=='game'),cardWidth=Number(responsiveWidth)||Number(document.querySelector('#pred-match .model-match-card.open .model-match-detail-shell')?.clientWidth)||Number(document.getElementById('pred-match')?.clientWidth)||Number(window.innerWidth)||1240,W=clamp(Math.round(cardWidth),320,1400),H=W<560?270:350,L=W<560?40:64,R=W<560?14:42,T=W<560?23:34,B=W<560?62:82,plot=W-L-R,preWidth=plot*.56,gameWidth=plot-preWidth,teamColors=confidenceChartColors11(a,h);
+  const slots=axisSlots(w,kickoff),preSlots=slots.filter(s=>s.kind!=='game'),viewportWidth=Math.min(Number(window.visualViewport?.width)||Number(window.innerWidth)||1240,Number(document.documentElement?.clientWidth)||Number(window.innerWidth)||1240),reportedWidth=Number(responsiveWidth)||Number(document.querySelector('#pred-match .model-match-card.open .model-match-detail-shell')?.clientWidth)||Number(document.getElementById('pred-match')?.clientWidth)||viewportWidth,cardWidth=viewportWidth<=720?Math.max(320,Math.min(viewportWidth-24,reportedWidth||viewportWidth)):reportedWidth,W=clamp(Math.round(cardWidth),320,1400),small=viewportWidth<=560,H=small?190:350,L=small?33:64,R=small?8:42,T=small?16:34,B=small?39:82,plot=W-L-R,preWidth=plot*.56,gameWidth=plot-preWidth,teamColors=confidenceChartColors11(a,h);
   const dailySlots=slots.filter(sl=>sl.kind==='daily'),preMin=dailySlots[0]?.t??preSlots[0]?.t??kickoff-4*86400000,preMax=kickoff-10*60000;
   const xPre=t=>L+clamp((Number(t)-preMin)/Math.max(1,preMax-preMin),0,1)*preWidth;
   const xGame=g=>L+preWidth+clamp(Number(g)||0,0,1)*gameWidth;
   const y=p=>T+(100-Number(p))/100*(H-T-B);
   let s='';
-  [0,25,50,75,100].forEach(p=>{const yy=y(p);s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--border)" stroke-width="${p===50?1.1:.8}" ${p===50?'':'stroke-dasharray="4 6"'}/><text x="${L-8}" y="${yy+5}" text-anchor="end" font-size="13" font-weight="900" fill="var(--muted)">${p}%</text>`});
+  [0,25,50,75,100].forEach(p=>{const yy=y(p);s+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="var(--border)" stroke-width="${p===50?1.1:.8}" ${p===50?'':'stroke-dasharray="4 6"'}/><text x="${L-5}" y="${yy+3}" text-anchor="end" font-size="${small?9:13}" font-weight="900" fill="var(--muted)">${p}%</text>`});
   const dailyKeep=new Set(W<560?[dailySlots[0]?.id,dailySlots.at(-1)?.id]:dailySlots.map(sl=>sl.id));
-  slots.forEach(sl=>{const xx=sl.kind==='game'?xGame(sl.g):xPre(sl.t);s+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B+7}" stroke="var(--border)" stroke-width=".75" opacity="${sl.kind==='freeze'?.7:.34}" ${sl.kind==='freeze'?'stroke-dasharray="3 4"':''}/>`;if(sl.kind==='daily'&&!dailyKeep.has(sl.id))return;let label=sl.label;if(W<560){if(sl.kind==='pre')label='PRE';else if(sl.kind==='daily')label=String(sl.label).split(' ')[0];}const parts=String(label).split(' ');s+=`<text x="${xx}" y="${H-47}" text-anchor="middle" font-size="12" font-weight="900" fill="var(--text)"><tspan x="${xx}">${esc(parts[0])}</tspan>${parts.length>1?`<tspan x="${xx}" dy="14">${esc(parts.slice(1).join(' '))}</tspan>`:''}</text>`});
+  slots.forEach(sl=>{const xx=sl.kind==='game'?xGame(sl.g):xPre(sl.t);s+=`<line x1="${xx}" y1="${T}" x2="${xx}" y2="${H-B+3}" stroke="var(--border)" stroke-width=".75" opacity="${sl.kind==='freeze'?.7:.34}" ${sl.kind==='freeze'?'stroke-dasharray="3 4"':''}/>`;if(sl.kind==='daily'&&!dailyKeep.has(sl.id))return;let label=sl.label;if(small){if(sl.kind==='pre')label='PRE';else if(sl.kind==='daily')label=String(sl.label).split(' ')[0];}const parts=String(label).split(' ');s+=`<text x="${xx}" y="${small?H-23:H-47}" text-anchor="middle" font-size="${small?8.5:12}" font-weight="900" fill="var(--text)"><tspan x="${xx}">${esc(parts[0])}</tspan>${parts.length>1?`<tspan x="${xx}" dy="${small?9:14}">${esc(parts.slice(1).join(' '))}</tspan>`:''}</text>`});
 
   const cand=[];
   for(const q0 of history){
@@ -7329,14 +7329,14 @@ function confidenceSvg11(w,a,h,kickoff,responsiveWidth=0){
 
   const homeD=clean.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(q.p).toFixed(2)}`).join(' ');
   const awayD=clean.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(100-Number(q.p)).toFixed(2)}`).join(' ');
-  if(homeD)s+=`<path d="${homeD}" fill="none" stroke="${teamColors.home}" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>`;
-  if(awayD)s+=`<path d="${awayD}" fill="none" stroke="${teamColors.away}" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(homeD)s+=`<path d="${homeD}" fill="none" stroke="${teamColors.home}" stroke-width="${small?1.5:2.25}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(awayD)s+=`<path d="${awayD}" fill="none" stroke="${teamColors.away}" stroke-width="${small?1.5:2.25}" stroke-linecap="round" stroke-linejoin="round"/>`;
   clean.forEach((q,i)=>{
-    const lab=String(q.label||'').toUpperCase(),major=q.checkpointFixed||/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P/.test(lab),latest=i===clean.length-1,show=major||latest,r=show?5.5:2.2,hp=Number(q.p),ap=100-hp,hy=y(hp),ay=y(ap);
+    const lab=String(q.label||'').toUpperCase(),major=q.checkpointFixed||/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P/.test(lab),latest=i===clean.length-1,show=small?latest:(major||latest),r=major?(small?3:5.5):(small?1.4:2.2),hp=Number(q.p),ap=100-hp,hy=y(hp),ay=y(ap);
     s+=`<circle cx="${q.x}" cy="${hy}" r="${r}" fill="${show?'var(--card)':teamColors.home}" stroke="${teamColors.home}" stroke-width="1.6"><title>${esc(h)} ${hp.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'-')}</title></circle><circle cx="${q.x}" cy="${ay}" r="${r}" fill="${show?'var(--card)':teamColors.away}" stroke="${teamColors.away}" stroke-width="1.6"><title>${esc(a)} ${ap.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'-')}</title></circle>`;
-    if(show){const hY=hy<52?hy+20:hy-11,aY=ay>H-B-16?ay-11:ay+19;s+=`<text x="${q.x}" y="${hY}" text-anchor="middle" font-size="12" font-weight="950" fill="${teamColors.home}">${hp.toFixed(0)}%</text><text x="${q.x}" y="${aY}" text-anchor="middle" font-size="12" font-weight="950" fill="${teamColors.away}">${ap.toFixed(0)}%</text>`}
+    if(show){const hY=hy<T+18?hy+11:hy-5,aY=ay>H-B-10?ay-8:ay+11;s+=`<text x="${q.x}" y="${hY}" text-anchor="middle" font-size="${small?7.5:12}" font-weight="950" fill="${teamColors.home}">${hp.toFixed(0)}%</text><text x="${q.x}" y="${aY}" text-anchor="middle" font-size="${small?7.5:12}" font-weight="950" fill="${teamColors.away}">${ap.toFixed(0)}%</text>`}
   });
-  if(clean.length){const q=clean.at(-1),hp=Number(q.p),ap=100-hp,lx=Math.min(W-R-4,q.x+11),anchor=W<560?'end':'start';s+=`<text x="${lx}" y="${y(hp)-2}" text-anchor="${anchor}" font-size="12" font-weight="950" fill="${teamColors.home}">${esc(h)}</text><text x="${lx}" y="${y(ap)-2}" text-anchor="${anchor}" font-size="12" font-weight="950" fill="${teamColors.away}">${esc(a)}</text>`}
+  if(clean.length){const q=clean.at(-1),hp=Number(q.p),ap=100-hp,lx=Math.min(W-R-3,q.x+8),anchor=small?'end':'start';s+=`<text x="${lx}" y="${y(hp)-2}" text-anchor="${anchor}" font-size="${small?8:12}" font-weight="950" fill="${teamColors.home}">${esc(h)}</text><text x="${lx}" y="${y(ap)-2}" text-anchor="${anchor}" font-size="${small?8:12}" font-weight="950" fill="${teamColors.away}">${esc(a)}</text>`}
   else s+=`<text x="${(L+W-R)/2}" y="${(T+H-B)/2}" text-anchor="middle" font-size="13" font-weight="800" fill="var(--muted)">Timeline ready - captured analyses will fill this graph</text>`;
   return `<div class="rc11-conf-wrap"><svg class="rc11-conf-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(a)} and ${esc(h)} win probability history">${s}</svg></div>`
 }
@@ -8158,8 +8158,12 @@ boot();
 #modelGraphDetail{max-height:70vh;overflow:auto}
 #rc18WeeklyAnalysis>summary{font-size:14px!important}
 @media(max-width:720px){
- #pred-match .rc11-confidence-box{padding:2px!important}
- #pred-match .rc11-confidence-box svg{max-height:none!important}
+ #pred-match .rc17-confidence-wide,#pred-match .rc17-confidence-wide .rc10-left-body,#pred-match .rc11-confidence-box,#pred-match .rc11-conf-wrap{width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden!important}
+ /* Match the specificity of the older RC17 980px rule so the full timeline fits on phones. */
+ #pred-match .rc17-confidence-wide .rc11-conf-wrap{width:100%!important;min-width:0!important;overflow-x:hidden!important;overflow-y:hidden!important}
+ #pred-match .rc17-confidence-wide .rc11-conf-svg{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;height:180px!important;max-height:180px!important}
+ #pred-match .rc11-confidence-box{padding:0!important;margin:0!important}
+ #pred-match .rc11-confidence-box svg{display:block;width:100%!important;height:180px!important;max-height:180px!important;min-width:0!important}
  #pred-match .rc20-evidence-grid{grid-template-columns:minmax(0,1fr)!important}
  #modelTrajectorySection .model-chart-box{overflow:hidden!important}
  #modelTrajectorySection .model-chart-box svg{font-size:1.45em}
@@ -8198,6 +8202,24 @@ const list=$('#predMatchList');if(list)mo.observe(list,{childList:true,subtree:t
 document.addEventListener('click',e=>{if(e.target.closest('.model-match-main'))setTimeout(refreshCards,220);if(e.target.closest('.rc10-checkpoint-row button'))setTimeout(()=>{const c=e.target.closest('.model-match-card');if(c)enrichPulse(c)},400)});
 window.addEventListener('resize',()=>{clearTimeout(window.__rc22resize);window.__rc22resize=setTimeout(()=>{window.fhqRefreshConfidenceCharts11?.();refreshCards()},180)});
 setTimeout(()=>{refreshCards();$$('.model-match-card.open').forEach(enrichPulse);removeArrows()},900);setTimeout(()=>{refreshCards();removeArrows()},2200);setInterval(()=>{refreshCards();$$('.model-match-card.open').forEach(enrichPulse);removeArrows()},3500);
+})();
+</script>
+
+<style id="rc22AccountPlacement">
+#fhqAccountWidget{display:none!important}
+#fhqSettingsAccount{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--border);border-radius:8px;background:var(--card);margin:8px 0}
+#fhqSettingsAccount .fhq-settings-account-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+#fhqSettingsAccount .fhq-settings-account-name{font-weight:850;color:var(--text)}
+#fhqSettingsAccount .fhq-settings-account-role{font-size:11px;color:var(--muted);margin-top:3px}
+#fhqSettingsAccount details{font-size:11px;color:var(--muted)}
+#fhqSettingsAccount summary{cursor:pointer;padding:5px 0}
+#fhqSettingsAccount code{font-size:10px;overflow-wrap:anywhere;color:var(--muted)}
+@media(max-width:700px){#fhqSettingsAccount{padding:10px}#fhqSettingsAccount .v2-btn{min-height:38px}}
+</style>
+<script id="rc22AccountPlacementLogic">
+(function(){'use strict';
+function mountAccount(data){const widget=document.getElementById('fhqAccountWidget');if(widget)widget.style.display='none';if(!data)return;const profile=document.querySelector('#panel-settings #league-home .settings-section');if(!profile)return;let box=document.getElementById('fhqSettingsAccount');if(!box){box=document.createElement('section');box.id='fhqSettingsAccount';const label=profile.querySelector('.settings-sec-label');if(label)label.after(box);else profile.prepend(box)}box.innerHTML='';const head=document.createElement('div');head.className='fhq-settings-account-head';const info=document.createElement('div');const display=document.createElement('div');display.className='fhq-settings-account-name';display.textContent=data.display_name||'League member';const role=document.createElement('div');role.className='fhq-settings-account-role';role.textContent=data.role==='commissioner'?'Commissioner account':'League member account';info.append(display,role);const out=document.createElement('button');out.type='button';out.className='v2-btn v2-btn-sm';out.textContent='Sign out';out.addEventListener('click',()=>{box.remove();window.signOut?.()});head.append(info,out);const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Member ID';const id=document.createElement('code');id.textContent=data.user_id||'';details.append(summary,id);box.append(head,details)}
+document.addEventListener('fhq-member-ready',e=>mountAccount(e.detail));document.addEventListener('click',e=>{if(e.target.closest('#bb-settings'))setTimeout(()=>mountAccount(window.FHQ_CURRENT_MEMBER),80)});if(window.FHQ_CURRENT_MEMBER)mountAccount(window.FHQ_CURRENT_MEMBER);
 })();
 </script>
 
