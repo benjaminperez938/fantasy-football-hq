@@ -8143,6 +8143,55 @@ document.addEventListener('click',e=>{if(e.target.closest('#predTabs button'))se
 sb?.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentMember=null;window.FHQ_CURRENT_MEMBER=null;$('#fhqAccountWidget')?.remove();gate().style.display='flex';showForm('signin')}else if(session&&event==='PASSWORD_RECOVERY'){passwordRecoveryActive=true;gate().style.display='flex';showForm('newpassword','Recovery link accepted. Choose a new password below.')}else if(session&&!currentMember)setTimeout(()=>validateSession(session).catch(e=>message(e.message,true)),0)});
 boot();
 </script>
+<script id="rc23SharedHistoryLoadFix">
+/* RC23 shared-history load fix. This changes only browser loading/presentation;
+   collector writes, Supabase fields, labels, and model calculations are unchanged. */
+(function(){'use strict';
+  const HISTORY_KEY='fhq_confidence_history_rc9';
+  const read=()=>{try{const x=JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}');return x&&typeof x==='object'?x:{}}catch(_){return{}}};
+  const write=x=>{try{localStorage.setItem(HISTORY_KEY,JSON.stringify(x))}catch(_){} };
+  const gameParts=game=>{const p=String(game||'').split(':');return p.length===3?{week:Number(p[0]),away:String(p[1]),home:String(p[2])}:null};
+  window.FHQSharedHistoryPointFromRow=function(row,game){
+    const parts=gameParts(game);if(!parts||!row)return null;
+    const t=Date.parse(row.captured_at||row.t),p=Number(row.home_probability);
+    if(!Number.isFinite(t)||!Number.isFinite(p))return null;
+    const label=String(row.snapshot_type||row.label||'').toUpperCase().replaceAll('_',' ');
+    return {t,p:p*100,label,rel:row.reliability||'—',v:21,period:Number(row.period||0),clock:row.clock||'',away:parts.away,home:parts.home,awayScore:row.away_score??row.awayScore,homeScore:row.home_score??row.homeScore,score:row.home_score!=null?`${row.away_score}-${row.home_score}`:'',revision:Number(row.revision||1),...(row.metadata||{})};
+  };
+  function mergeGame(game,before,after){
+    const by=new Map();for(const q of [...(before||[]),...(after||[])])if(Number.isFinite(Number(q?.t)))by.set(Number(q.t),q);
+    const all=read();all[game]=[...by.values()].sort((a,b)=>Number(a.t)-Number(b.t));write(all);return all[game];
+  }
+  const original=window.FHQ18LoadSharedHistory;
+  if(typeof original==='function')window.FHQ18LoadSharedHistory=async function(game){
+    const before=read()[game]||[];let result=false;
+    try{result=await original(game)}catch(error){window.FHQ_SHARED_HISTORY_STATUS={...(window.FHQ_SHARED_HISTORY_STATUS||{}),lastError:String(error?.message||error)};return false}
+    const after=read()[game]||[];mergeGame(game,before,after);return result;
+  };
+  function identify(card){
+    let away=card.dataset.away,home=card.dataset.home;
+    if(!away||!home){const teams=[...card.querySelectorAll('.model-team-name-link')].map(x=>x.textContent.trim()).filter(Boolean);if(teams.length>=2){away=teams[0];home=teams[1];card.dataset.away=away;card.dataset.home=home}}
+    const week=Number(card.dataset.week||document.getElementById('predWeekSel')?.value||window.MODEL_FORECAST_WEEK||0);if(week&&away&&home)card.dataset.week=String(week);
+    return week&&away&&home?`${week}:${away}:${home}`:null;
+  }
+  window.FHQRefreshSharedHistories=async function(){
+    const loader=window.FHQ18LoadSharedHistory,cards=[...document.querySelectorAll('#predMatchList .model-match-card')];
+    if(typeof loader!=='function'||!cards.length)return {attempted:0,loaded:0,points:0};
+    let attempted=0,loaded=0,points=0,errors=0;
+    for(const card of cards){const game=identify(card);if(!game)continue;attempted++;try{if(await loader(game))loaded++;points+=(read()[game]||[]).length}catch(_){errors++}}
+    window.FHQ_SHARED_HISTORY_STATUS={attempted,loaded,points,errors,updatedAt:Date.now()};
+    window.fhqRefreshConfidenceCharts11?.();
+    return window.FHQ_SHARED_HISTORY_STATUS;
+  };
+  let timer=0;const schedule=()=>{clearTimeout(timer);timer=setTimeout(()=>window.FHQRefreshSharedHistories?.(),350)};
+  const list=document.getElementById('predMatchList');
+  if(list&&typeof MutationObserver!=='undefined')new MutationObserver(schedule).observe(list,{childList:true});
+  window.addEventListener('fhq-member-ready',()=>setTimeout(schedule,250));
+  window.addEventListener('pageshow',()=>setTimeout(schedule,500));
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')schedule()});
+  setTimeout(schedule,1200);
+})();
+</script>
 <style id="fhq-rc21-cloud-style">
 #signInOv{display:none!important}#fhqAccountWidget{position:fixed;right:10px;top:10px;z-index:90000;display:none;align-items:center;gap:10px;padding:7px 9px;background:#17191b;color:#f4f4f2;border:1px solid #45494c;font:700 10px Arial,sans-serif}#fhqAccountWidget small{display:block;color:#b9bec2;font:9px monospace;max-width:190px;overflow:hidden;text-overflow:ellipsis}#fhqCloudGate{position:fixed;inset:0;z-index:100000;background:rgba(8,10,12,.98);display:none;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;color:#f4f4f2;font:14px Arial,sans-serif}#fhqCloudGate .fhq-cloud-card{width:min(100%,420px);background:#17191b;border:1px solid #3a3d40;padding:24px;box-shadow:0 20px 80px #0008}#fhqCloudGate .fhq-cloud-brand{font:900 24px Impact,Arial,sans-serif;letter-spacing:3px;text-align:center}#fhqCloudGate .fhq-cloud-brand b{color:#54c982}#fhqCloudGate .fhq-cloud-title{text-align:center;color:#abb0b4;font:10px monospace;letter-spacing:2px;margin:5px 0 15px}#fhqCloudGate h2{font-size:18px;margin:0 0 15px}#fhqCloudGate label{display:block;font-size:11px;font-weight:700;margin:10px 0}#fhqCloudGate input{display:block;box-sizing:border-box;width:100%;margin-top:5px;padding:11px;background:#101214;color:white;border:1px solid #464a4d}#fhqCloudGate button,#fhqCloudMembers button,#fhqPublishForecasts,#fhqImportHistory{padding:10px 12px;background:#262a2d;color:#f4f4f2;border:1px solid #4b5054;cursor:pointer;font-weight:700}#fhqCloudGate #fhqCloudSubmit{width:100%;background:#166b3b;margin:10px 0}#fhqCloudGate .fhq-cloud-links{display:flex;justify-content:space-between}#fhqCloudGate .fhq-cloud-links button{border:0;background:transparent;color:#8ab9ff;padding:7px 0}#fhqCloudMsg{min-height:22px;color:#bec5ca;font-size:12px;line-height:1.5;margin-top:8px}#fhqCloudMsg[data-error="1"]{color:#ff8585}.fhq-cloud-help{color:#b9bec2;font-size:11px;line-height:1.45}.fhq-cloud-locked body{overflow:hidden}.fhq-cloud-admin{padding:12px;margin:10px 0;background:var(--card);border:1px solid var(--border)}.fhq-cloud-admin-row{display:flex;gap:7px;flex-wrap:wrap}.fhq-cloud-admin-row input{min-width:130px;flex:1;padding:9px;background:var(--dark2);color:var(--text);border:1px solid var(--border)}.fhq-cloud-member{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--border)}.fhq-cloud-member small{display:block;color:var(--muted);font-size:10px;overflow-wrap:anywhere}
 </style>
