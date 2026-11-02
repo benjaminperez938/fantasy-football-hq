@@ -1352,7 +1352,7 @@
 <style id="rc14GraphFix">
 .rc11-conf-svg{min-width:1040px!important}
 .rc11-confidence-box{overflow:hidden}
-.rc11-conf-wrap{overflow-x:auto;overscroll-behavior-inline:contain;padding:4px 0 7px}
+.rc11-conf-wrap{overflow:hidden;overscroll-behavior-inline:contain;padding:4px 0 7px;min-width:0;max-width:100%;box-sizing:border-box}
 </style>
 </head>
 <body>
@@ -6167,7 +6167,8 @@ window.addEventListener("DOMContentLoaded",()=>{populateDraftSlots();renderDraft
     const {store,bucket}=bucketFor(state.w,state.away,state.home);if(bucket.snapshots[label])return bucket.snapshots[label];
     const stats=state.summary?compactStats(state.summary,state.away,state.home):{rows:[],awayLeaders:[],homeLeaders:[],plays:[]};
     const liveHome=modelLiveProbability(Number(pred?.pHome||.5),Number(state.homeScore||0),Number(state.awayScore||0),state.statusObj||{}),livePick=liveHome>=.5?state.home:state.away;
-    const snap={label,capturedAt:new Date().toISOString(),status:state.statusName||'',period:state.period||0,clock:state.clock||'',awayScore:state.awayScore,homeScore:state.homeScore,livePick,livePct:Math.max(liveHome,1-liveHome),stats,forecast:forecastPack(pred)};
+    const liabilities=state.summary&&typeof liveEvidence==='function'?(liveEvidence(state.summary,state.away,state.home).liabilities||[]):[];
+    const snap={label,capturedAt:new Date().toISOString(),status:state.statusName||'',period:state.period||0,clock:state.clock||'',awayScore:state.awayScore,homeScore:state.homeScore,livePick,livePct:Math.max(liveHome,1-liveHome),stats,liabilities,forecast:forecastPack(pred)};
     bucket.snapshots[label]=snap;storeSave(store);return snap;
   }
   function getSnapshots(w,away,home){const {bucket}=bucketFor(w,away,home);return bucket.snapshots||{}}
@@ -7341,8 +7342,9 @@ function confidenceSvg11(w,a,h,kickoff,responsiveWidth=0){
 
   const homeD=clean.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(q.p).toFixed(2)}`).join(' ');
   const awayD=clean.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(100-Number(q.p)).toFixed(2)}`).join(' ');
-  if(homeD)s+=`<path d="${homeD}" fill="none" stroke="${teamColors.home}" stroke-width="${small?3.6:4.5}" stroke-linecap="round" stroke-linejoin="round"/>`;
-  if(awayD)s+=`<path d="${awayD}" fill="none" stroke="${teamColors.away}" stroke-width="${small?3.6:4.5}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  /* Keep the line thick, but render the observed points as straight segments. */
+  if(homeD)s+=`<path d="${homeD}" fill="none" stroke="${teamColors.home}" stroke-width="${small?3.6:4.5}" stroke-linecap="butt" stroke-linejoin="miter"/>`;
+  if(awayD)s+=`<path d="${awayD}" fill="none" stroke="${teamColors.away}" stroke-width="${small?3.6:4.5}" stroke-linecap="butt" stroke-linejoin="miter"/>`;
   clean.forEach((q,i)=>{
     const lab=String(q.label||'').toUpperCase(),major=q.checkpointFixed||/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P/.test(lab),latest=i===clean.length-1,show=small?latest:(major||latest),r=major?(small?2.5:4):(small?1.05:1.35),hp=Number(q.p),ap=100-hp,hy=y(hp),ay=y(ap);
     s+=`<circle cx="${q.x}" cy="${hy}" r="${r}" fill="${show?'var(--card)':teamColors.home}" stroke="${teamColors.home}" stroke-width="1.6"><title>${esc(h)} ${hp.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'-')}</title></circle><circle cx="${q.x}" cy="${ay}" r="${r}" fill="${show?'var(--card)':teamColors.away}" stroke="${teamColors.away}" stroke-width="1.6"><title>${esc(a)} ${ap.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'-')}</title></circle>`;
@@ -7736,7 +7738,7 @@ function ensureLayout(card){
 }
 function activeLabel(card){if(card.dataset.activeCheckpoint)return card.dataset.activeCheckpoint;const s=snaps(Number(card.dataset.week),card.dataset.away,card.dataset.home);return s.FINAL?'FINAL':s.Q3?'Q3':s.HALF?'HALF':s.Q1?'Q1':'PRE'}
 function installGuard(card){const pane=card?.querySelector('.model-match-report-pane');if(!pane||pane.dataset.rc17guard)return;pane.dataset.rc17guard='1';let busy=false;new MutationObserver(()=>{if(busy)return;const r=pane.querySelector('.rc4-report-content');if(r&&!r.querySelector('.rc17-pulse-report')){busy=true;setTimeout(()=>{renderReport(card,activeLabel(card));busy=false},0)}}).observe(pane,{childList:true,subtree:true})}
-function renderReport(card,label){const pane=card?.querySelector('.model-match-report-pane');if(!pane)return;let r=pane.querySelector('.rc4-report-content');if(!r){r=document.createElement('div');r.className='rc4-report-content';pane.appendChild(r)}r.innerHTML=reportHtml(card,label);installGuard(card)}
+function renderReport(card,label){const pane=card?.querySelector('.model-match-report-pane');if(!pane)return;let r=pane.querySelector('.rc4-report-content');if(!r){r=document.createElement('div');r.className='rc4-report-content';pane.appendChild(r)}r.innerHTML=reportHtml(card,label);window.FHQFormatPulseMiniHeadersV1?.(r);installGuard(card)}
 function stabilize(card){if(!card?.classList.contains('open'))return;ensureLayout(card);const label=activeLabel(card);card.dataset.activeCheckpoint=label;card.querySelectorAll('.rc10-checkpoint-row .rc4-checkpoint-btn').forEach(x=>x.classList.toggle('active',x.textContent.trim()===label));renderStats(card,label);renderReport(card,label)}
 function stabilizeAll(){document.querySelectorAll('.model-match-card.open').forEach(stabilize)}
 window.modelPulseSelectCheckpoint=function(btn,label){const card=btn?.closest('.model-match-card');if(!card)return;card.dataset.activeCheckpoint=label;card.querySelectorAll('.rc10-checkpoint-row .rc4-checkpoint-btn').forEach(x=>x.classList.toggle('active',x.textContent.trim()===label));renderStats(card,label);renderReport(card,label)};
@@ -8203,7 +8205,7 @@ boot();
 .rc22-analysis-evidence{border-top:1px solid var(--border);margin-top:12px;padding-top:8px}.rc22-analysis-evidence p{line-height:1.55;margin:9px 0}.rc22-modal-pulse{border-top:1px solid var(--border);padding:7px}.rc22-modal-pulse>summary{cursor:pointer;padding:8px;font-weight:800}
 /* RC22 presentation layer: graph values and stored data remain untouched. */
 #pred-match .rc11-confidence-box{width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden!important;padding:6px 4px!important}
-#pred-match .rc11-confidence-box svg{display:block;width:100%!important;height:auto!important;max-width:100%!important;min-width:0!important;overflow:visible}
+#pred-match .rc11-confidence-box svg{display:block;width:100%!important;height:auto!important;max-width:100%!important;min-width:0!important;overflow:hidden}
 #pred-match .model-match-detail-shell{--home-color:transparent!important;--away-color:transparent!important}
 #pred-match .model-match-report-pane{background:var(--card)!important;box-shadow:none!important;background-image:none!important}
 #pred-match .rc20-evidence-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
@@ -8214,6 +8216,11 @@ boot();
 #pred-match .rc22-unit-detail .rc22-unit-body{padding:8px 0 4px}
 #pred-match .rc22-pulse-accordion{border:1px solid var(--border);border-radius:9px;overflow:hidden;background:var(--card)}
 #pred-match .rc22-pulse-accordion>summary{font-weight:900;border-bottom:1px solid var(--border);background:var(--card)}
+/* Every evidence section gets a large, non-emoji keyboard-style toggle. */
+details.rc22-unit-detail>summary::-webkit-details-marker,details.rc22-pulse-accordion>summary::-webkit-details-marker,details.rc22-stats-detail>summary::-webkit-details-marker{display:none}
+details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc22-stats-detail>summary{justify-content:space-between;gap:12px}
+details.rc22-unit-detail>summary::after,details.rc22-pulse-accordion>summary::after,details.rc22-stats-detail>summary::after{content:'+';display:inline-flex;align-items:center;justify-content:center;flex:0 0 24px;width:24px;height:24px;border:1px solid currentColor;border-radius:4px;color:var(--muted);font:900 18px/1 Arial,sans-serif}
+details.rc22-unit-detail[open]>summary::after,details.rc22-pulse-accordion[open]>summary::after,details.rc22-stats-detail[open]>summary::after{content:'−'}
 .rc22-checkpoint-hit{filter:drop-shadow(0 0 5px var(--green));stroke:var(--text)!important;stroke-width:4px!important}
 .rc22-evidence-hit{background:color-mix(in srgb,var(--green) 18%,var(--card))!important;outline:2px solid var(--green)}
 #modelTrajectorySection .model-chart-box{overflow:hidden!important;min-width:0!important}
@@ -8320,7 +8327,9 @@ body{overflow-y:auto}
 .rc11-confidence-box svg path[data-rc24-line="1"]{stroke-width:4.5!important}
 .rc11-confidence-box .rc11-conf-svg text{paint-order:stroke;stroke:var(--card);stroke-width:5.5px;stroke-linejoin:round}
 .rc11-confidence-box .rc11-conf-layout{display:grid;grid-template-columns:minmax(0,1fr) 86px;gap:8px;align-items:stretch}
-.rc11-confidence-box .rc11-conf-layout .rc11-conf-wrap{min-width:0}
+.rc11-confidence-box .rc11-conf-layout{width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow:hidden}
+.rc11-confidence-box .rc11-conf-layout .rc11-conf-wrap{min-width:0;max-width:100%;overflow:hidden;box-sizing:border-box}
+.rc11-confidence-box .rc11-conf-svg{display:block;width:100%!important;max-width:100%!important;min-width:0!important;overflow:hidden}
 .rc11-confidence-box .rc11-point-label,.rc11-confidence-box .rc11-end-label{display:none!important}
 .rc11-confidence-box .rc11-conf-legend{display:flex;flex-direction:column;justify-content:space-around;gap:8px;min-width:0;padding:12px 4px}
 .rc11-confidence-box .rc11-conf-legend-team{border-left:5px solid var(--team-color);padding:8px 4px 8px 8px;display:flex;flex-direction:column;gap:3px;line-height:1.05}
@@ -8338,7 +8347,7 @@ details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc
   .rc24-projection-label{font-size:8px}
   .rc11-confidence-box .rc11-conf-svg text{stroke-width:4px}
   .rc11-confidence-box svg path[data-rc24-line="1"]{stroke-width:3.6!important}
-  .rc11-confidence-box .rc11-conf-layout{grid-template-columns:minmax(0,1fr) 58px;gap:4px}
+  .rc11-confidence-box .rc11-conf-layout{grid-template-columns:minmax(0,1fr) 58px;gap:4px;width:100%;overflow:hidden}
   .rc11-confidence-box .rc11-conf-legend{padding:8px 1px}
   .rc11-confidence-box .rc11-conf-legend-team{border-left-width:3px;padding:6px 2px 6px 5px}
   .rc11-confidence-box .rc11-conf-legend-team span{font-size:10px}
@@ -8484,9 +8493,9 @@ details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc
 
   // Keep independently collapsible sections responsive on desktop and mobile.
   const openState=new WeakMap();
-  document.addEventListener('toggle',e=>{const d=e.target;if(!(d instanceof HTMLDetailsElement))return;openState.set(d,d.open);d.dataset.rc24Open=d.open?'1':'0'},true);
-  function restoreDetails(){document.querySelectorAll('details[data-rc24-open]').forEach(d=>{if(document.activeElement!==d.querySelector('summary'))d.open=d.dataset.rc24Open==='1'})}
-  const observer=new MutationObserver(()=>{clearTimeout(observer.t);observer.t=setTimeout(()=>{restoreDetails();decorateGraphs()},80)}); observer.t=0;
+  document.addEventListener('toggle',e=>{const d=e.target;if(!(d instanceof HTMLDetailsElement))return;openState.set(d,d.open);d.dataset.rc24Open=d.open?'1':'0';const s=d.querySelector(':scope>summary');if(s)s.setAttribute('aria-expanded',d.open?'true':'false')},true);
+  /* Re-rendering a matchup must not immediately overwrite a click the user just made. */
+  const observer=new MutationObserver(()=>{clearTimeout(observer.t);observer.t=setTimeout(()=>{decorateGraphs()},80)}); observer.t=0;
   observer.observe(document.body,{childList:true,subtree:true});
 
   // Resolve the live forecast week without reintroducing the old Week 4 fallback.
@@ -8595,7 +8604,7 @@ details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc
   function enhance(card){
     if(!card?.classList.contains('open')||String(card.dataset.activeCheckpoint||'PRE').toUpperCase()!=='PRE')return;
     const report=$('.rc4-report-content',card),prose=$('.rc4-report-prose',report);if(!prose||prose.querySelector('[data-rc24-pre-enhanced]'))return;
-    prose.innerHTML=build(card);report.querySelectorAll('.rc22-analysis-evidence').forEach(x=>x.remove());
+    prose.innerHTML=build(card);window.FHQFormatPulseMiniHeadersV1?.(prose);report.querySelectorAll('.rc22-analysis-evidence').forEach(x=>x.remove());
   }
   window.FHQBuildPrePulseV1=build;window.FHQEnhancePrePulseV1=enhance;
   const run=()=>document.querySelectorAll('.model-match-card.open').forEach(enhance);
@@ -8611,6 +8620,14 @@ details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc
 #pred-match .rc24-pulse-v2 p{margin:0 0 9px;font-size:14px;line-height:1.62}
 #pred-match .rc24-pulse-v2 p:last-child{margin-bottom:0}
 #pred-match .rc24-pulse-v2 .rc24-pulse-note{font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:7px;margin-top:7px}
+#pred-match .rc24-mini-stack{display:grid;gap:9px;margin:0 0 9px}
+#pred-match .rc24-mini-block{margin:0;padding:0}
+#pred-match .rc24-mini-block h5,#pred-health .rc24-health-mini-block h5{margin:0 0 3px;font:900 12px/1.25 Arial,Helvetica,sans-serif;letter-spacing:.045em;text-transform:uppercase;color:var(--text)}
+#pred-match .rc24-mini-copy,#pred-health .rc24-health-mini-copy{margin:0;font-size:14px;line-height:1.62}
+#pred-match .rc24-pre-section>.rc24-mini-stack{margin-top:2px}
+#pred-health .rc24-health-mini-stack{display:grid;gap:10px;margin:0 0 12px}
+#pred-health .rc24-health-mini-block{margin:0;padding:0}
+#pred-health .rc24-health-mini-copy{font-size:14px;line-height:1.68}
 @media(max-width:700px){#pred-match .rc24-pulse-v2 .rc24-pulse-section{padding:10px 11px}#pred-match .rc24-pulse-v2 p{font-size:13px;line-height:1.55}}
 </style>
 <script id="rc24PulseRendererV2">
@@ -8641,6 +8658,13 @@ details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc
     if(third){const fa=frac(side(third,'away')),fh=frac(side(third,'home'));out.push(`<b>Third down:</b> ${escV(nameV(a))} ${fa?`${fa.made}/${fa.att} (${fa.pct.toFixed(1)}%)`:escV(side(third,'away'))}; ${escV(nameV(h))} ${fh?`${fh.made}/${fh.att} (${fh.pct.toFixed(1)}%)`:escV(side(third,'home'))}.`)}else out.push('<b>Third down:</b> UNAVAILABLE.');
     if(red)out.push(`<b>Red zone:</b> ${escV(side(red,'away'))} versus ${escV(side(red,'home'))}.`);if(turn)out.push(`<b>Turnovers:</b> ${escV(side(turn,'away'))} versus ${escV(side(turn,'home'))}.`);if(sack)out.push(`<b>Sacks:</b> ${escV(side(sack,'away'))} versus ${escV(side(sack,'home'))}.`);if(pos)out.push(`<b>Possession:</b> ${escV(side(pos,'away'))} versus ${escV(side(pos,'home'))}.`);return out.join(' ');
   }
+  function liabilityWatch(snap,a,h){
+    const raw=[snap?.liabilities,snap?.metadata?.liabilities,snap?.liveEvidence?.liabilities,snap?.evidence?.liabilities].find(x=>Array.isArray(x)&&x.length);
+    const items=raw||[];
+    const efficiency=statLine(snap,a,h);
+    if(items.length)return `<p><b>Production/efficiency watch:</b> ${items.map(x=>boldPlayers(String(x),a,h)).join(' · ')}. <b>Interpretation:</b> these are persistent problems observed across the captured sample, so they matter more than one isolated play. The live probability reflects the liability only alongside score, time, possession and the rest of the box-score evidence.</p><p><b>Efficiency context:</b> ${efficiency}</p>`;
+    return `<p><b>Production/efficiency watch:</b> no persistent liability has crossed the current evidence threshold. <b>Interpretation:</b> that does not mean both units are clean; it means the available sample has not yet shown repeated protection or production failure strong enough to label a structural problem.</p><p><b>Efficiency context:</b> ${efficiency}</p>`;
+  }
   function playText(snap,a,h){const p=Array.isArray(snap?.stats?.plays)?snap.stats.plays:[];if(!p.length)return '<span class="rc24-pulse-note">Play-level detail UNAVAILABLE for this checkpoint.</span>';return p.slice(-6).map(x=>`<p><b>Key play:</b> ${boldPlayers(String(x),a,h)} <b>Interpretation:</b> the event is preserved as observed evidence; the probability effect is only claimed when a before/after point is available.</p>`).join('')}
   function leaders(snap,a,h,which){const al=snap?.stats?.awayLeaders||[],hl=snap?.stats?.homeLeaders||[];if(which==='away')return `<span><b>${escV(nameV(a))}:</b> ${al.length?al.map(x=>boldPlayers(String(x),a,h)).join(' · '):'UNAVAILABLE'}.</span>`;if(which==='home')return `<span><b>${escV(nameV(h))}:</b> ${hl.length?hl.map(x=>boldPlayers(String(x),a,h)).join(' · '):'UNAVAILABLE'}.</span>`;if(!al.length&&!hl.length)return '<span class="rc24-pulse-note">Player production UNAVAILABLE for this checkpoint.</span>';return `<span><b>${escV(nameV(a))}:</b> ${al.length?al.map(x=>boldPlayers(String(x),a,h)).join(' · '):'UNAVAILABLE'}.</span><span><b>${escV(nameV(h))}:</b> ${hl.length?hl.map(x=>boldPlayers(String(x),a,h)).join(' · '):'UNAVAILABLE'}.</span>`}
   function playPattern(snap){const p=(snap?.stats?.plays||[]).map(String).join(' ').toLowerCase();if(!p)return'Play-type mix UNAVAILABLE.';const kinds=[];if(/pass|complete|throw/.test(p))kinds.push('passing');if(/run|rush|handoff|scramble/.test(p))kinds.push('rushing');if(/screen|flat|checkdown/.test(p))kinds.push('short-area/checkdown');if(/play action|play-action|rpo/.test(p))kinds.push('play-action/RPO');if(/sack|pressure/.test(p))kinds.push('pressure');return kinds.length?`Captured plays show ${kinds.join(', ')} concepts.`:'Play-type mix is not classified in the captured feed.'}
@@ -8648,16 +8672,53 @@ details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc
   function sourceLine(snap){const s=Array.isArray(snap?.sources)?snap.sources:[];if(!s.length)return'<span class="rc24-pulse-note">Source links UNAVAILABLE at this checkpoint.</span>';return s.slice(0,4).map(x=>x.link?`<a href="${escV(x.link)}" target="_blank" rel="noreferrer">${escV(x.title||x.source||'Source')}</a>`:escV(x.title||x.source||'Source')).join(' · ')}
   function formLine(ab,w){const a=canonV(ab),g=(Array.isArray(MODEL_GAMES_2026)?MODEL_GAMES_2026:[]).filter(x=>Number(x?.[0])<Number(w)&&(canonV(x?.[1])===a||canonV(x?.[2])===a));let win=0,loss=0,pf=0,pa=0;for(const x of g){const aw=canonV(x[1])===a,us=Number(aw?x[3]:x[4]),op=Number(aw?x[4]:x[3]);pf+=us;pa+=op;if(us>op)win++;else if(us<op)loss++}return g.length?`${win}-${loss}, ${((pf/g.length)||0).toFixed(1)} PF/G, ${((pa/g.length)||0).toFixed(1)} PA/G through Week ${Math.max(0,Number(w)-1)}`:'current form UNAVAILABLE'}
   function section(title,body){return `<section class="rc24-pulse-section"><h4>${escV(title)}</h4>${body}</section>`}
+  /* Any deliberate bold label ending in a colon becomes its own mini-heading.
+     This also covers team/source/player-context labels without hard-coding them. */
+  const MINI_LABEL_RE=/<b>\s*([^<]{1,90}?)\s*:\s*<\/b>/gi;
+  function formatPulseMiniHeaders(root){
+    if(!root)return;
+    const nodes=[...root.querySelectorAll('.rc24-pulse-v2 p,.rc24-pre-pulse p,.rc24-pulse-section p,.rc24-pre-section p')];
+    nodes.forEach(p=>{
+      if(p.closest('.rc24-mini-block')||p.dataset.rc24MiniFormatted==='1')return;
+      const html=p.innerHTML;if(!MINI_LABEL_RE.test(html)){MINI_LABEL_RE.lastIndex=0;return}MINI_LABEL_RE.lastIndex=0;
+      const parts=html.split(MINI_LABEL_RE);if(parts.length<3)return;
+      const stack=document.createElement('div');stack.className='rc24-mini-stack';
+      const add=(title,body)=>{if(!String(body||'').trim())return;const block=document.createElement('div');block.className='rc24-mini-block';const h=document.createElement('h5');h.textContent=String(title).replace(/:$/,'');const copy=document.createElement('div');copy.className='rc24-mini-copy';copy.innerHTML=String(body).trim();block.append(h,copy);stack.append(block)};
+      if(String(parts[0]||'').trim())add('Context',parts[0]);
+      for(let i=1;i<parts.length;i+=2)add(parts[i],parts[i+1]);
+      if(stack.children.length){p.replaceWith(stack);}
+    });
+  }
+  window.FHQFormatPulseMiniHeadersV1=formatPulseMiniHeaders;
+  function formatHealthContainer(el,titles){
+    if(!el||el.querySelector(':scope>.rc24-health-mini-stack'))return;
+    const ps=[...el.children].filter(x=>x.tagName==='P');if(!ps.length)return;
+    const stack=document.createElement('div');stack.className='rc24-health-mini-stack';
+    ps.forEach((p,i)=>{const block=document.createElement('div');block.className='rc24-health-mini-block';const h=document.createElement('h5');h.textContent=titles[i]||`Analysis ${i+1}`;const copy=document.createElement('div');copy.className='rc24-health-mini-copy';copy.innerHTML=p.innerHTML;block.append(h,copy);stack.append(block);p.remove()});
+    el.prepend(stack);
+  }
+  function formatHealthMiniSections(){
+    formatHealthContainer(document.getElementById('modelOverviewSection'),['Current Profile','Recent Form and Unit Read','Player Evidence']);
+    formatHealthContainer(document.getElementById('modelUpcomingOutlook'),['Upcoming Matchup Read','News Context','Player Evidence']);
+    document.querySelectorAll('#rc18WeekContent>.model-analysis-sheet,#rc18WeekAnalysis .model-analysis-sheet,.model-health-narrative').forEach(el=>formatHealthContainer(el,['Weekly Read','Evidence','Interpretation','Model Context','Game Review']));
+  }
+  window.FHQFormatHealthMiniSectionsV1=formatHealthMiniSections;
   function liveReport(x){
     const {label,a,h,w,snap,pre,homeP,state,score}=x,la=label==='HALF'?'Halftime State':label==='FINAL'||label==='POSTGAME'?'Final Line':'Quarter State',winner=Number(snap?.awayScore)>Number(snap?.homeScore)?a:Number(snap?.homeScore)>Number(snap?.awayScore)?h:null,pick=canonV(pre?.pick||h),p=Math.round(Number(homeP||0)*100),turn=findRow(snap,/turnover/i),third=findRow(snap,/third down/i),patterns=playPattern(snap),metric=statLine(snap,a,h);
     if(label==='POSTGAME'){
       const audit=winner?`<p><b>Claim:</b> ${escV(nameV(winner))} finished with the scoreboard edge at <b>${escV(score)}</b>. <b>Evidence:</b> the stored PRE pick was ${escV(nameV(pick))} at ${p}%. <b>Interpretation:</b> the audit separates the result from repeatable efficiency, protection, third downs, turnovers and explosive plays. <b>Model effect:</b> the result is appended as a verification; it does not rewrite PRE.</p>`:'<p>Final winner UNAVAILABLE.</p>';
-      return `<div class="rc24-pulse-v2" data-rc24-pulse-v2="1">${section('Final Line',`<p><b>Claim:</b> ${escV(score)} is the settled score at the captured postgame checkpoint. <b>Evidence:</b> official final stats are ${rowsFor(snap).length?'present':'UNAVAILABLE'}. <b>Interpretation:</b> the final line is the starting point for the audit, not the entire explanation.</p>`)}${section('Efficiency',`<p>${metric}</p><p><b>Hidden read:</b> where the raw fields exist, yards/play, third-down rate, red-zone result, turnover margin, sack impact and possession are calculated from the captured rows. Missing fields remain UNAVAILABLE.</p>`)}${section(`${nameV(a)} Offense`,`<p><b>Claim:</b> ${escV(nameV(a))}'s offensive result must be read through its quarterback, skill-player production, play mix and finishing efficiency. <b>Evidence:</b> ${leaders(snap,a,h,'away')} ${qbFocus(snap,a,h)} ${boldPlayers(patterns,a,h)}.</p>`)}${section(`${nameV(h)} Offense`,`<p><b>Claim:</b> ${escV(nameV(h))}'s offensive result is evaluated against the same evidence rather than the score alone. <b>Evidence:</b> ${leaders(snap,a,h,'home')} ${qbFocus(snap,a,h)}.</p>`)}${section(`${nameV(a)} Defense`,`<p><b>Claim:</b> defensive value is shown by pressure, sacks, takeaways, third-down stops and field position. <b>Evidence:</b> ${turn?`turnover row ${escV(side(turn,'away'))}–${escV(side(turn,'home'))}`:'takeaway data UNAVAILABLE'}; ${findRow(snap,/sack/i)?'sack data captured.':'sack data UNAVAILABLE'}.</p>`)}${section(`${nameV(h)} Defense`,`<p><b>Claim:</b> the opposing defense is graded by the same repeatable measures. <b>Evidence:</b> ${third?`third-down row ${escV(side(third,'away'))}–${escV(side(third,'home'))}`:'third-down data UNAVAILABLE'}.</p>`)}${section('Special Teams','<p><b>Claim:</b> special-teams impact is included only when a kick, return, block, miss or fumble is captured. <b>Evidence:</b> special-teams detail is UNAVAILABLE unless present in the play feed.</p>')}${section('Key Plays',playText(snap,a,h))}${section('Model Audit',audit)}${section('Board Impact',`<p><b>Claim:</b> the result should move the weekly board according to repeatable performance, not a single noisy event. <b>Evidence:</b> ${escV(nameV(a))} form before this game was ${escV(formLine(a,w))}; ${escV(nameV(h))} was ${escV(formLine(h,w))}. <b>Interpretation:</b> turnover and special-teams variance are separated from sustained efficiency.</p>`)}${section('Bottom Line',`<p><b>Claim:</b> ${escV(nameV(winner||pick))} has the stronger captured outcome. <b>Evidence:</b> ${escV(score)}; ${escV(metric)} <b>Interpretation:</b> the final explanation follows the evidence above rather than a generic unit ranking.</p>`)}<p class="rc24-pulse-note">Sources: ${sourceLine(snap)}</p></div>`;
+      return `<div class="rc24-pulse-v2" data-rc24-pulse-v2="1">${section('Final Line',`<p><b>Claim:</b> ${escV(score)} is the settled score at the captured postgame checkpoint. <b>Evidence:</b> official final stats are ${rowsFor(snap).length?'present':'UNAVAILABLE'}. <b>Interpretation:</b> the final line is the starting point for the audit, not the entire explanation.</p>`)}${section('Efficiency',`<p>${metric}</p><p><b>Hidden read:</b> where the raw fields exist, yards/play, third-down rate, red-zone result, turnover margin, sack impact and possession are calculated from the captured rows. Missing fields remain UNAVAILABLE.</p>`)}${section('Liability Watch',liabilityWatch(snap,a,h))}${section(`${nameV(a)} Offense`,`<p><b>Claim:</b> ${escV(nameV(a))}'s offensive result must be read through its quarterback, skill-player production, play mix and finishing efficiency. <b>Evidence:</b> ${leaders(snap,a,h,'away')} ${qbFocus(snap,a,h)} ${boldPlayers(patterns,a,h)}.</p>`)}${section(`${nameV(h)} Offense`,`<p><b>Claim:</b> ${escV(nameV(h))}'s offensive result is evaluated against the same evidence rather than the score alone. <b>Evidence:</b> ${leaders(snap,a,h,'home')} ${qbFocus(snap,a,h)}.</p>`)}${section(`${nameV(a)} Defense`,`<p><b>Claim:</b> defensive value is shown by pressure, sacks, takeaways, third-down stops and field position. <b>Evidence:</b> ${turn?`turnover row ${escV(side(turn,'away'))}–${escV(side(turn,'home'))}`:'takeaway data UNAVAILABLE'}; ${findRow(snap,/sack/i)?'sack data captured.':'sack data UNAVAILABLE'}.</p>`)}${section(`${nameV(h)} Defense`,`<p><b>Claim:</b> the opposing defense is graded by the same repeatable measures. <b>Evidence:</b> ${third?`third-down row ${escV(side(third,'away'))}–${escV(side(third,'home'))}`:'third-down data UNAVAILABLE'}.</p>`)}${section('Special Teams','<p><b>Claim:</b> special-teams impact is included only when a kick, return, block, miss or fumble is captured. <b>Evidence:</b> special-teams detail is UNAVAILABLE unless present in the play feed.</p>')}${section('Key Plays',playText(snap,a,h))}${section('Model Audit',audit)}${section('Board Impact',`<p><b>Claim:</b> the result should move the weekly board according to repeatable performance, not a single noisy event. <b>Evidence:</b> ${escV(nameV(a))} form before this game was ${escV(formLine(a,w))}; ${escV(nameV(h))} was ${escV(formLine(h,w))}. <b>Interpretation:</b> turnover and special-teams variance are separated from sustained efficiency.</p>`)}${section('Bottom Line',`<p><b>Claim:</b> ${escV(nameV(winner||pick))} has the stronger captured outcome. <b>Evidence:</b> ${escV(score)}; ${escV(metric)} <b>Interpretation:</b> the final explanation follows the evidence above rather than a generic unit ranking.</p>`)}<p class="rc24-pulse-note">Sources: ${sourceLine(snap)}</p></div>`;
     }
     const quarterLabel=label==='HALF'?'Halftime':`End of ${label==='Q1'?'1st':label==='Q3'?'3rd':label} Quarter`,aTitle=label==='HALF'?`${nameV(a)} Offensive Pattern`:`${nameV(a)} Offense`,hTitle=label==='HALF'?`${nameV(h)} Offensive Pattern`:`${nameV(h)} Offense`,keyTitle=label==='HALF'?'Plays That Changed the Half':'Key Plays',confirmTitle=label==='HALF'?'Halftime Evidence':'What the Quarter Confirms',modelTitle=label==='HALF'?'Halftime Model Read':'Model Movement',adjustTitle=label==='HALF'?'Halftime Adjustments':'Adjustments';
-    return `<div class="rc24-pulse-v2" data-rc24-pulse-v2="1">${section(la,`<p><b>Claim:</b> ${escV(score)} is the current state at the ${escV(quarterLabel)}. <b>Evidence:</b> ${metric} <b>Interpretation:</b> the score is weighed against down-to-down efficiency, possession, pressure and player usage. <b>Model effect:</b> the live read is ${escV(state||'UNAVAILABLE')} with ${escV(nameV(homeP>=.5?h:a))} at approximately <b>${p}%</b>.</p>`)}${section(aTitle,`<p><b>Claim:</b> ${escV(nameV(a))} is using the captured personnel and play mix to attack ${escV(nameV(h))}. <b>Evidence:</b> ${leaders(snap,a,h,'away')} ${qbFocus(snap,a,h)} ${escV(patterns)} <b>Interpretation:</b> the important question is whether this production is creating first downs and efficient scoring opportunities rather than isolated gains.</p>`)}${section(hTitle,`<p><b>Claim:</b> ${escV(nameV(h))} is showing the opposing offensive pattern. <b>Evidence:</b> ${leaders(snap,a,h,'home')} ${qbFocus(snap,a,h)} ${escV(patterns)} <b>Interpretation:</b> player usage and play type determine whether the counter-script is sustainable.</p>`)}${section(confirmTitle,`<p><b>Claim:</b> the captured evidence ${state==='CONFIRMED'?'supports':'tests'} the pregame unit thesis. <b>Evidence:</b> ${escV(metric)} ${escV(patterns)}. <b>Interpretation:</b> third-down conversion, quarterback pressure and favored targets explain more than the score in isolation.</p>`)}${section(keyTitle,playText(snap,a,h))}${section(modelTitle,`<p><b>Claim:</b> the live probability reflects the observed score, clock, possessions and available efficiency evidence. <b>Evidence:</b> third downs ${third?`${escV(side(third,'away'))}–${escV(side(third,'home'))}`:'UNAVAILABLE'}; turnovers ${turn?`${escV(side(turn,'away'))}–${escV(side(turn,'home'))}`:'UNAVAILABLE'}. <b>Interpretation:</b> ${escV(nameV(pick))}'s pregame path is ${state==='CONFIRMED'?'being confirmed':'being tested'} rather than automatically accepted.</p>`)}${section(adjustTitle,`<p><b>Claim:</b> both teams need to respond to the captured pattern. <b>Evidence:</b> ${escV(metric)} ${escV(patterns)} <b>Interpretation:</b> ${escV(nameV(a))} should preserve its most efficient early-down concept and protect its quarterback; ${escV(nameV(h))} should attack the pressure/coverage weakness and convert the next scoring opportunity. These are football adjustments tied to the observed evidence, not a promise about the next result.</p>`)}<p class="rc24-pulse-note">Sources: ${sourceLine(snap)}</p></div>`;
+    return `<div class="rc24-pulse-v2" data-rc24-pulse-v2="1">${section(la,`<p><b>Claim:</b> ${escV(score)} is the current state at the ${escV(quarterLabel)}. <b>Evidence:</b> ${metric} <b>Interpretation:</b> the score is weighed against down-to-down efficiency, possession, pressure and player usage. <b>Model effect:</b> the live read is ${escV(state||'UNAVAILABLE')} with ${escV(nameV(homeP>=.5?h:a))} at approximately <b>${p}%</b>.</p>`)}${section('Liability Watch',liabilityWatch(snap,a,h))}${section(aTitle,`<p><b>Claim:</b> ${escV(nameV(a))} is using the captured personnel and play mix to attack ${escV(nameV(h))}. <b>Evidence:</b> ${leaders(snap,a,h,'away')} ${qbFocus(snap,a,h)} ${escV(patterns)} <b>Interpretation:</b> the important question is whether this production is creating first downs and efficient scoring opportunities rather than isolated gains.</p>`)}${section(hTitle,`<p><b>Claim:</b> ${escV(nameV(h))} is showing the opposing offensive pattern. <b>Evidence:</b> ${leaders(snap,a,h,'home')} ${qbFocus(snap,a,h)} ${escV(patterns)} <b>Interpretation:</b> player usage and play type determine whether the counter-script is sustainable.</p>`)}${section(confirmTitle,`<p><b>Claim:</b> the captured evidence ${state==='CONFIRMED'?'supports':'tests'} the pregame unit thesis. <b>Evidence:</b> ${escV(metric)} ${escV(patterns)}. <b>Interpretation:</b> third-down conversion, quarterback pressure and favored targets explain more than the score in isolation.</p>`)}${section(keyTitle,playText(snap,a,h))}${section(modelTitle,`<p><b>Claim:</b> the live probability reflects the observed score, clock, possessions and available efficiency evidence. <b>Evidence:</b> third downs ${third?`${escV(side(third,'away'))}–${escV(side(third,'home'))}`:'UNAVAILABLE'}; turnovers ${turn?`${escV(side(turn,'away'))}–${escV(side(turn,'home'))}`:'UNAVAILABLE'}. <b>Interpretation:</b> ${escV(nameV(pick))}'s pregame path is ${state==='CONFIRMED'?'being confirmed':'being tested'} rather than automatically accepted.</p>`)}${section(adjustTitle,`<p><b>Claim:</b> both teams need to respond to the captured pattern. <b>Evidence:</b> ${escV(metric)} ${escV(patterns)} <b>Interpretation:</b> ${escV(nameV(a))} should preserve its most efficient early-down concept and protect its quarterback; ${escV(nameV(h))} should attack the pressure/coverage weakness and convert the next scoring opportunity. These are football adjustments tied to the observed evidence, not a promise about the next result.</p>`)}<p class="rc24-pulse-note">Sources: ${sourceLine(snap)}</p></div>`;
   }
   window.FHQBuildPulseReportV2=function(x){if(String(x.label).toUpperCase()==='PRE')return window.FHQBuildPrePulseV1?window.FHQBuildPrePulseV1(x.card):'<div class="rc24-pulse-v2" data-rc24-pulse-v2="1"><p>Pregame evidence UNAVAILABLE.</p></div>';return liveReport(x)};
+  const healthRenderer=window.renderModelHealth;
+  if(healthRenderer&&!window.__fhqRc24HealthMiniHeaders){
+    window.__fhqRc24HealthMiniHeaders=true;
+    window.renderModelHealth=function(){const out=healthRenderer.apply(this,arguments);setTimeout(formatHealthMiniSections,0);return out};
+  }
+  setTimeout(formatHealthMiniSections,900);
 })();
 </script>
 </body>
