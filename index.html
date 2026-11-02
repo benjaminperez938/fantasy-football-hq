@@ -7341,8 +7341,8 @@ function confidenceSvg11(w,a,h,kickoff,responsiveWidth=0){
 
   const homeD=clean.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(q.p).toFixed(2)}`).join(' ');
   const awayD=clean.map((q,i)=>`${i?'L':'M'} ${q.x.toFixed(2)} ${y(100-Number(q.p)).toFixed(2)}`).join(' ');
-  if(homeD)s+=`<path d="${homeD}" fill="none" stroke="${teamColors.home}" stroke-width="${small?1.25:2}" stroke-linecap="round" stroke-linejoin="round"/>`;
-  if(awayD)s+=`<path d="${awayD}" fill="none" stroke="${teamColors.away}" stroke-width="${small?1.25:2}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(homeD)s+=`<path d="${homeD}" fill="none" stroke="${teamColors.home}" stroke-width="${small?3.6:4.5}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(awayD)s+=`<path d="${awayD}" fill="none" stroke="${teamColors.away}" stroke-width="${small?3.6:4.5}" stroke-linecap="round" stroke-linejoin="round"/>`;
   clean.forEach((q,i)=>{
     const lab=String(q.label||'').toUpperCase(),major=q.checkpointFixed||/PRE|Q1|HALF|Q3|FINAL|FREEZE|MIDNIGHT|12P/.test(lab),latest=i===clean.length-1,show=small?latest:(major||latest),r=major?(small?2.5:4):(small?1.05:1.35),hp=Number(q.p),ap=100-hp,hy=y(hp),ay=y(ap);
     s+=`<circle cx="${q.x}" cy="${hy}" r="${r}" fill="${show?'var(--card)':teamColors.home}" stroke="${teamColors.home}" stroke-width="1.6"><title>${esc(h)} ${hp.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'-')}</title></circle><circle cx="${q.x}" cy="${ay}" r="${r}" fill="${show?'var(--card)':teamColors.away}" stroke="${teamColors.away}" stroke-width="1.6"><title>${esc(a)} ${ap.toFixed(1)}% · ${esc(q.label||'LIVE')} · ${esc(q.rel||'-')}</title></circle>`;
@@ -8315,7 +8315,9 @@ document.addEventListener('fhq-member-ready',e=>mountAccount(e.detail));document
 /* RC24 presentation-only refinements. Stored observations and model math are untouched. */
 html{scrollbar-gutter:stable}
 body{overflow-y:auto}
-.rc11-confidence-box svg path[data-rc24-line="1"]{stroke-width:1.35!important}
+.rc11-confidence-box svg path[data-rc24-line="1"]{stroke-width:4.5!important}
+.rc11-confidence-box .rc11-conf-svg text{paint-order:stroke;stroke:var(--card);stroke-width:5.5px;stroke-linejoin:round}
+.rc11-confidence-box .rc11-conf-svg .rc24-projection-line{stroke-width:3.2px!important}
 .rc24-projection-line{fill:none;stroke-width:1.35;stroke-dasharray:5 4;opacity:.72;pointer-events:stroke}
 .rc24-projection-label{font:600 10px system-ui,sans-serif;fill:currentColor;opacity:.8}
 .rc24-hidden-ordinary-point{opacity:.18!important}
@@ -8325,6 +8327,8 @@ details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc
   .rc11-confidence-box{overflow:hidden!important}
   .rc11-confidence-box svg{width:100%!important;max-width:100%!important}
   .rc24-projection-label{font-size:8px}
+  .rc11-confidence-box .rc11-conf-svg text{stroke-width:4px}
+  .rc11-confidence-box svg path[data-rc24-line="1"]{stroke-width:3.6!important}
   details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc22-stats-detail>summary{min-height:34px;padding:8px 10px}
 }
 </style>
@@ -8485,5 +8489,103 @@ details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc
 })();
 </script>
 
+<style id="rc24PrePulseV1Styles">
+/* The PRE read is an evidence brief, not a rank-only summary. */
+#pred-match .rc24-pre-pulse{display:grid;gap:10px}
+#pred-match .rc24-pre-section{background:color-mix(in srgb,var(--card) 96%,var(--text) 4%);border:1px solid var(--border);border-radius:7px;padding:12px 14px}
+#pred-match .rc24-pre-section h4{margin:0 0 7px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--text)}
+#pred-match .rc24-pre-section p{margin:0 0 9px;line-height:1.62;font-size:14px}
+#pred-match .rc24-pre-section p:last-child{margin-bottom:0}
+#pred-match .rc24-pre-section b{color:var(--text)}
+#pred-match .rc24-pre-unavailable{color:var(--muted);font-style:italic}
+#pred-match .rc24-pre-source{font-size:11px!important;color:var(--muted);border-top:1px solid var(--border);padding-top:7px;margin-top:7px!important}
+@media(max-width:700px){#pred-match .rc24-pre-section{padding:10px 11px}#pred-match .rc24-pre-section p{font-size:13px;line-height:1.55}}
+</style>
+<script id="rc24PrePulseV1">
+(function(){'use strict';
+  const $=(s,r=document)=>r.querySelector(s);
+  const escP=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const canon=v=>typeof fhqTeamAbbreviation==='function'?fhqTeamAbbreviation(v):String(v||'').toUpperCase()==='WSH'?'WAS':String(v||'').toUpperCase();
+  const teamName=ab=>(typeof TEAM_NAMES!=='undefined'&&TEAM_NAMES[ab])||ab;
+  const pct=v=>Number.isFinite(Number(v))?`${Number(v).toFixed(1)}%`:'UNAVAILABLE';
+  const num=v=>Number.isFinite(Number(v))?Number(v):null;
+  const rank=(ab,w,i)=>{const t=MODEL_TEAM_DATA?.[canon(ab)];if(!t)return null;const n=Math.max(1,Number(w)-1);const u=t['u'+n]||t.u3;return num(u?.[i])??num(t.u3?.[i])};
+  function currentForm(ab,w){
+    const a=canon(ab),games=(Array.isArray(MODEL_GAMES_2026)?MODEL_GAMES_2026:[]).filter(g=>Number(g?.[0])<Number(w)&&(canon(g?.[1])===a||canon(g?.[2])===a));
+    let wins=0,losses=0,ties=0,pf=0,pa=0; const recent=[];
+    for(const g of games){const away=canon(g[1])===a,own=num(away?g[3]:g[4]),opp=num(away?g[4]:g[3]);if(own==null||opp==null)continue;pf+=own;pa+=opp;if(own>opp)wins++;else if(own<opp)losses++;else ties++;recent.push({week:g[0],own,opp,win:own>opp});}
+    const n=wins+losses+ties;return {games:n,wins,losses,ties,pf:n?pf/n:null,pa:n?pa/n:null,pdg:n?(pf-pa)/n:null,recent:recent.slice(-3)};
+  }
+  function seasonStat(ab,grp,key){
+    const years=['2025','2024','2023'];for(const y of years){try{const v=typeof statFor==='function'?statFor(canon(ab),y,grp,key):TEAM_STATS_YR?.[y]?.[canon(ab)]?.[grp]?.[key];if(num(v)!=null)return {year:y,value:num(v)}}catch(_){} }return null;
+  }
+  const fallbackRoles={
+    PHI:[['Jalen Hurts','QB'],['Saquon Barkley','RB'],['DeVonta Smith','WR'],['A.J. Brown','WR']],
+    WAS:[['Jayden Daniels','QB'],['Jacory Croskey-Merritt','RB'],['Terry McLaurin','WR'],['Deebo Samuel','WR']],
+    WSH:[['Jayden Daniels','QB'],['Jacory Croskey-Merritt','RB'],['Terry McLaurin','WR'],['Deebo Samuel','WR']],
+    GB:[['Jordan Love','QB'],['Josh Jacobs','RB'],['Christian Watson','WR'],['Rashan Gary','DE']],
+    CAR:[['Bryce Young','QB'],['Chuba Hubbard','RB'],['Tetairoa McMillan','WR'],['Jaycee Horn','CB']],
+    SEA:[['Sam Darnold','QB'],['Kenneth Walker III','RB'],['Jaxon Smith-Njigba','WR'],['Leonard Williams','DT']],
+    DEN:[['Bo Nix','QB'],['J.K. Dobbins','RB'],['Courtland Sutton','WR'],['Patrick Surtain II','CB']],
+    LAC:[['Justin Herbert','QB'],['Omarion Hampton','RB'],['Ladd McConkey','WR'],['Derwin James Jr.','S']],
+    SF:[['Brock Purdy','QB'],['Christian McCaffrey','RB'],['George Kittle','TE'],['Nick Bosa','DE']],
+    KC:[['Patrick Mahomes','QB'],['Isiah Pacheco','RB'],['Rashee Rice','WR'],['Chris Jones','DT']]
+  };
+  function players(ab){
+    const a=canon(ab),out=[];
+    try{for(const p of (Array.isArray(DRAFT_PLAYERS)?DRAFT_PLAYERS:[])){if(canon(p.team)!==a||!p.name||p.pos==='DST')continue;out.push({name:p.name,pos:p.pos==='WR/TE'?'WR':p.pos,stats:(p.gameLog||[]).length?`${p.gameLog.length} preserved game-log entries`:'season game log UNAVAILABLE'});if(out.length>=4)break}}catch(_){}
+    return out.length?out:(fallbackRoles[a]||[['Team quarterback','QB'],['Primary back','RB'],['Top receiver','WR'],['Defensive leader','LB']]).map(x=>({name:x[0],pos:x[1],stats:'individual checkpoint production UNAVAILABLE'}));
+  }
+  function newsFor(ab){
+    const a=canon(ab),full=String(teamName(a)).toLowerCase(),nick=full.split(/\s+/).at(-1);
+    return (Array.isArray(allNewsItems)?allNewsItems:[]).filter(n=>{const text=((n.headline||'')+' '+(n.impact||'')).toLowerCase();return (full&&text.includes(full))||(nick&&nick.length>3&&text.includes(nick))}).slice(0,3);
+  }
+  function factLine(ab,side){
+    const a=canon(ab),offY=seasonStat(a,'o','ypp'),offP=seasonStat(a,'o','ppg'),third=seasonStat(a,'o','third'),rz=seasonStat(a,'o','rztd'),defY=seasonStat(a,'d','ypp'),allow=seasonStat(a,'d','papg'),rush=seasonStat(a,'d','sckr');
+    if(side==='offense')return `${offY?`${offY.year} reference: ${offY.value.toFixed(1)} yards/play`: 'Yards/play UNAVAILABLE'}; ${offP?`${offP.value.toFixed(1)} points/game`: 'points/game UNAVAILABLE'}; ${third?`${third.value.toFixed(1)}% third-down conversion`: 'third-down rate UNAVAILABLE'}; ${rz?`${rz.value.toFixed(1)}% red-zone TD rate`: 'red-zone rate UNAVAILABLE'}.`;
+    return `${defY?`${defY.year} reference: ${defY.value.toFixed(1)} yards/play allowed`: 'defensive yards/play UNAVAILABLE'}; ${allow?`${allow.value.toFixed(1)} points allowed/game`: 'points allowed/game UNAVAILABLE'}; ${rush?`${rush.value.toFixed(1)}% sack rate`: 'pressure/sack rate UNAVAILABLE'}.`;
+  }
+  function unitSection(a,h,w,pick){
+    const rows=[['pass offense','pass defense',1,5],['run offense','run defense',2,6],['protection','pass rush',3,7],['overall offense','overall defense',0,4]],out=[];
+    for(const [labelA,labelH,ia,ih] of rows){const ar=rank(a,w,ia),hr=rank(h,w,ih);if(ar==null&&hr==null)continue;const better=ar!=null&&hr!=null?(ar<hr?a:hr<ar?h:null):null;const evidence=better===a?factLine(a,'offense'):better===h?factLine(h,'defense'):`${factLine(a,'offense')} ${factLine(h,'defense')}`;out.push(`<p><b>${escP(labelA)} vs ${escP(labelH)}:</b> ${escP(teamName(a))} is #${ar??'UNAVAILABLE'} and ${escP(teamName(h))} is #${hr??'UNAVAILABLE'}. <b>Evidence:</b> ${escP(evidence)} <b>Interpretation:</b> ${better?`the rank edge belongs to ${escP(teamName(better))}, but the multi-year reference numbers describe the type of production that must appear on game day rather than proving that it will. <b>Matchup effect:</b> ${escP(teamName(pick))} benefits only if this edge survives early-down execution and finishing.`:'the available unit grades are too close or incomplete to call a clean structural edge.'}</p>`)}
+    return out.join('')||'<p class="rc24-pre-unavailable">Unit grades are UNAVAILABLE for this matchup at the frozen checkpoint.</p>';
+  }
+  function sourceSection(a,h){
+    const ns=[...newsFor(a),...newsFor(h)];
+    if(!ns.length)return '<p class="rc24-pre-unavailable">No verified team-specific news item is present in the loaded feed at the frozen checkpoint; no injury or availability change is inferred.</p>';
+    return ns.map(n=>`<p><b>${escP(n.headline||'Source item')}:</b> ${escP(n.impact||'The item is available for context, but its football effect is not quantified in the feed.')}${n.link?` <a href="${escP(n.link)}" target="_blank" rel="noreferrer">Source</a>`:''}</p>`).join('');
+  }
+  function build(card){
+    const a=canon(card?.dataset?.away),h=canon(card?.dataset?.home),w=Number(card?.dataset?.week||0);if(!a||!h||!w)return'';
+    const pre=typeof modelForecastForGame==='function'?modelForecastForGame(a,h,w):null,pick=canon(pre?.pick||h),opp=pick===a?h:a,af=currentForm(a,w),hf=currentForm(h,w),pa=players(a),ph=players(h),tpA=TEAM_PROFILES?.[a]||{},tpH=TEAM_PROFILES?.[h]||{},ta=MODEL_TEAM_DATA?.[a]||{},th=MODEL_TEAM_DATA?.[h]||{};
+    const score=pre?.score?`${a} ${pre.score.away}–${h} ${pre.score.home}`:'UNAVAILABLE';
+    const rec=x=>x.games?`${x.wins}-${x.losses}${x.ties?`-${x.ties}`:''}, ${x.pf.toFixed(1)} PF/G and ${x.pa.toFixed(1)} PA/G`:'UNAVAILABLE';
+    const recent=x=>x.recent.length?x.recent.map(g=>`W${g.week} ${g.win?'W':'L'} ${g.own}–${g.opp}`).join(' · '):'UNAVAILABLE';
+    const playerLine=(team,arr)=>`<p><b>${escP(teamName(team))}:</b> ${arr.map(p=>`<b>${escP(p.name)} (${escP(p.pos)})</b> — ${escP(p.stats)}.`).join(' ')}</p>`;
+    const offA=seasonStat(a,'o','ypp'),offH=seasonStat(h,'o','ypp');
+    const swing=pick===a?`${teamName(a)}'s advantage must show up as efficient early downs, protection and red-zone finishing; ${teamName(h)} can change the game by forcing long-yardage and making the favorite win outside its preferred script.`:`${teamName(h)}'s advantage must show up as efficient early downs, protection and red-zone finishing; ${teamName(a)} can change the game by forcing long-yardage and making the favorite win outside its preferred script.`;
+    return `<div class="rc24-pre-pulse" data-rc24-pre-enhanced="1">
+      <section class="rc24-pre-section"><h4>Current State</h4><p><b>Claim:</b> The frozen model makes <b>${escP(teamName(pick))}</b> the pick at <b>${escP(pct(Number(pre?.confidence||0)*100))}</b> with ${escP(pre?.reliability?.label||'UNAVAILABLE')} reliability. <b>Evidence:</b> score lens ${escP(score)}; ${escP(teamName(a))} is ${escP(ta.rec||'record UNAVAILABLE')} and ${escP(teamName(h))} is ${escP(th.rec||'record UNAVAILABLE')}. <b>Interpretation:</b> this is a pregame baseline, not a claim that one rank decides the matchup. <b>Matchup effect:</b> later checkpoints should be judged against this frozen probability without rewriting it.</p></section>
+      <section class="rc24-pre-section"><h4>Team Form</h4><p><b>Claim:</b> The recent shape is ${escP(teamName(a))}: <b>${escP(rec(af))}</b> (${escP(recent(af))}); ${escP(teamName(h))}: <b>${escP(rec(hf))}</b> (${escP(recent(hf))}). <b>Evidence:</b> these are completed 2026 results through Week ${Math.max(0,w-1)}, not preseason projections. <b>Interpretation:</b> current scoring margin and opponent results provide the near-term context around the frozen unit grades. <b>Matchup effect:</b> the team that turns its recent efficiency into first-half field position has the clearest path to making the model read look sustainable.</p></section>
+      <section class="rc24-pre-section"><h4>Player Usage</h4>${playerLine(a,pa)}${playerLine(h,ph)}<p><b>Interpretation:</b> the names identify the players most likely to carry the relevant workload; individual game-log detail is labeled UNAVAILABLE when the loaded player feed does not preserve it rather than being invented.</p></section>
+      <section class="rc24-pre-section"><h4>Game Script</h4><p><b>Claim:</b> ${escP(swing)} <b>Evidence:</b> ${escP(tpA.off||'Offensive identity UNAVAILABLE')} ${escP(tpA.def||'Defensive identity UNAVAILABLE')} ${escP(tpH.off||'Offensive identity UNAVAILABLE')} ${escP(tpH.def||'Defensive identity UNAVAILABLE')}. <b>Interpretation:</b> a rank edge matters only when the personnel and scheme can reproduce it against this opponent. <b>Matchup effect:</b> the first meaningful test is whether ${escP(teamName(pick))} can keep its preferred run/pass balance while the opponent attacks its weakest protection, coverage or run-fit point.</p></section>
+      <section class="rc24-pre-section"><h4>Key Plays</h4><p><b>Claim:</b> No play has occurred at PRE, so no play-level impact is attributed. <b>Evidence:</b> the live play/event buffer is intentionally empty before kickoff. <b>Interpretation:</b> the important pregame events are personnel availability, expected usage and the unit matchups above. <b>Matchup effect:</b> a later turnover, sack, explosive play or injury can move the probability, but it must be attached to the observed event rather than projected backward.</p></section>
+      <section class="rc24-pre-section"><h4>Model Read</h4><p><b>Claim:</b> the model is leaning ${escP(teamName(pick))}, not merely ranking ${escP(teamName(pick))} higher. <b>Evidence:</b> ${escP(teamName(a))} offense rank #${rank(a,w,0)??'UNAVAILABLE'} versus ${escP(teamName(h))} defense rank #${rank(h,w,4)??'UNAVAILABLE'}; ${escP(teamName(h))} offense rank #${rank(h,w,0)??'UNAVAILABLE'} versus ${escP(teamName(a))} defense rank #${rank(a,w,4)??'UNAVAILABLE'}. Available reference production: ${escP(teamName(a))} ${escP(offA?`${offA.value.toFixed(1)} yards/play (${offA.year})`:'UNAVAILABLE')}; ${escP(teamName(h))} ${escP(offH?`${offH.value.toFixed(1)} yards/play (${offH.year})`:'UNAVAILABLE')}. <b>Interpretation:</b> the confidence is strongest where form, units and player availability point in the same direction; uncertainty remains where those signals disagree or player data is missing. <b>Matchup effect:</b> the probability should move only when a timestamped checkpoint supplies new evidence.</p></section>
+      <section class="rc24-pre-section"><h4>Board Impact</h4><p><b>Claim:</b> there is no postgame board movement to report before kickoff. <b>Evidence:</b> the board currently carries each team's record, PF/G, PA/G and unit grades; the current read is ${escP(teamName(a))} ${escP(rec(af))} versus ${escP(teamName(h))} ${escP(rec(hf))}. <b>Interpretation:</b> this matchup can confirm or challenge the weekly profile, but a single result should not silently rewrite the earlier PRE pulse. <b>Matchup effect:</b> the final audit will separate repeatable efficiency from one-off turnover variance.</p></section>
+      <section class="rc24-pre-section"><h4>Unit Context</h4>${unitSection(a,h,w,pick)}<div class="rc24-pre-source"><b>Availability sources:</b>${sourceSection(a,h)}</div></section>
+    </div>`;
+  }
+  function enhance(card){
+    if(!card?.classList.contains('open')||String(card.dataset.activeCheckpoint||'PRE').toUpperCase()!=='PRE')return;
+    const report=$('.rc4-report-content',card),prose=$('.rc4-report-prose',report);if(!prose||prose.querySelector('[data-rc24-pre-enhanced]'))return;
+    prose.innerHTML=build(card);report.querySelectorAll('.rc22-analysis-evidence').forEach(x=>x.remove());
+  }
+  window.FHQBuildPrePulseV1=build;window.FHQEnhancePrePulseV1=enhance;
+  const run=()=>document.querySelectorAll('.model-match-card.open').forEach(enhance);
+  document.addEventListener('click',e=>{if(e.target.closest('.rc4-checkpoint-btn,.model-match-card'))setTimeout(run,80)},true);
+  new MutationObserver(()=>{clearTimeout(window.__fhqPrePulseTimer);window.__fhqPrePulseTimer=setTimeout(run,120)}).observe(document.body,{childList:true,subtree:true});
+  setTimeout(run,350);setInterval(run,1400);
+})();
+</script>
 </body>
 </html>
