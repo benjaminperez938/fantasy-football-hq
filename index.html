@@ -8310,5 +8310,164 @@ document.addEventListener('fhq-member-ready',e=>mountAccount(e.detail));document
 })();
 </script>
 
+<style id="rc24PulseSpecV1Styles">
+/* RC24 presentation-only refinements. Stored observations and model math are untouched. */
+html{scrollbar-gutter:stable}
+body{overflow-y:auto}
+.rc11-confidence-box svg path[data-rc24-line="1"]{stroke-width:1.35!important}
+.rc24-projection-line{fill:none;stroke-width:1.35;stroke-dasharray:5 4;opacity:.72;pointer-events:stroke}
+.rc24-projection-label{font:600 10px system-ui,sans-serif;fill:currentColor;opacity:.8}
+.rc24-hidden-ordinary-point{opacity:.18!important}
+.rc24-major-point{opacity:1!important}
+details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc22-stats-detail>summary{min-height:38px;padding:10px 12px;cursor:pointer;user-select:none;touch-action:manipulation}
+@media(max-width:700px){
+  .rc11-confidence-box{overflow:hidden!important}
+  .rc11-confidence-box svg{width:100%!important;max-width:100%!important}
+  .rc24-projection-label{font-size:8px}
+  details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc22-stats-detail>summary{min-height:34px;padding:8px 10px}
+}
+</style>
+<script id="rc24PulseSpecV1">
+(function(){'use strict';
+  const SPEC='PULSE_SPEC_V1';
+  const CHECKPOINTS=['PRE','Q1','HALF','Q3','FINAL','POSTGAME'];
+  const HEADINGS=['Current State','Team Form','Player Usage','Game Script','Key Plays','Model Read','Board Impact'];
+  const POSITIONS=/\((QB|RB|FB|WR|TE|LT|LG|C|RG|RT|OL|DE|DT|NT|DL|LB|OLB|ILB|MLB|CB|S|FS|SS|DB|K|P|LS)\)/i;
+  const stores={snapshots:'fhq_pulse_snapshots_v1',plays:'fhq_play_events_v1',sources:'fhq_pulse_sources_v1'};
+  const read=(key)=>{try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v:[]}catch(_){return[]}};
+  const write=(key,rows)=>{try{localStorage.setItem(key,JSON.stringify(rows))}catch(_){} return rows};
+  const append=(key,row,id)=>{if(!row||!id)return false;const rows=read(key);if(rows.some(x=>String(x[id])===String(row[id])))return false;rows.push(JSON.parse(JSON.stringify(row)));write(key,rows);return true};
+  const unavailable='UNAVAILABLE: source data not provided';
+  function hiddenStats(raw){
+    raw=raw||{}; const n=(v)=>Number.isFinite(Number(v))?Number(v):null;
+    const pct=(a,b)=>n(a)!=null&&n(b)!=null&&Number(b)!==0?Number(a)/Number(b):null;
+    const out={};
+    out.yards_per_play=pct(raw.total_yards,raw.plays);
+    out.third_down_percentage=pct(raw.third_down_conversions,raw.third_down_attempts);
+    out.red_zone_efficiency=pct(raw.red_zone_scores,raw.red_zone_trips);
+    out.fourth_down_efficiency=pct(raw.fourth_down_conversions,raw.fourth_down_attempts);
+    out.net_passing_yards=n(raw.net_passing_yards)!=null?n(raw.net_passing_yards):(n(raw.passing_yards)!=null&&n(raw.sack_yards)!=null?n(raw.passing_yards)-n(raw.sack_yards):null);
+    out.sack_yardage=n(raw.sack_yards); out.yards_per_attempt=pct(raw.net_passing_yards!=null?raw.net_passing_yards:raw.passing_yards,raw.pass_attempts);
+    out.pressure_rate=pct(raw.pressures,raw.dropbacks); out.explosive_play_rate=pct(raw.explosive_plays,raw.plays);
+    out.turnover_margin=n(raw.turnovers_for)!=null&&n(raw.turnovers_against)!=null?n(raw.turnovers_for)-n(raw.turnovers_against):null;
+    out.points_per_drive=pct(raw.points,raw.drives); out.special_teams_yards=n(raw.special_teams_yards);
+    out.yards_before_contact=n(raw.yards_before_contact); out.yards_after_contact=n(raw.yards_after_contact);
+    out.success_rate=pct(raw.successful_plays,raw.plays); out.first_half_efficiency=pct(raw.first_half_successful_plays,raw.first_half_plays); out.second_half_efficiency=pct(raw.second_half_successful_plays,raw.second_half_plays);
+    Object.keys(out).forEach(k=>{if(out[k]==null)out[k]=unavailable}); return out;
+  }
+  function validate(pulse){
+    const errors=[],warnings=[]; pulse=pulse||{};
+    if(pulse.spec!==SPEC)errors.push('spec must be PULSE_SPEC_V1');
+    if(!CHECKPOINTS.includes(String(pulse.checkpoint||'').toUpperCase()))errors.push('invalid checkpoint');
+    const sections=pulse.sections||{}; HEADINGS.forEach(h=>{if(!sections[h]&&!new RegExp('(^|\\n)'+h+'\\b','i').test(String(pulse.text||'')))errors.push('missing section: '+h)});
+    if(/\bI\b/i.test(String(pulse.text||'')))errors.push('first-person statement is not allowed');
+    if(/next checkpoint/i.test(String(pulse.text||'')))errors.push('next checkpoint language is not allowed');
+    if(/\b(TODO|TBD|PLACEHOLDER)\b/i.test(String(pulse.text||'')))errors.push('placeholder remains');
+    (pulse.players||[]).forEach(p=>{if(!POSITIONS.test(String(p.name||p)))errors.push('player position missing: '+String(p.name||p))});
+    if(!Array.isArray(pulse.sources)||!pulse.sources.length)warnings.push('no source links supplied');
+    if(pulse.missing_data&&typeof pulse.missing_data==='string'&&!pulse.missing_data.includes('UNAVAILABLE'))warnings.push('missing data should be explicitly marked UNAVAILABLE');
+    return {ok:errors.length===0,errors,warnings};
+  }
+  function salience(event,recent,options){
+    event=event||{}; options=options||{}; const threshold=Number(options.threshold??5), delta=Number(event.probability_delta||0), abs=Math.abs(delta);
+    const text=String(event.play_description||event.description||'').toLowerCase();
+    const flags=[]; if(Math.abs(delta)>=threshold)flags.push('threshold');
+    if(event.turnover||/intercept|fumble|turnover/.test(text))flags.push('turnover');
+    if(event.injury||/injur|left game|carted/.test(text))flags.push('injury');
+    if(event.down===4||/4th down|fourth down/.test(text))flags.push('fourth_down');
+    if(event.sack&& (event.down===3||event.down===4)||/sack/.test(text)&& (event.down===3||event.down===4))flags.push('critical_sack');
+    if(event.explosive||/\b(20|30|40|50)\+? yard/.test(text))flags.push('explosive');
+    if(event.missed_kick||/no good|missed field goal|missed extra point/.test(text))flags.push('missed_kick');
+    if(event.penalty||/penalty|flag/.test(text))flags.push('penalty');
+    const prior=(recent||[]).slice(-4).reduce((s,x)=>s+Number(x.probability_delta||0),0), crossing=(Number(event.probability_before||0)-.5)*(Number(event.probability_after||0)-.5)<0;
+    if(crossing)flags.push('game_script_flip'); if(Math.abs(prior+delta)>=threshold*1.5)flags.push('rolling_move');
+    const modelImpact=abs>=threshold?'material':abs>=threshold/2?'moderate':'limited';
+    const footballImportance=flags.length?'high':'contextual';
+    return {highlighted:flags.length>0,modelImpact,footballImportance,reasons:flags,threshold};
+  }
+  function registerSnapshot(row){const x=Object.assign({spec:SPEC},row||{});return append(stores.snapshots,x,'pulse_id')}
+  function registerPlay(row){const x=Object.assign({spec:SPEC},row||{});return append(stores.plays,x,'event_id')}
+  function registerSource(row){const x=Object.assign({spec:SPEC},row||{});return append(stores.sources,x,'source_id')}
+  window.PULSE_SPEC_V1={version:SPEC,checkpoints:CHECKPOINTS,headings:HEADINGS,defaultThreshold:5,hiddenStats,validate,salience,registerSnapshot,registerPlay,registerSource,unavailable};
+  window.FHQValidatePulseV1=validate; window.FHQComputeHiddenStatsV1=hiddenStats; window.FHQScorePlaySalienceV1=salience;
+  window.FHQRegisterPulseV1=registerSnapshot; window.FHQRegisterPlayEventV1=registerPlay; window.FHQRegisterSourceV1=registerSource;
+
+  function decorateGraphs(){
+    document.querySelectorAll('.rc11-confidence-box').forEach(box=>{
+      const svg=box.querySelector('svg'); if(!svg)return;
+      svg.querySelectorAll('path').forEach(p=>{if(!p.getAttribute('data-rc24-line'))p.setAttribute('data-rc24-line','1')});
+      const circles=[...svg.querySelectorAll('circle')];
+      circles.forEach(c=>{const title=(c.querySelector('title')?.textContent||c.getAttribute('aria-label')||'').toUpperCase();const major=/PRE|PREGAME|MIDNIGHT|MIDDAY|Q1|HALF|Q3|FINAL|POST|SELECTED|EVENT/.test(title);c.classList.toggle('rc24-major-point',major);c.classList.toggle('rc24-hidden-ordinary-point',!major)});
+      const proj=box.__fhqProjection; const old=svg.querySelector('[data-rc24-projection]'); old?.remove();
+      if(!proj||!Number.isFinite(Number(proj.projected_final_probability))||!circles.length)return;
+      const last=circles[circles.length-1], x1=Number(last.getAttribute('cx')), y1=Number(last.getAttribute('cy')); if(!Number.isFinite(x1)||!Number.isFinite(y1))return;
+      const vb=(svg.getAttribute('viewBox')||'0 0 100 100').split(/\s+/).map(Number), width=vb[2]||100, height=vb[3]||100;
+      const end=Math.max(0,Math.min(1,Number(proj.projected_final_probability))), y2=height*.08+(1-end)*height*.84;
+      const color=last.getAttribute('fill')||last.getAttribute('stroke')||getComputedStyle(box).color||'#8be9fd';
+      const ns='http://www.w3.org/2000/svg',g=document.createElementNS(ns,'g');g.setAttribute('data-rc24-projection','1');
+      const path=document.createElementNS(ns,'path');path.setAttribute('class','rc24-projection-line');path.setAttribute('d',`M ${x1} ${y1} L ${Math.max(x1+2,width-8)} ${y2}`);path.setAttribute('stroke',color);const title=document.createElementNS(ns,'title');title.textContent=`Live projection: ${Math.round(end*100)}% home probability`;path.append(title);g.append(path);svg.append(g);
+    });
+  }
+  function attachProjectionFromPoints(){
+    document.querySelectorAll('.rc11-confidence-box').forEach(box=>{
+      const card=box.closest('.model-match-card'); const points=card?.__fhqHistoryPoints||box.__fhqHistoryPoints;
+      if(Array.isArray(points)&&points.length){const last=points[points.length-1],m=last.metadata||last;box.__fhqProjection=m.live_projection||m.projection||null}
+    }); decorateGraphs();
+  }
+  window.FHQDecoratePulseGraphsV1=decorateGraphs; window.FHQAttachProjectionV1=attachProjectionFromPoints;
+  document.addEventListener('fhq-confidence-point',e=>{const d=e.detail||{};(d.play_events||[]).forEach(registerPlay);if(d.pulse_snapshot)registerSnapshot(d.pulse_snapshot);if(d.source)registerSource(d.source);setTimeout(attachProjectionFromPoints,0)});
+
+  // The shared graph reader keeps the existing point shape and additionally
+  // exposes collector projection/play metadata to the Pulse renderer.
+  const historyReader=window.FHQ18LoadSharedHistory;
+  if(typeof historyReader==='function'&&!window.__fhqRc24HistoryReader){
+    window.__fhqRc24HistoryReader=true;
+    window.FHQ18LoadSharedHistory=async function(game){
+      const result=await historyReader(game);
+      try{
+        const all=JSON.parse(localStorage.getItem('fhq_confidence_history_rc9')||'{}'),points=all[game]||[];
+        document.querySelectorAll('#predMatchList .model-match-card').forEach(card=>{if(`${card.dataset.week}:${card.dataset.away}:${card.dataset.home}`===String(game))card.__fhqHistoryPoints=points});
+        points.forEach(point=>(point.play_events||[]).forEach(registerPlay));
+        attachProjectionFromPoints();
+      }catch(_){}
+      return result;
+    };
+  }
+  window.FHQLoadPulseSpecV1=async function(game){
+    if(typeof sb==='undefined'||!sb||typeof currentMember==='undefined'||!currentMember)return {available:false,reason:'signed_out'};
+    const [week,away,home]=String(game||'').split(':'); if(!week||!away||!home)return {available:false,reason:'invalid_game'};
+    try{
+      const season=Number(window.FHQ_APP_SEASON||2026), q={season,week:Number(week),away_team:away,home_team:home};
+      const [s,p,src]=await Promise.all([
+        sb.from('pulse_snapshots').select('*').match(q).order('captured_at',{ascending:true}),
+        sb.from('pulse_play_events').select('*').match({season,week:Number(week),game_key:String(game)}).order('graph_timestamp',{ascending:true}),
+        sb.from('pulse_sources').select('*').match({season,week:Number(week)}).order('published_at',{ascending:true})
+      ]);
+      const error=s.error||p.error||src.error;if(error)return {available:false,reason:error.message};
+      return {available:true,snapshots:s.data||[],play_events:p.data||[],sources:src.data||[],contract:SPEC};
+    }catch(error){return {available:false,reason:String(error?.message||error)}}
+  };
+
+  // Keep independently collapsible sections responsive on desktop and mobile.
+  const openState=new WeakMap();
+  document.addEventListener('toggle',e=>{const d=e.target;if(!(d instanceof HTMLDetailsElement))return;openState.set(d,d.open);d.dataset.rc24Open=d.open?'1':'0'},true);
+  function restoreDetails(){document.querySelectorAll('details[data-rc24-open]').forEach(d=>{if(document.activeElement!==d.querySelector('summary'))d.open=d.dataset.rc24Open==='1'})}
+  const observer=new MutationObserver(()=>{clearTimeout(observer.t);observer.t=setTimeout(()=>{restoreDetails();decorateGraphs()},80)}); observer.t=0;
+  observer.observe(document.body,{childList:true,subtree:true});
+
+  // Resolve the live forecast week without reintroducing the old Week 4 fallback.
+  function currentWeek(){return Number(window.MODEL_FORECAST_WEEK||window.MODEL_CALENDAR_STATE?.forecastWeek||window.MODEL_CURRENT_WEEK||0)}
+  function syncWeekSelect(){const sel=document.getElementById('modelWeekSelect');if(!sel)return;const w=currentWeek();if(w>0&&(!sel.dataset.rc24UserSelected||sel.value==='4')){sel.value=String(w);window.predLoadWeek?.(true)}}
+  document.addEventListener('change',e=>{if(e.target?.id==='modelWeekSelect')e.target.dataset.rc24UserSelected='1'},true);
+  window.FHQCurrentForecastWeekV1=currentWeek; setTimeout(syncWeekSelect,2200);setInterval(syncWeekSelect,60000);
+  const oldRefresh=window.modelStartMatchAutoRefresh;
+  if(oldRefresh&&!window.__fhqRc24AutoRefresh){window.__fhqRc24AutoRefresh=true;window.modelStartMatchAutoRefresh=function(){return oldRefresh.apply(this,arguments)}}
+  function keepAppTitle(){try{document.title='Fantasy HQ'}catch(_){} }
+  keepAppTitle(); setTimeout(keepAppTitle,1200); setInterval(keepAppTitle,10000);
+  setTimeout(()=>{decorateGraphs();attachProjectionFromPoints()},1200);
+  setInterval(()=>{decorateGraphs();attachProjectionFromPoints()},3000);
+})();
+</script>
+
 </body>
 </html>
