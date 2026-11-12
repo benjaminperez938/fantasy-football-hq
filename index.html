@@ -8773,5 +8773,32 @@ details.rc22-unit-detail>summary,details.rc22-pulse-accordion>summary,details.rc
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){window.renderModelLeagueBoard?.();sync()}});
 })();
 </script>
+<style id="fhqPulseEngineV2Styles">
+#pred-match .fhq-pulse-v2{display:grid;gap:10px;padding:14px 0;font-family:Arial,Helvetica,sans-serif}
+#pred-match .fhq-pulse-v2 header{border-bottom:1px solid var(--border);padding-bottom:10px}
+#pred-match .fhq-pulse-v2-kicker{font:900 11px/1.2 Arial,sans-serif;letter-spacing:.07em;color:var(--muted);text-transform:uppercase}
+#pred-match .fhq-pulse-v2-meta{margin-top:6px;font-size:13px;line-height:1.45;color:var(--text);font-weight:750}
+#pred-match .fhq-pulse-v2-body{display:grid;gap:12px}
+#pred-match .fhq-pulse-v2-section{border:1px solid var(--border);background:color-mix(in srgb,var(--card) 96%,var(--text) 4%);padding:12px 14px;border-radius:7px}
+#pred-match .fhq-pulse-v2-section h4{margin:0 0 8px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--text)}
+#pred-match .fhq-pulse-v2-section p{margin:0 0 10px;font-size:14px;line-height:1.68;color:var(--text)}
+#pred-match .fhq-pulse-v2-section p:last-child{margin-bottom:0}
+#pred-match .fhq-pulse-v2-sources{border-top:1px solid var(--border);padding-top:8px;font-size:11px;line-height:1.5;color:var(--muted)}
+#pred-match .fhq-pulse-v2-sources a{color:var(--blue);text-decoration:underline;text-underline-offset:2px}
+#pred-match .fhq-pulse-v2-missing{padding:12px;border:1px dashed var(--border);color:var(--muted);font-style:italic}
+#pred-match .fhq-pulse-v2-warning{font-size:11px;color:var(--red,#d35b5b);border-top:1px solid var(--border);padding-top:8px}
+#pred-match .fhq-pulse-v2-checkpoint{min-height:34px;cursor:pointer;touch-action:manipulation}
+@media(max-width:700px){#pred-match .fhq-pulse-v2{padding:10px 0}#pred-match .fhq-pulse-v2-section{padding:10px 11px}#pred-match .fhq-pulse-v2-section p{font-size:13px;line-height:1.58}}
+</style>
+<script>
+  // Human-readable app release identity. Model versions remain independent.
+  window.FHQ_RELEASE = {
+    product: 'FantasyHQBeta',
+    version: '2.0',
+    channel: 'beta',
+    build: '01'
+  };
+</script>
+<script src="./pulse_engine_v2.js"></script>
 </body>
 </html>
